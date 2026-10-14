@@ -232,28 +232,19 @@ expect <- function(expr, data = NULL, envir = parent.frame(),
   res
 }
 
-# Resolve the (standard evaluated) 'subset' argument to a logical vector of
-# length 'n':
+# Resolve the 'subset' argument to a logical vector of length 'n':
 #  - one-sided formula: evaluated in 'data', enclosed by environment(formula)
-#  - quoted call / expression: evaluated in 'data', enclosed by 'env'
 #  - character string: column of 'data'
 #  - logical vector, or numeric vector with values in {0, 1}
-# In formulas/expressions a variable that is both a column of 'data' and an
-# object in the calling environment is an error (ambiguous). Use the pronouns
-# `.data$x` / `.env$x` (or `bquote()`) to disambiguate.
+# In formulas a variable that is both a column of 'data' and an
+# object in the calling environment is an error (ambiguous).
 resolve_subset <- function(subset, data, n, env = parent.frame()) {
   if (is.null(subset)) return(NULL)
   if (!is.list(data)) data <- NULL
-  if (is.call(subset) && identical(subset[[1L]], as.name("~")))
-    subset <- eval(subset, envir = env) # e.g., bquote(~ a == .(a))
   if (inherits(subset, "formula")) {
     if (length(subset) != 2L)
       stop("'subset' formula must be one-sided, e.g., `~ a == 1`")
-    fenv <- environment(subset)
-    subset <- eval_in_data(subset[[2L]], data,
-                           if (is.null(fenv)) env else fenv)
-  } else if (is.language(subset) || is.expression(subset)) {
-    subset <- eval_in_data(subset, data, env)
+    subset <- eval(subset[[2L]], envir = data, enclos = env)
   } else if (is.character(subset) && length(subset) == 1L) {
     if (is.null(data) || !(subset %in% names(data)))
       stop("'subset' column '", subset, "' not found in 'data'")
@@ -272,100 +263,6 @@ resolve_subset <- function(subset, data, n, env = parent.frame()) {
     stop("Length of 'subset' (", length(subset), ") does not agree with ",
          "the number of values of 'f' (", n, ")")
   subset
-}
-
-# Evaluate 'expr' with the columns of 'data' masking 'env'. The pronouns
-# `.data$x` and `.env$x` refer explicitly to a column of 'data' or a variable
-# of 'env'. A bare variable found in both 'data' and (the user part of) 'env'
-# is an error.
-eval_in_data <- function(expr, data, env) {
-  v <- expr_vars(expr)
-  if (length(v$data) > 0) {
-    nf <- setdiff(v$data, names(data))
-    if (length(nf) > 0)
-      stop("Column(s) not found in 'data': ", paste0("`", nf, "`",
-                                                     collapse = ", "))
-  }
-  for (x in v$env) {
-    if (!exists(x, envir = env, inherits = TRUE))
-      stop("Variable `", x, "` not found in the calling environment")
-  }
-  if (!is.null(data)) {
-    clash <- v$vars[v$vars %in% names(data)]
-    clash <- clash[vapply(clash, in_user_env, logical(1), env = env)]
-    if (length(clash) > 0) {
-      x <- clash[1L]
-      stop("`", x, "` is both a column of 'data' and a variable in the ",
-           "calling environment. Use `.data$", x, "` to refer to the ",
-           "column and `.env$", x, "` to refer to the variable",
-           call. = FALSE)
-    }
-  }
-  mask <- new.env(parent = env)
-  mask$.env <- list2env(mget(v$env, envir = env, inherits = TRUE))
-  mask$.data <- if (is.null(data)) list() else as.list(data)
-  if (is.null(data)) return(eval(expr, envir = mask))
-  eval(expr, envir = data, enclos = mask)
-}
-
-# Variables used in 'expr': bare variables ('vars'; not functions in call
-# position, not the right-hand side of `$`/`@`) and the names referenced via
-# the pronouns `.data$x`, `.data[["x"]]` ('data') and `.env$x` ('env')
-expr_vars <- function(expr) {
-  res <- list(vars = character(), data = character(), env = character())
-  walk <- function(e) {
-    if (is.expression(e)) {
-      for (el in as.list(e)) walk(el)
-    } else if (is.symbol(e)) {
-      nm <- as.character(e)
-      if (nzchar(nm) && !(nm %in% c(".data", ".env")))
-        res$vars <<- c(res$vars, nm)
-    } else if (is.call(e)) {
-      fn <- e[[1L]]
-      if (is.symbol(fn) && as.character(fn) %in% c("$", "[[", "@") &&
-          length(e) == 3L) {
-        obj <- e[[2L]]
-        key <- e[[3L]]
-        pron <- if (is.symbol(obj)) as.character(obj) else ""
-        literal <- is.character(key) ||
-          (is.symbol(key) && as.character(fn) == "$")
-        if (pron %in% c(".data", ".env") && as.character(fn) != "@" &&
-            literal) {
-          key <- as.character(key)
-          if (pron == ".data") res$data <<- c(res$data, key) else
-            res$env <<- c(res$env, key)
-          return(invisible())
-        }
-        walk(obj)
-        if (as.character(fn) == "[[") walk(key)
-        return(invisible())
-      }
-      if (!is.symbol(fn)) walk(fn)
-      args <- as.list(e)[-1L]
-      for (i in seq_along(args)) { # skip empty arguments, e.g., x[, 1]
-        if (!identical(args[[i]], quote(expr = ))) walk(args[[i]])
-      }
-    }
-    invisible()
-  }
-  walk(expr)
-  lapply(res, unique)
-}
-
-# Is 'name' a (non-function) object in the user part of the environment chain
-# of 'env', i.e., up to and including the global environment, but excluding
-# namespaces, attached packages and base (to avoid clashes with e.g. `T`, `pi`)
-in_user_env <- function(name, env) {
-  repeat {
-    if (identical(env, emptyenv()) || identical(env, baseenv()) ||
-        isNamespace(env))
-      return(FALSE)
-    if (exists(name, envir = env, inherits = FALSE) &&
-        !is.function(get(name, envir = env, inherits = FALSE)))
-      return(TRUE)
-    if (identical(env, globalenv())) return(FALSE)
-    env <- parent.env(env)
-  }
 }
 
 # Ids attached to the rows of the influence function 'ic' of 'x': the id of an
