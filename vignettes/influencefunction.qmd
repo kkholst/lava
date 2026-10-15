@@ -8,6 +8,7 @@ format:
     toc: true
     html-math-method: mathjax
     fig-format: 'svg'
+    embed-resources: true
 execute:
   echo: true
   warning: false
@@ -1021,10 +1022,8 @@ summary(estimate(gg, pairwise_diff(3), use=c(2,4,6)), null=c(1,1,1))
 
 It is also possible to use this function directly on an `estimate` object:
 ```{r pairwise_diff2}
-pairwise_diff(gg)
+pairwise_diff(gg[c(2,4,6)]) == 1
 ```
-
-
 
 When conducting multiple tests each at a nominal-level of $\alpha$ the overall
 type I error is not controlled at $\alpha$-level.
@@ -1060,7 +1059,7 @@ While this always yields a more powerful test compared to Bonferroni
 adjustments, another powerful closed-testing procedure [@marcus1976], can be generally
 obtained by considering all intersection hypotheses.
 
-![*Figure: closed testing via Wald tests of all intersections hypotheses.*](../man/figures/closedtesting.svg){width=60%}
+![*Figure: closed testing via Wald tests of all intersections hypotheses.*](../man/figures/closedtesting.svg){width=65%}
 
 To reject the $H_{1}$ at
 an correct $\alpha$-level we should test all intersection hypotheses involving
@@ -1161,7 +1160,6 @@ Specifically for GLM models, it is possible to do the above steps directly with 
 e <- estimate(g, id=dw$id)
 expectation(predict, object = e, data = dw, id = "id", labels = "trt=1")
 ```
-
 
 ## Average Treatment Effects
 
