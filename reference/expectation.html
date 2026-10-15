@@ -100,11 +100,16 @@ of <code>data</code>). Defaults to the names of the values of <code>f</code>, an
 
 
 <dt id="arg-subset">subset<a class="anchor" aria-label="anchor" href="#arg-subset"></a></dt>
-<dd><p>(optional) logical vector (one value per value of <code>f</code>),
-expression evaluated in <code>data</code> (columns of <code>data</code> take precedence over
-variables in the calling environment), or column name. The average is then
-conditioned on the subpopulation where <code>subset</code> is <code>TRUE</code> (conditional
-marginal mean estimate).</p></dd>
+<dd><p>(optional) subpopulation on which the average is conditioned
+(conditional marginal mean estimate). Either a logical vector (or numeric
+0/1 vector) with one value per value of <code>f</code>, a column name of <code>data</code>, or a
+one-sided formula evaluated in <code>data</code> (e.g., <code>~ a == 1 &amp; z &gt; 0</code>). Note
+that <code>subset</code> uses standard evaluation, i.e., <code>subset = a == 1</code> is
+evaluated in the calling environment and not in <code>data</code>. As for model
+formulas (see <a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">stats::model.frame</a>), the variables of a formula <code>subset</code>
+are looked up in the columns of <code>data</code> and then in the environment where
+the formula was created (not the environment from which <code>expectation</code> is
+called).</p></dd>
 
 
 <dt id="arg-labels">labels<a class="anchor" aria-label="anchor" href="#arg-labels"></a></dt>
@@ -177,13 +182,14 @@ assign ids (or clusters) to the model.</p>
 <span class="r-in"><span><span class="va">d</span><span class="op">$</span><span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">expectation</span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span>, <span class="va">data</span><span class="op">)</span> <span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span> <span class="op">*</span> <span class="va">data</span><span class="op">[</span>, <span class="st">"z"</span><span class="op">]</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>            <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">fit</span>, id <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">cl</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>            data <span class="op">=</span> <span class="va">d</span>, subset <span class="op">=</span> <span class="va">z</span> <span class="op">&gt;</span> <span class="fl">0</span>, id <span class="op">=</span> <span class="st">"cl"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in expectation(function(p, data) expit(p[1] + p["z"] * data[, "z"]),     estimate(fit, id = d$cl), data = d, subset = z &gt; 0, id = "cl"):</span> object 'N' not found</span>
+<span class="r-in"><span>            data <span class="op">=</span> <span class="va">d</span>, subset <span class="op">=</span> <span class="op">~</span> <span class="va">z</span> <span class="op">&gt;</span> <span class="fl">0</span>, id <span class="op">=</span> <span class="st">"cl"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.6903 0.02496 0.6414 0.7392 2.202e-168</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Simple mean of known function</span></span></span>
-<span class="r-in"><span><span class="fu">expectation</span><span class="op">(</span><span class="va">x</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="va">z</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.3088 0.01174 0.2858 0.3318 1.638e-152</span>
+<span class="r-in"><span><span class="fu">expectation</span><span class="op">(</span><span class="op">~</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="va">z</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, data<span class="op">=</span><span class="va">d</span>, subset <span class="op">=</span> <span class="op">~</span><span class="va">x</span>, labels<span class="op">=</span><span class="st">"p"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Estimate Std.Err   2.5% 97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p   0.6419 0.01228 0.6178 0.666       0</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -12,7 +12,7 @@
   standardization/g-computation over another dataset than the one used
   to fit the model (e.g., a model fitted on a subset). Use
   `estimate(x, id=...)` to link a model to the ids of `data`. `f` must
-  have the argument `p`, and optionally `data` and `object`
+  have the argument `p`, and optionally `data` and `object`.
 - `estimate(x, ...)` when `x` is a glm object returns an object of class
   `estimate.glm`with a `predict.estimate.glm` method. Standardized
   estimates can then easily be obtained with the syntax
@@ -31,7 +31,7 @@
   summary method and documentation
 - methods `diff.estimate`, `pairwise_diff`, `gamma.estimate`,
   `lgamma.estimate`, `normcdf.estimate`, `norminv.estimate`,
-  `normpdf.estimate` to for estimating differences of parmaters, (log)
+  `normpdf.estimate` for estimating differences of parameters, (log)
   gamma transformations, and normal transformations (cumulative
   distribution function, quantile function, probability density
   function) with `estimate` objects
