@@ -484,11 +484,11 @@ semfit <- estimate(sem, data = dw)
 ## Robust standard errors
 estimate(semfit)
 #>      Estimate Std.Err     2.5%  97.5%   P-value
-#> y2   -0.01236 0.06350 -0.13682 0.1121 8.457e-01
-#> u     0.21656 0.04681  0.12482 0.3083 3.713e-06
-#> y1~w  0.59037 0.05307  0.48636 0.6944 9.491e-29
-#> y2~w  0.65419 0.05598  0.54447 0.7639 1.510e-31
-#> u~~u  0.19001 0.07610  0.04086 0.3392 1.253e-02
+#> y2   -0.01236 0.06099 -0.13190 0.1072 8.394e-01
+#> u     0.21656 0.04596  0.12648 0.3066 2.454e-06
+#> y1~w  0.59037 0.05306  0.48637 0.6944 9.366e-29
+#> y2~w  0.65419 0.05597  0.54449 0.7639 1.470e-31
+#> u~~u  0.19001 0.07609  0.04087 0.3391 1.252e-02
 ```
 
 ### Example: quantile
@@ -810,11 +810,11 @@ between the estimates, the argument `id=NULL` can be used
 
 merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #>      (Intercept) a          (Intercept).1
-#> 1    -5.097e-16   5.698e+00  0.000e+00   
-#> 2    -5.097e-16   5.698e+00  0.000e+00   
-#> 3    -5.097e-16   5.698e+00  0.000e+00   
-#> 4    -5.097e-16   5.698e+00  0.000e+00   
-#> 5     3.043e-15  -1.600e+01  0.000e+00   
+#> 1    -5.770e-16   5.698e+00  0.000e+00   
+#> 2    -5.770e-16   5.698e+00  0.000e+00   
+#> 3    -5.770e-16   5.698e+00  0.000e+00   
+#> 4    -5.770e-16   5.698e+00  0.000e+00   
+#> 5     2.155e-15  -1.600e+01  0.000e+00   
 #> ---                                      
 #> 1996  0.000       0.000     -4.545       
 #> 1997  0.000       0.000      3.571       
@@ -823,79 +823,181 @@ merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #> 2000  0.000       0.000     -4.545
 merge(g1, g2, id = NULL) |> vcov()
 #>                 (Intercept)             a (Intercept).1
-#> (Intercept)    7.898704e-03 -7.898704e-03  4.539224e-28
-#> a             -7.898704e-03  1.874767e-02 -2.718185e-24
-#> (Intercept).1  4.539224e-28 -2.718185e-24  4.058270e-03
+#> (Intercept)    7.898704e-03 -7.898704e-03 -1.700594e-28
+#> a             -7.898704e-03  1.874767e-02 -2.717325e-24
+#> (Intercept).1 -1.700594e-28 -2.717325e-24  4.058270e-03
 ```
 
-### Renaming and subsetting parameters
+Note that for `estimate` objects it is also possible to merge objects
+directly with the [`c()`](https://rdrr.io/r/base/c.html) operator. See
+the Section on [IF building
+blocks](#if-building-blocks-transformations-and-the-delta-theorem).
 
-To only keep a subset of the parameters the `keep` argument can be used.
+### Selecting, ordering, and renaming parameters
+
+Parameters can be selected or reordered directly within an `estimate`
+object. These operations retain the corresponding influence functions
+and covariance information. They act on the parameters, rather than on
+the observations contributing to their estimation.
+
+#### Selecting parameters
+
+Consider the following `estimate` object
 
 ``` r
 
-merge(g1, g2, keep = c("(Intercept)", "(Intercept).1"))
+est1 <- estimate(coef=c(1,3), vcov=diag(2), labels=c("ba","ab"))
+est2 <- estimate(coef=c(2,4), vcov=diag(2), labels=c("cb","da"))
+est <- c(est1, est2)
+est
+#>    Estimate Std.Err     2.5% 97.5%   P-value
+#> ba        1       1 -0.95996  2.96 3.173e-01
+#> ab        3       1  1.04004  4.96 2.700e-03
+#> cb        2       1  0.04004  3.96 4.550e-02
+#> da        4       1  2.04004  5.96 6.334e-05
+```
+
+The `subset` or `[` operator selects parameters by position or label:
+
+``` r
+
+subset(est, 1:2)
+#>    Estimate Std.Err  2.5% 97.5% P-value
+#> ba        1       1 -0.96  2.96  0.3173
+#> ab        3       1  1.04  4.96  0.0027
+est[c("ba", "cb")]
+#>    Estimate Std.Err     2.5% 97.5% P-value
+#> ba        1       1 -0.95996  2.96  0.3173
+#> cb        2       1  0.04004  3.96  0.0455
+```
+
+The `head` and `tail` methods select parameters from the beginning or
+end of the object:
+
+``` r
+
+head(est) # First parameter
+#>    Estimate Std.Err  2.5% 97.5% P-value
+#> ba        1       1 -0.96  2.96  0.3173
+tail(est) # Last parameter
+#>    Estimate Std.Err 2.5% 97.5%   P-value
+#> da        4       1 2.04  5.96 6.334e-05
+head(est, n = 2) # First two parameters
+#>    Estimate Std.Err  2.5% 97.5% P-value
+#> ba        1       1 -0.96  2.96  0.3173
+#> ab        3       1  1.04  4.96  0.0027
+tail(est, n = 2) # Last two parameters
+#>    Estimate Std.Err    2.5% 97.5%   P-value
+#> cb        2       1 0.04004  3.96 4.550e-02
+#> da        4       1 2.04004  5.96 6.334e-05
+```
+
+Parameters can also be selected when combining estimates, using the
+`keep` argument. This accepts either a character vector of parameter
+labels or a vector of positions:
+
+``` r
+
+merge(est1, est2, keep = c("a", "b"))
+#>      Estimate Std.Err 2.5% 97.5% P-value
+#> NA                                      
+#> NA.1
+merge(g1, g2, keep = c(1, 3))
 #>               Estimate Std.Err    2.5%   97.5%   P-value
 #> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
 #> (Intercept).1   0.2412 0.06370  0.1163  0.3660 1.533e-04
 ```
 
-The argument can be given either as character vector or a vector of
-indices:
+With `regex = TRUE`, selection can instead use Perl-style regular
+expressions:
 
 ``` r
 
-merge(g1, g2, keep=c(1, 3))
-#>               Estimate Std.Err    2.5%   97.5%   P-value
-#> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
-#> (Intercept).1   0.2412 0.06370  0.1163  0.3660 1.533e-04
+merge(est1, est2, keep = c("^a", "a$"),
+      regex = TRUE, ignore.case = TRUE)
+#>    Estimate Std.Err  2.5% 97.5%   P-value
+#> ab        3       1  1.04  4.96 2.700e-03
+#> ba        1       1 -0.96  2.96 3.173e-01
+#> da        4       1  2.04  5.96 6.334e-05
+subset(est, "b", regex=TRUE)
+#>    Estimate Std.Err     2.5% 97.5% P-value
+#> ba        1       1 -0.95996  2.96  0.3173
+#> ab        3       1  1.04004  4.96  0.0027
+#> cb        2       1  0.04004  3.96  0.0455
 ```
 
-or as a vector of perl-style regular expressions
+#### Ordering parameters
+
+The `rev` method reverses the parameter order. The `sort` method orders
+parameters by their estimated values or labels:
 
 ``` r
 
-merge(g1, g2, keep = "cept", regex = TRUE)
-#>               Estimate Std.Err    2.5%   97.5%   P-value
-#> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
-#> (Intercept).1   0.2412 0.06370  0.1163  0.3660 1.533e-04
-merge(g1, g2, keep = c("\\)$", "^a$"), regex = TRUE, ignore.case = TRUE)
-#>             Estimate Std.Err    2.5%   97.5%   P-value
-#> (Intercept)  -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
-#> a             1.4031 0.13692  1.1347  1.6714 1.218e-24
+rev(est)
+#>    Estimate Std.Err     2.5% 97.5%   P-value
+#> da        4       1  2.04004  5.96 6.334e-05
+#> cb        2       1  0.04004  3.96 4.550e-02
+#> ab        3       1  1.04004  4.96 2.700e-03
+#> ba        1       1 -0.95996  2.96 3.173e-01
+sort(est, by = "values")
+#>    Estimate Std.Err     2.5% 97.5%   P-value
+#> ba        1       1 -0.95996  2.96 3.173e-01
+#> cb        2       1  0.04004  3.96 4.550e-02
+#> ab        3       1  1.04004  4.96 2.700e-03
+#> da        4       1  2.04004  5.96 6.334e-05
+sort(est, by = "labels")
+#>    Estimate Std.Err     2.5% 97.5%   P-value
+#> ab        3       1  1.04004  4.96 2.700e-03
+#> ba        1       1 -0.95996  2.96 3.173e-01
+#> cb        2       1  0.04004  3.96 4.550e-02
+#> da        4       1  2.04004  5.96 6.334e-05
 ```
 
-When merging estimates unique parameter names are created. It is also
-possible to rename the parameters with the `labels` argument
+These methods return `estimate` objects and can therefore be combined
+withvselection and other operations:
 
 ``` r
 
-merge(g1, g2, labels = c("a", "b", "c")) |> estimate(keep = c("a", "c"))
-#>   Estimate Std.Err    2.5%   97.5%   P-value
-#> a  -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
-#> c   0.2412 0.06370  0.1163  0.3660 1.533e-04
-merge(g1, g2,
-      labels = c("a", "b", "c"),
-      keep = c("a", "c")
-)
-#>   Estimate Std.Err    2.5%   97.5%   P-value
-#> a  -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
-#> c   0.2412 0.06370  0.1163  0.3660 1.533e-04
-estimate(g1, labels=c("a", "b"))
-#>   Estimate Std.Err    2.5%   97.5%   P-value
-#> a  -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
-#> b   1.4031 0.13692  1.1347  1.6714 1.218e-24
+est |>
+  sort(by = "values") |>
+  tail(n = 1) # Parameter with the largest estimated value
+#>    Estimate Std.Err 2.5% 97.5%   P-value
+#> da        4       1 2.04  5.96 6.334e-05
 ```
 
-Finally, the `subset` argument can be used to subset the parameters and
-IFs before the actual merging is being done
+#### Renaming parameters
+
+When estimates are merged, unique parameter labels are created
+automatically. The `labels` method can be used to rename parameters in
+an existing object:
 
 ``` r
 
-merge(g1, g2, subset="(Intercept)")
-#>               Estimate Std.Err    2.5%   97.5%   P-value
-#> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
-#> (Intercept).1   0.2412 0.06370  0.1163  0.3660 1.533e-04
+est[1:2] |>
+  labels(c("intercept", "treatment"))
+#>           Estimate Std.Err  2.5% 97.5% P-value
+#> intercept        1       1 -0.96  2.96  0.3173
+#> treatment        3       1  1.04  4.96  0.0027
+```
+
+Labels can also be supplied when constructing an `estimate` object:
+
+``` r
+
+estimate(est1, labels = c("intercept", "treatment"))
+#>           Estimate Std.Err  2.5% 97.5% P-value
+#> intercept        1       1 -0.96  2.96  0.3173
+#> treatment        3       1  1.04  4.96  0.0027
+```
+
+or directly via the [`c()`](https://rdrr.io/r/base/c.html) method
+
+``` r
+
+c(a = est[1], b = est[2])
+#>   Estimate Std.Err  2.5% 97.5% P-value
+#> a        1       1 -0.96  2.96  0.3173
+#> b        3       1  1.04  4.96  0.0027
 ```
 
 ### Clustered data (non-iid case)
@@ -1155,7 +1257,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x55963c1f6710>
+#> <bytecode: 0x55bf33de9828>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1435,8 +1537,8 @@ function also allows for adjusting for multiple comparisons. Let
 Z\_{1},\ldots,Z\_{p} denote Z-statistics from p distinct two-sided
 hypothesis tests which we will assume is asymptotically distributed
 under the null hypothesis as a zero-mean Gaussian distribution with
-correlation matrix R. Let \$ Z\_{max} = \_{i=1,,p} \|Z_i\|\$ then the
-family-wise error rate (FWER) under the null can be approximated by
+correlation matrix R. Let Z\_{max} = \max\_{i=1,\ldots,p} \|Z_i\| then
+the family-wise error rate (FWER) under the null can be approximated by
 P(Z\_{max} \> z) = 1-\int\_{-z}^{z} \cdots \int\_{-z}^{z}
 \phi\_{R}(x\_{1},\ldots,x\_{p}) \\dx\_{1}\cdots\\dx\_{p} where \phi\_{R}
 is the multivariate normal density function with mean 0 and variance
@@ -1581,7 +1683,8 @@ IC(ea) |> head()
 #> 6 -0.5285
 ```
 
-The above steps are easily wrapped into For `glm` objects this
+Specifically for GLM models, it is possible to do the above steps
+directly with the `predict.estimate.glm` method:
 
 ``` r
 
