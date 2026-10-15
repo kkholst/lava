@@ -1,0 +1,31 @@
+# Reverse dependency check using the reusable workflow from
+# https://github.com/r-devel/recheck. All reverse dependencies are checked
+# against both the CRAN release and the development version of lava (the
+# branch selected when triggering the run), and differences are reported.
+# Full install/check logs are uploaded as artifacts.
+#
+# Trigger manually from the Actions tab ("Run workflow").
+on:
+ push:
+    branches: [develop/revdep-gh-actions]
+ workflow_dispatch:
+    inputs:
+      which:
+        type: choice
+        description: Which dependents to check
+        default: strong
+        options:
+          - strong # Depends, Imports, LinkingTo
+          - most # strong + Suggests
+
+name: Reverse dependency check
+
+permissions:
+  contents: read
+
+jobs:
+  revdep_check:
+    name: Reverse check ${{ inputs.which || 'strong' }} dependents
+    uses: r-devel/recheck/.github/workflows/recheck.yml@v1
+    with:
+      which: ${{ inputs.which || 'strong' }}
