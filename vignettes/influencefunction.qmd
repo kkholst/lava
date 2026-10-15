@@ -1004,7 +1004,7 @@ estimate(gg, B)
 
 Such linear statistics can also be specified directly as expressions of the parameter names
 ```{r}
-estimate(gg, a + a.1, 2*a - a.2, a) |> summary(null=c(2,1,1))
+estimate(gg, a + a.1, 2*a - a.2, a) |> summary(null = c(2, 1, 1))
 ```
 
 We refer to the function `lava::contr`  and `lava::parsedesign` for defining contrast matrices.
@@ -1018,6 +1018,13 @@ comparisons of different exposure estimates:
 pairwise_diff(3)
 summary(estimate(gg, pairwise_diff(3), use=c(2,4,6)), null=c(1,1,1))
 ```
+
+It is also possible to use this function directly on an `estimate` object:
+```{r pairwise_diff2}
+pairwise_diff(gg)
+```
+
+
 
 When conducting multiple tests each at a nominal-level of $\alpha$ the overall
 type I error is not controlled at $\alpha$-level.
@@ -1045,7 +1052,7 @@ can be estimated from the IFs. This is implemented in the `alpha_zmax` method
 
 ```{r pcorrect }
 #| eval: !expr lava:::versioncheck('mets', 1)
-gg0 <- estimate(gg, use="^a", regex=TRUE)
+gg0 <- estimate(gg, keep="^a", regex=TRUE)
 alpha_zmax(gg0, null=rep(.8, 3))
 ```
 
