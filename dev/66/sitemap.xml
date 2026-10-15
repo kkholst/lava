@@ -59,6 +59,7 @@
 <url><loc>https://kkholst.github.io/lava/reference/diagtest.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/dsep.lvm.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/equivalence.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/estimate-subset.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/estimate.array.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/estimate.default.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/estimate.formula.html</loc></url>
@@ -66,6 +67,7 @@
 <url><loc>https://kkholst.github.io/lava/reference/estimate.list.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/estimate.lvm.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/eventTime.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/expectation.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/fplot.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/getSAS.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/gof.html</loc></url>
@@ -96,11 +98,13 @@
 <url><loc>https://kkholst.github.io/lava/reference/mvnmix.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/na.pass0.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/nldata.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/normcdf.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/nsem.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/op_concat.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/op_match.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/ordinal-set.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/ordreg.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/pairwise_diff.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/parpos.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/partialcor.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/path.html</loc></url>

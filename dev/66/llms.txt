@@ -416,16 +416,32 @@ Functions for working with Influence Functions
   : Estimate method for GLM objects
 - [`estimate(`*`<list>`*`)`](https://kkholst.github.io/lava/reference/estimate.list.md)
   : Estimate method for lists
+- [`expectation()`](https://kkholst.github.io/lava/reference/expectation.md)
+  : Mean of (estimated) function via g-computation
 - [`iid()`](https://kkholst.github.io/lava/reference/iid.md) : Extract
   i.i.d. decomposition from model object
 - [`merge(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/merge.estimate.md)
   : Merge estimate objects
 - [`multinomial()`](https://kkholst.github.io/lava/reference/multinomial.md)
   : Estimate probabilities in contingency table
+- [`normcdf()`](https://kkholst.github.io/lava/reference/normcdf.md)
+  [`normpdf()`](https://kkholst.github.io/lava/reference/normcdf.md)
+  [`norminv()`](https://kkholst.github.io/lava/reference/normcdf.md) :
+  Normal distribution
+- [`pairwise_diff()`](https://kkholst.github.io/lava/reference/pairwise_diff.md)
+  : Pairwise parameter differences
 - [`plot(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/plot.estimate.md)
   : Plot method for 'estimate' objects
 - [`stack(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/stack.estimate.md)
   : Stack estimating equations
+- [`subset(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/estimate-subset.md)
+  [`rev(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/estimate-subset.md)
+  [`tail(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/estimate-subset.md)
+  [`head(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/estimate-subset.md)
+  [`sort(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/estimate-subset.md)
+  [`` `[`( ``*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/estimate-subset.md)
+  [`with(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/estimate-subset.md)
+  : Subset parameter of estimate object
 - [`summary(`*`<estimate>`*`)`](https://kkholst.github.io/lava/reference/summary.estimate.md)
   : Summary of estimate objects
 - [`var_ic()`](https://kkholst.github.io/lava/reference/var_ic.md) :
