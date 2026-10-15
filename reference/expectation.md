@@ -126,8 +126,7 @@ d$cl <- rep(seq(nrow(d) / 4), each = 4)
 expectation(function(p, data) expit(p[1] + p["z"] * data[, "z"]),
             estimate(fit, id = d$cl),
             data = d, subset = z > 0, id = "cl")
-#>    Estimate Std.Err   2.5%  97.5%    P-value
-#> p1   0.6903 0.02496 0.6414 0.7392 2.202e-168
+#> Error in expectation(function(p, data) expit(p[1] + p["z"] * data[, "z"]),     estimate(fit, id = d$cl), data = d, subset = z > 0, id = "cl"): object 'N' not found
 
 ## Simple mean of known function
 expectation(x / (1+z^2), data=d)
