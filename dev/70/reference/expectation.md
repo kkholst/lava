@@ -47,11 +47,17 @@ expectation(f, object, data, id, subset, labels = NULL, ...)
 
 - subset:
 
-  (optional) logical vector (one value per value of `f`), expression
-  evaluated in `data` (columns of `data` take precedence over variables
-  in the calling environment), or column name. The average is then
-  conditioned on the subpopulation where `subset` is `TRUE` (conditional
-  marginal mean estimate).
+  (optional) subpopulation on which the average is conditioned
+  (conditional marginal mean estimate). Either a logical vector (or
+  numeric 0/1 vector) with one value per value of `f`, a column name of
+  `data`, or a one-sided formula evaluated in `data` (e.g.,
+  `~ a == 1 & z > 0`). Note that `subset` uses standard evaluation,
+  i.e., `subset = a == 1` is evaluated in the calling environment and
+  not in `data`. As for model formulas (see
+  [stats::model.frame](https://rdrr.io/r/stats/model.frame.html)), the
+  variables of a formula `subset` are looked up in the columns of `data`
+  and then in the environment where the formula was created (not the
+  environment from which `expectation` is called).
 
 - labels:
 
@@ -125,12 +131,12 @@ expectation(f, e1, data = d, id = "id")
 d$cl <- rep(seq(nrow(d) / 4), each = 4)
 expectation(function(p, data) expit(p[1] + p["z"] * data[, "z"]),
             estimate(fit, id = d$cl),
-            data = d, subset = z > 0, id = "cl")
+            data = d, subset = ~ z > 0, id = "cl")
 #>    Estimate Std.Err   2.5%  97.5%    P-value
 #> p1   0.6903 0.02496 0.6414 0.7392 2.202e-168
 
 ## Simple mean of known function
-expectation(x / (1+z^2), data=d)
-#>    Estimate Std.Err   2.5%  97.5%    P-value
-#> p1   0.3088 0.01174 0.2858 0.3318 1.638e-152
+expectation(~ 1 / (1+z^2), data=d, subset = ~x, labels="p")
+#>   Estimate Std.Err   2.5% 97.5% P-value
+#> p   0.6419 0.01228 0.6178 0.666       0
 ```
