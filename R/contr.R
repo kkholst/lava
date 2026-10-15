@@ -83,6 +83,7 @@ contr <- function(p, n, diff = TRUE, ...) {
 #'               vcov = diag(3))
 #' pairwise_diff(e)
 #' @export
+#' @aliases pairwise_diff pairwise.diff
 pairwise_diff <- function(n, idx=NULL, reverse=FALSE) {
   estimate_obj <- inherits(n, "estimate")
   if (isTRUE(estimate_obj)) {
@@ -105,3 +106,12 @@ pairwise_diff <- function(n, idx=NULL, reverse=FALSE) {
   return(B)
 }
 
+##' @export
+pairwise.diff <- function(n) {
+  .Deprecated("pairwise_diff", package = "lava",
+              msg = paste(
+                "`pairwise.diff` is deprecated. Use `pairwise_diff` instead."
+              )
+              )
+  pairwise_diff(n)
+}

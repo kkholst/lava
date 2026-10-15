@@ -1,4 +1,4 @@
-context("ordreg: cumulative link regression")
+# ordreg: cumulative link regression
 
 test_that("ordreg",{
   set.seed(1)
@@ -22,6 +22,6 @@ test_that("ordreg",{
   ## estimate(a, function(x) lava:::ordreg_threshold(x[seq_len(J-1)]))
   s <- summary(a)
   cc <- coef(s$coef)
-  expect_equivalent(cc, c(as, bs), tolerance=0.1)
+  expect_equal(cc, c(as, bs), tolerance=0.1, ignore_attr = TRUE)
 }
 )

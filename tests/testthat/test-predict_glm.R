@@ -1,4 +1,4 @@
-context("predict_glm")
+# predict_glm
 
 set.seed(42)
 n <- 100
@@ -17,14 +17,27 @@ test_that("predict_glm matches predict.glm for poisson(log)", {
   pred_mod <- as.numeric(predict_glm(m, p = p0, type = "response"))
   expect_equal(pred_mod, exp(rep(0, nrow(d))))
 
-  # with data
+  # data with response variable
   pr <- as.numeric(predict_glm(m, p = p0, data=head(d, 5L)))
   expect_true(length(pr)==5L)
   expect_true(all(pr==1L))
 
+  newd <- head(d, 5L)[, c("x1", "x2")]
+  pr1 <- as.numeric(predict_glm(m, p = p0, data=newd))
+  expect_equal(pr, pr1)
+
   # with user offset
-  pr <- as.numeric(predict_glm(m, p = p0, data=head(d, 5L), offset=1L))
+  pr <- as.numeric(predict_glm(m, p = p0, data=newd, offset=1L))
   expect_true(all(pr==exp(1)))
+
+  # formula environment is handled correctly in predict_glm when removing the
+  # response variable
+  m <- local({
+    thr <- 2
+    glm(y ~ x1 + I(x2 < thr), data = d, family = poisson(link = "log"))
+  })
+  pr <- as.numeric(predict_glm(m, data=newd))
+  expect_equal(pr, as.numeric(predict(m, newd, type = "response")))
 })
 
 test_that("predict_glm matches predict.glm with offset (poisson)", {

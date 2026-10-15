@@ -90,108 +90,29 @@ merge.estimate <- function(x, y,
       }
       return(estimate(coef=coefs, vcov=V, keep=keep))
     }
-    if (!missing(id) && is.null(id)) { # Independence betw. datasets in x,y,...
-        nn <- unlist(lapply(
-          objects,
-          function(x) nrow(x$IC)
-        ))
-        cnn <- c(0, cumsum(nn))
-        id <- list()
-        for (i in seq_along(nn)) {
-          id <- c(id, list(seq(nn[i]) + cnn[i]))
-        }
-    }
-    if (missing(id)) {
-      if (paired) { ## One-to-one dependence between observations in x,y,...
-        id <- lapply(objects, function(x) {
-          seq_len(NROW(x$IC))
-        })
-        } else {
-            id <- lapply(objects, function(x) x$id)
-        }
-    } else {
-        nn <- unlist(lapply(objects,function(x) NROW(IC(x))))
-        if (length(id)==1 && is.logical(id)) {
-            if (id) {
-              if (any(nn[1]!=nn)) {
-                stop("Expected objects of the same size: ",
-                     paste(nn,collapse=","))
-              }
-              id0 <- seq(nn[1]); id <- c()
-              for (i in seq(length(nn))) id <- c(id,list(id0))
-            } else {
-              id <- c()
-              N <- cumsum(c(0,nn))
-              for (i in seq(length(nn))) id <- c(id,list(seq(nn[i])+N[i]))
-            }
-        }
-        if (length(id)!=length(objects)) {
-          stop("Same number of id-elements as model objects expected")
-        }
-        idlen <- unlist(lapply(id,length))
-        if (!identical(idlen,nn)) {
-          stop("Wrong lengths of 'id': ",
-               paste(idlen,collapse=","), "; ", paste(nn,collapse=","))
-        }
-    }
-    ids <- ic_all <- c(); count <- 0
-    first_id <- id[[1]]
-    for (z in objects) {
-        count <- count+1
-        clidx <- NULL
-        id0 <- id[[count]]
-        icz <- IC(z)
-        if (is.null(id0)) {
-            id0 <- rownames(icz)
-            if (is.null(id0)) stop("Need id for object number ", count)
-        }
-        if (!missing(subset)) icz <- icz[,subset,drop=FALSE]
+    id_missing <- missing(id)
+    id <- merge_ids(objects, id = if (!id_missing) id,
+                    paired = paired, id_missing = id_missing)
+    ics <- list(); model.index <- list(); colpos <- 0
+    for (i in seq_along(objects)) {
+        icz <- IC(objects[[i]])
+        if (!missing(subset)) icz <- icz[, subset, drop = FALSE]
         if (lava.options()$check.ic) {
           check_ic_mean_zero(icz)
         }
-        if (!lava.options()$cluster.index) {
-          ic0 <- matrix(
-            unlist(by(icz,id0,colSums)),
-            byrow = TRUE, ncol = ncol(icz))
-            ids <- c(ids, list(base::sort(unique(id0))))
-        } else {
-          if (!requireNamespace("mets", quietly = TRUE)) {
-            stop("'mets' package required")
-          }
-          clidx <- mets::cluster.index(id0, mat = icz, return.all = TRUE)
-          ic0 <- clidx$X
-          ids <- c(ids, list(id0[as.vector(clidx$firstclustid)+1]))
-        }
-        # order observations such that the order
-        ic0 <- ic0 * NROW(ic0) / length(id0)
-        ic_all <- c(ic_all, list(ic0))
+        ics <- c(ics, list(cluster_sum_ic(icz, id[[i]])))
+        model.index <- c(model.index, list(colpos + seq_len(ncol(icz))))
+        colpos <- colpos + ncol(icz)
     }
-    id <- unique(unlist(ids))
-    ic0 <- matrix(NA, nrow=length(id),ncol=length(coefs))
-    model.index <- c()
-    colpos <- 0
-    for (i in seq(length(objects))) {
-        relpos <- seq_along(coef(objects[[i]], messages=0))
-        if (!missing(subset)) relpos <- seq_along(subset)
-        ic0[match(ids[[i]], id), relpos + colpos] <- ic_all[[i]]
-        midx <- list(relpos + colpos)
-        ## }
-        model.index <- c(model.index, midx)
-        colpos <- colpos+tail(relpos,1)
-    }
-    rownames(ic0) <- id
-    if (!sort) { # Reorder to original order of the first IC
-      ord <- match(id, unique(c(first_id, id)))
-      ord <- match(unique(c(first_id, id)), id)
-      ic0 <- ic0[ord, , drop=FALSE]
+    al <- align_ic(ics, lapply(id, unique))
+    ic0 <- do.call(cbind, al$ic)
+    id <- al$id
+    if (sort) { # sort according to the ids (default: order of first IC)
+      ord <- order(id)
+      ic0 <- ic0[ord, , drop = FALSE]
       id <- id[ord]
     }
-    ## Rescale each column according to I(obs)/pr(obs)
-    for (i in seq(NCOL(ic0))) {
-      pr <- mean(!is.na(ic0[,i]))
-      ic0[,i] <- ic0[,i]/pr
-    }
-    ic0[is.na(ic0)] <- 0
+    rownames(ic0) <- id
     res <- estimate.default(
       coef = coefs, stack = FALSE, data = NULL,
       IC = ic0, id = id, keep = keep
@@ -201,6 +122,69 @@ merge.estimate <- function(x, y,
     }
     return(res)
 }
+
+## Align influence functions 'ics' (list) with row ids 'ids' (list of unique
+## ids) on the union of ids (first-appearance order). Each IF is zero outside
+## its own ids and rescaled by length(union)/length(own ids) (inverse
+## probability of observation, see the section "Estimators computed on
+## different subsets" in vignette("influencefunction")).
+## Returns the list of aligned IFs and the ids of the union.
+align_ic <- function(ics, ids) {
+  ## union of ids. Starting from the first set keeps its type (e.g. numeric
+  ## ids) when the other sets are contained in it
+  uid <- unique(ids[[1]])
+  for (i in ids[-1]) {
+    i <- unique(i)
+    new <- is.na(match(i, uid))
+    if (any(new)) uid <- c(uid, i[new])
+  }
+  ics <- Map(function(ic, id) {
+    ic <- cbind(ic)
+    res <- matrix(0, nrow = length(uid), ncol = ncol(ic),
+                  dimnames = list(NULL, colnames(ic)))
+    res[match(id, uid), ] <- ic
+    res * length(uid) / length(id)
+  }, ics, ids)
+  list(ic = ics, id = uid)
+}
+
+
+## Ids of the rows of the influence functions of the estimate objects in
+## 'objects' (used by merge.estimate):
+##  - id=NULL or id=FALSE: independence (distinct ids across objects)
+##  - id=TRUE or paired=TRUE: one-to-one matching (objects of the same size)
+##  - 'id' missing (id_missing=TRUE): ids of the objects (index or rownames)
+##  - otherwise a list of ids, one element for each object
+merge_ids <- function(objects, id, paired = FALSE, id_missing = FALSE) {
+  nn <- unlist(lapply(objects, function(x) NROW(IC(x))))
+  if (!id_missing && (is.null(id) || isFALSE(id))) {
+    cnn <- c(0, cumsum(nn))
+    return(lapply(seq_along(nn), function(i) seq_len(nn[i]) + cnn[i]))
+  }
+  if ((id_missing && paired) || isTRUE(id)) {
+    if (any(nn[1] != nn)) {
+      stop("Expected objects of the same size: ", paste(nn, collapse = ","))
+    }
+    return(rep(list(seq_len(nn[1])), length(nn)))
+  }
+  if (id_missing) {
+    return(lapply(seq_along(objects), function(i) {
+      id0 <- ic_ids(objects[[i]], IC(objects[[i]]))
+      if (is.null(id0)) stop("Need id for object number ", i)
+      id0
+    }))
+  }
+  if (length(id) != length(objects)) {
+    stop("Same number of id-elements as model objects expected")
+  }
+  idlen <- unlist(lapply(id, length))
+  if (!identical(idlen, nn)) {
+    stop("Wrong lengths of 'id': ",
+         paste(idlen, collapse = ","), "; ", paste(nn, collapse = ","))
+  }
+  id
+}
+
 
 #' @export
 "%++%.estimate" <- function(x, ...) {

@@ -1,3 +1,5 @@
+
+
 set.seed(1)
 center_ic <- function(n, p = 1) {
   x <- matrix(rnorm(n * p), n, p)
@@ -20,7 +22,7 @@ test_that("c.summary.estimate concatenates coefficient matrices", {
   # coefmat is the row-bind of the inputs (preserving rows and columns)
   expect_equal(rownames(cc$coefmat), c("a1", "a2", "a3"))
   expect_equal(colnames(cc$coefmat), colnames(s1$coefmat))
-  expect_equivalent(cc$coefmat, rbind(s1$coefmat, s2$coefmat, s3$coefmat))
+  expect_equal(cc$coefmat, rbind(s1$coefmat, s2$coefmat, s3$coefmat), ignore_attr = TRUE)
 
   # coef.summary.estimate returns the combined coef vector
   expect_equal(coef(cc), cc$coefmat[, 1])

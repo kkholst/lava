@@ -27,7 +27,10 @@
 ##' ordinal(m,K=2) <- ~y1+y2+y3
 ##' d <- sim(m,50,seed=1)
 ##' if (requireNamespace("mets", quietly=TRUE)) {
+##'    op <- lava.options(Dmethod="simple")
 ##'    e1 <- complik(m,d,control=list(trace=1),type="all")
+##'    lava.options(op)
+##'    e1
 ##' }
 complik <- function(x, data, k=2, type=c("all","nearest"), pairlist,
              messages=0, estimator="normal", quick=FALSE, ...) {

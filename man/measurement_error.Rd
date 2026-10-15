@@ -2,7 +2,6 @@
 % Please edit documentation in R/measurement_error.R
 \name{measurement_error}
 \alias{measurement_error}
-\alias{measurement.error}
 \title{Two-stage (non-linear) measurement error}
 \usage{
 measurement_error(

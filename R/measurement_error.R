@@ -10,7 +10,7 @@
 ##' @param ... Additional arguments to lower level functions
 ##' @seealso stack.estimate
 ##' @export
-##' @aliases measurement_error measurement.error
+##' @aliases measurement_error
 ##' @examples
 ##' m <- lvm(c(y1,y2,y3)~u,c(y3,y4,y5)~v,u~~v,c(u,v)~x)
 ##' transform(m,u2~u) <- function(x) x^2
@@ -74,14 +74,4 @@ measurement_error <- function(model1, formula, data=parent.frame(),
              list(naive=e2,lm=coef(summary(stage.two)),
                   fun=predictfun))
     structure(res,class=c("measurement.error","estimate"))
-}
-
-#' @export
-measurement.error <- function(...) {
-  .Deprecated("measurement_error", package = "lava",
-    msg = paste(
-      "`measurement.error` is deprecated. Use `measurement_error` instead."
-    )
-  )
-  measurement_error(...)
 }

@@ -1,10 +1,10 @@
-context("Simulation")
+# Simulation
 
 test_that("Constrain, transform I", {
     m <- lvm(,~y+x)
     distribution(m,~x) <- Sequence.lvm()
     transform(m,y~x) <- function(x) x
-    with(sim(m,10),testthat::expect_equivalent(y,x))
+    with(sim(m,10),testthat::expect_equal(y,x, ignore_attr = TRUE))
 
     m <- lvm(y~1,~x)
     distribution(m,~x) <- Sequence.lvm()
@@ -25,10 +25,10 @@ test_that("Missing", {
     testthat::expect_equal(sum(d$r),sum(!is.na(d$y0)))
 
     g <- glm(r~x,data=d,family=binomial)
-    testthat::expect_true(all.equal(coef(g), c(0, 1),
-                                    tolerance = 0.2,
-                                    check.attributes = FALSE
-    ))
+    testthat::expect_equal(coef(g), c(0, 1),
+                           tolerance = 0.2,
+                           ignore_attr = TRUE
+    )
 })
 
 test_that("sim.default I", {
@@ -58,7 +58,7 @@ test_that("sim.default I", {
                   true = c(1, 1), names = c("Model", "Sandwich")
     )
     testthat::expect_true(length(grep("Coverage",rownames(s1)))>0)
-    testthat::expect_equivalent(colnames(s1),c("Model","Sandwich"))
+    testthat::expect_equal(colnames(s1),c("Model","Sandwich"), ignore_attr = TRUE)
     
     val <- sim(onerun,R=2,cl=TRUE,seed=1,messages=0,mc.cores=1)
     testthat::expect_true(val[1,1]!=val[1,2])
@@ -70,7 +70,7 @@ test_that("sim.default I", {
     dm <- capture.output(val2 <- sim(onerun2,R=R,messages=1,mc.cores=1))
     testthat::expect_true(all(R-val2[,1:2]==0))
     res <- summary(val2)
-    testthat::expect_equivalent(res["Mean",],c(1.5,3.5,0.5,2.5))
+    testthat::expect_equal(res["Mean",],c(1.5,3.5,0.5,2.5), ignore_attr = TRUE)
 
     testthat::expect_output(print(val2[1,]),"a b c d")
     testthat::expect_output(print(val2[1,]),"1 3 0 2")
@@ -115,13 +115,13 @@ test_that("distributions", {
     }
     testthat::expect_true(all(sim(m,2)==2))
     testthat::expect_true(all(sim(m,2,p=c(a=10))==10))
-    testthat::expect_equivalent(sim(m,2,p=c(a=10)),sim(m,2,a=10))
+    testthat::expect_equal(sim(m,2,p=c(a=10)),sim(m,2,a=10), ignore_attr = TRUE)
 
     ## Multivariate distribution
     m <- lvm()
     rmr <- function(n,rho,...) rmvn0(n,sigma=diag(2)*(1-rho)+rho)
     distribution(m,~y1+y2,rho=0.9) <- rmr
-    testthat::expect_equivalent(c("y1","y2"),colnames(d <- sim(m,5)))
+    testthat::expect_equal(c("y1","y2"),colnames(d <- sim(m,5)), ignore_attr = TRUE)
 
     ## Special 'distributions'
     m <- lvm()
@@ -130,28 +130,28 @@ test_that("distributions", {
     distribution(m,~x3) <- Sequence.lvm(a=NULL,b=2)
     distribution(m,~x4) <- Sequence.lvm(a=2,b=NULL)
     ex <- sim(m,5)
-    testthat::expect_equivalent(ex$x1,1:5)
-    testthat::expect_equivalent(ex$x2,seq(1,2,length.out=5))
-    testthat::expect_equivalent(ex$x3,seq(-2,2))
-    testthat::expect_equivalent(ex$x4,seq(2,6))
+    testthat::expect_equal(ex$x1,1:5, ignore_attr = TRUE)
+    testthat::expect_equal(ex$x2,seq(1,2,length.out=5), ignore_attr = TRUE)
+    testthat::expect_equal(ex$x3,seq(-2,2), ignore_attr = TRUE)
+    testthat::expect_equal(ex$x4,seq(2,6), ignore_attr = TRUE)
 
     m <- lvm()
     distribution(m,~x1) <- dist_ones()
     distribution(m,~x2) <- dist_ones(p=0.5)
     distribution(m,~x3) <- binary.lvm(interval=c(0.4,0.6))
     ex <- sim(m,10)
-    testthat::expect_equivalent(ex$x1,rep(1,10))
-    testthat::expect_equivalent(ex$x2,c(rep(0,5),rep(1,5)))
-    testthat::expect_equivalent(ex$x3,c(0,0,0,1,1,1,0,0,0,0))
+    testthat::expect_equal(ex$x1,rep(1,10), ignore_attr = TRUE)
+    testthat::expect_equal(ex$x2,c(rep(0,5),rep(1,5)), ignore_attr = TRUE)
+    testthat::expect_equal(ex$x3,c(0,0,0,1,1,1,0,0,0,0), ignore_attr = TRUE)
 
     m <- lvm()
     testthat::expect_error(distribution(m,~y) <- threshold.lvm(p=c(0.5,.75)))
     distribution(m,~y) <- threshold.lvm(p=c(0.25,.25))
     set.seed(1)
-    testthat::expect_equivalent(1:3,sort(unique(sim(m,200))[,1]))
+    testthat::expect_equal(1:3,sort(unique(sim(m,200))[,1]), ignore_attr = TRUE)
 
     ## distribution(m,~y) <- threshold.lvm(p=c(0.25,.25),labels=letters[1:3])
-    ## testthat::expect_equivalent(c("a","b","c"),sort(unique(sim(m,200))[,1]))
+    ## testthat::expect_equal(c("a","b","c"),sort(unique(sim(m,200))[,1]), ignore_attr = TRUE)
         
 })
 
@@ -163,7 +163,7 @@ test_that("eventTime", {
 
     set.seed(1)
     d <- sim(m,100)
-    testthat::expect_equivalent((d$time<d$cens)*1L,d$status)
+    testthat::expect_equal((d$time<d$cens)*1L,d$status, ignore_attr = TRUE)
 
     ## TODO: plot(m)
     testthat::expect_output(print(m),"Event History Model")

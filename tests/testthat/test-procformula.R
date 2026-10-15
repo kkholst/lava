@@ -1,4 +1,4 @@
-context("procformula robustness against as.character.formula masking")
+# procformula robustness against as.character.formula masking
 
 # formula.tools overwrites as.character.formula, changing it from returning
 # a length-3 vector c("~", "LHS", "RHS") to a single collapsed string.

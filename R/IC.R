@@ -35,7 +35,7 @@ IC.default <- function(x, bread, id=NULL,
     cl[[1]] <- substitute(iid)
     ii <- eval.parent(cl)
     if (!is.null(attr(ii, "bread"))) {
-      attr(res, "bread") <- attr(res, "bread")*NROW(res)
+      attr(ii, "bread") <- attr(ii, "bread") * NROW(ii)
     }
     ii <- ii*NROW(ii)
     return(ii)
@@ -45,23 +45,10 @@ IC.default <- function(x, bread, id=NULL,
     return(NULL)
   }
 
-  ## if (folds>0 || maxsize>0 ||
-  ##     (!missing(id) && lava.options()$cluster.index)) {
-  ##   if (!requireNamespace("mets", quietly=TRUE)) stop("Requires 'mets'")
-  ## }
-  ## if (folds>0) {
-  ##   U <- Reduce(
-  ##     "rbind",
-  ##     mets::divide.conquer(function(data) score(x, data = data, ...),
-  ##                          id = id,
-  ##                          data = data, size = round(nrow(data) / folds)
-  ##       )
-  ##   )
-  ## } else {
   U <- score(x, indiv=TRUE, ...)
   pp <- pars(x)
   if (!missing(bread) && is.null(bread)) {
-    bread <- suppressWarnings(vcov(x)*NROW(U))
+    bread <- suppressWarnings(vcov(x) * NROW(U))
   }
   if (missing(bread)) bread <- attributes(U)$bread
   if (is.null(bread)) {
@@ -71,24 +58,14 @@ IC.default <- function(x, bread, id=NULL,
       I <- -numDeriv::jacobian(function(p) {
         score(x, p = p, indiv = FALSE, ...)
       }, pp, method = lava.options()$Dmethod)
-      bread <- Inverse(I)*NROW(U)
+      bread <- Inverse(I) * NROW(U)
     }
   }
 
-  ic0 <- U%*%bread
-  if (!missing(id)) {
-  N <- nrow(ic0)
-  if (!lava.options()$cluster.index) {
-    ic0 <- matrix(unlist(by(ic0, id, colSums)),
-                  byrow=TRUE, ncol=ncol(bread))
-  } else {
-    ic0 <- mets::cluster.index(id, mat=ic0, return.all=FALSE)
-  }
-  ic0 <- ic0*NROW(ic0)/length(id)
-  attributes(ic0)$N <- N
-}
-colnames(ic0) <- colnames(U)
-return(structure(ic0, bread=bread))
+  ic0 <- U %*% bread
+  if (!is.null(id)) ic0 <- cluster_sum_ic(ic0, id)
+  colnames(ic0) <- colnames(U)
+  return(structure(ic0, bread=bread))
 }
 
 ##' @export

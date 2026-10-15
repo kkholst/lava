@@ -2,6 +2,7 @@
 % Please edit documentation in R/contr.R
 \name{pairwise_diff}
 \alias{pairwise_diff}
+\alias{pairwise.diff}
 \title{Pairwise parameter differences}
 \usage{
 pairwise_diff(n, idx = NULL, reverse = FALSE)
