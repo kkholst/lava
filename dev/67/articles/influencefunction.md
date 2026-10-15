@@ -1257,7 +1257,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x55bf33de9828>
+#> <bytecode: 0x55e92fba6ab8>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1474,7 +1474,7 @@ the parameter names
 
 ``` r
 
-estimate(gg, a + a.1, 2*a - a.2, a) |> summary(null=c(2,1,1))
+estimate(gg, a + a.1, 2*a - a.2, a) |> summary(null = c(2, 1, 1))
 #> Call: estimate.default(x = gg, f = a + a.1, 2 * a - a.2, a)
 #> ────────────────────────────────────────────────────────────
 #>              Estimate Std.Err   2.5% 97.5%   P-value
@@ -1531,6 +1531,30 @@ summary(estimate(gg, pairwise_diff(3), use=c(2,4,6)), null=c(1,1,1))
 #> chisq = 33.79, df = 2, p-value = 4.597e-08
 ```
 
+It is also possible to use this function directly on an `estimate`
+object:
+
+``` r
+
+pairwise_diff(gg)
+#>                             Estimate Std.Err    2.5%   97.5%   P-value
+#> [(Intercept)] - [a]         -1.77367  0.2060 -2.1775 -1.3699 7.355e-18
+#> [(Intercept)] - [(Int....    0.06358  0.1146 -0.1610  0.2882 5.791e-01
+#> [(Intercept)] - [a.1]       -1.87005  0.1723 -2.2077 -1.5324 1.904e-27
+#> [(Intercept)] - [(Int.....1 -0.09434  0.1597 -0.4074  0.2187 5.548e-01
+#> [(Intercept)] - [a.2]       -1.72920  0.2094 -2.1396 -1.3188 1.485e-16
+#> [a] - [(Intercept).1]        1.83724  0.1718  1.5006  2.1739 1.074e-26
+#> [a] - [a.1]                 -0.09638  0.1800 -0.4491  0.2563 5.922e-01
+#> [a] - [(Intercept).2]        1.67932  0.1820  1.3227  2.0359 2.717e-20
+#> [a] - [a.2]                  0.04446  0.2355 -0.4172  0.5061 8.503e-01
+#> [(Intercept).1] - [a.1]     -1.93363  0.2074 -2.3401 -1.5271 1.132e-20
+#> [(Intercept).1] - [(I....   -0.15792  0.1437 -0.4396  0.1238 2.719e-01
+#> [(Intercept).1] - [a.2]     -1.79278  0.2211 -2.2262 -1.3593 5.196e-16
+#> [a.1] - [(Intercept).2]      1.77570  0.1958  1.3920  2.1594 1.195e-19
+#> [a.1] - [a.2]                0.14085  0.2218 -0.2939  0.5756 5.255e-01
+#> [(Intercept).2] - [a.2]     -1.63486  0.2925 -2.2081 -1.0616 2.275e-08
+```
+
 When conducting multiple tests each at a nominal-level of \alpha the
 overall type I error is not controlled at \alpha-level. The influence
 function also allows for adjusting for multiple comparisons. Let
@@ -1551,7 +1575,7 @@ in the `alpha_zmax` method
 
 ``` r
 
-gg0 <- estimate(gg, use="^a", regex=TRUE)
+gg0 <- estimate(gg, keep="^a", regex=TRUE)
 alpha_zmax(gg0, null=rep(.8, 3))
 #>     Estimate   P-value Adj.P-value
 #> a      1.403 1.060e-05   3.195e-05
