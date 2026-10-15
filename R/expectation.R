@@ -111,6 +111,7 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
       envir = parent.frame(),
       id = id,
       quoted = TRUE,
+      subset = subset,
       ...
     )
     if (!is.null(labels))
@@ -127,6 +128,15 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
   pp <- coef(e)
   if (missing(data))
     data <- tryCatch(model.frame(object), error = function(...) NULL)
+
+  if (!missing(subset)) {
+    subset <- resolve_subset(substitute(subset), data, parent.frame())
+    if (length(subset) != N)
+      stop("Length of 'subset' (", length(subset), ") does not agree with ",
+           "the number of values of 'f' (", N, ")")
+  } else {
+    subset <- NULL
+  }
 
   ## Values of 'f' (N x k matrix) and Jacobian (N*k x p)
   dots <- list(...)
@@ -179,6 +189,9 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
            "formula, e.g., `subset = ~ a == 1`", call. = FALSE)
     })
     subset <- resolve_subset(subset, data, N)
+    if (length(subset) != N)
+      stop("Length of 'subset' (", length(subset), ") does not agree with ",
+           "the number of values of 'f' (", N, ")")
   } else {
     subset <- NULL
   }
@@ -195,7 +208,7 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
 
 # Calculate E[f(Z)]
 expect <- function(expr, data = NULL, envir = parent.frame(),
-                   id, quoted = FALSE, ...) {
+                   id, quoted = FALSE, subset, ...) {
   expr <- if (quoted) base::as.expression(expr) else substitute(expr)
   z <- if (is.null(data)) {
     eval(expr, envir = envir)
@@ -204,6 +217,14 @@ expect <- function(expr, data = NULL, envir = parent.frame(),
   }
   z <- cbind(z, deparse.level = 0)
   N <- NROW(z)
+  if (!missing(subset)) {
+    subset <- resolve_subset(substitute(subset), data, parent.frame())
+    if (length(subset) != N)
+      stop("Length of 'subset' (", length(subset), ") does not agree with ",
+           "the number of values of 'f' (", N, ")")
+  } else {
+    subset <- rep(1, N)
+  }
   id_drop <- !missing(id) && is.null(id)
   if (missing(id) || is.null(id)) {
     id <- rownames(z)
@@ -217,9 +238,12 @@ expect <- function(expr, data = NULL, envir = parent.frame(),
     id <- resolve_id(id, data, n = N, x = NULL)
   }
   if (is.factor(id)) id <- as.character(id)
-  est <- colMeans(z)# avoid integer codes in c(...)
-  ic <- z
-  for (i in seq_len(ncol(z))) ic[, i] <- ic[, i] - est[i]
+  w <- subset / mean(subset)
+  est <- colMeans(w * z)
+  ic <- matrix(ncol=ncol(z), nrow=nrow(z))
+  for (i in seq_len(ncol(z))) {
+    ic[, i] <- w * (z[, i] - est[i])
+  }
   res <- estimate(coef=est, IC=ic, id = id, ...)
   if (id_drop) index(res) <- NULL
   res

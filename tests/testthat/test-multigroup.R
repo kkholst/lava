@@ -23,14 +23,12 @@ test_that("Multiple group II", {
   testthat::expect_true(mean((coef(e,type=2)[[1]][1:2,1]-coef(lm(y~x,cbind(d,d))))^2)<1e-9)
 })
 
-context("Missing data")
-
 test_that("Missing data analysis", {
   ## Random intercept model
   m <- lvm(c(y1,y2,y3)~x+u); latent(m) <- ~u
   set.seed(1)
   ## Missing on first two outcomes
-  d <- makemissing(sim(m,200),p=0.3,cols=c("y1","y2"))  
+  d <- makemissing(sim(m,200),p=0.3,cols=c("y1","y2"))
   e <- estimate(m,d,missing=TRUE)
   testthat::expect_true("lvm.missing"%in%class(e))
   testthat::expect_true(sum(unlist(lapply(e$estimate$model$data,nrow)))==200)
@@ -77,7 +75,7 @@ test_that("Multiple group, constraints", {
     b1 <- coef(e,2,labels=TRUE)["beta2",1]
     b2 <- constraints(ee)[1]
     testthat::expect_true(mean((b1-b2)^2)<1e-5)
-    
+
     ## "Multiple group, constraints (non-linear in x)
     m <- lvm(y[m:v] ~ 1)
     addvar(m) <- ~x
