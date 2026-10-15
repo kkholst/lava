@@ -103,11 +103,13 @@ of <code>data</code>). Defaults to the names of the values of <code>f</code>, an
 <dd><p>(optional) subpopulation on which the average is conditioned
 (conditional marginal mean estimate). Either a logical vector (or numeric
 0/1 vector) with one value per value of <code>f</code>, a column name of <code>data</code>, or a
-one-sided formula evaluated in <code>data</code> (e.g., <code>~ a == 1 &amp; z &gt; 0</code>), The
-formula <code>subset</code> is evaluated with the columns of <code>data</code> masking the
-environment of the formula. Note that <code>subset</code> uses standard evaluation,
-i.e., <code>subset = a == 1</code> is evaluated in the calling environment and not in
-<code>data</code>.</p></dd>
+one-sided formula evaluated in <code>data</code> (e.g., <code>~ a == 1 &amp; z &gt; 0</code>). Note
+that <code>subset</code> uses standard evaluation, i.e., <code>subset = a == 1</code> is
+evaluated in the calling environment and not in <code>data</code>. As for model
+formulas (see <a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">stats::model.frame</a>), the variables of a formula <code>subset</code>
+are looked up in the columns of <code>data</code> and then in the environment where
+the formula was created (not the environment from which <code>expectation</code> is
+called).</p></dd>
 
 
 <dt id="arg-labels">labels<a class="anchor" aria-label="anchor" href="#arg-labels"></a></dt>

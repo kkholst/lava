@@ -51,10 +51,13 @@ expectation(f, object, data, id, subset, labels = NULL, ...)
   (conditional marginal mean estimate). Either a logical vector (or
   numeric 0/1 vector) with one value per value of `f`, a column name of
   `data`, or a one-sided formula evaluated in `data` (e.g.,
-  `~ a == 1 & z > 0`), The formula `subset` is evaluated with the
-  columns of `data` masking the environment of the formula. Note that
-  `subset` uses standard evaluation, i.e., `subset = a == 1` is
-  evaluated in the calling environment and not in `data`.
+  `~ a == 1 & z > 0`). Note that `subset` uses standard evaluation,
+  i.e., `subset = a == 1` is evaluated in the calling environment and
+  not in `data`. As for model formulas (see
+  [stats::model.frame](https://rdrr.io/r/stats/model.frame.html)), the
+  variables of a formula `subset` are looked up in the columns of `data`
+  and then in the environment where the formula was created (not the
+  environment from which `expectation` is called).
 
 - labels:
 
