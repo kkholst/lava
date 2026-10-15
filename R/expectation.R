@@ -90,23 +90,21 @@
 #'             data = d, subset = ~ z > 0, id = "cl")
 #'
 #' ## Simple mean of known function
-#' expectation(x / (1+z^2), data=d)
+#' expectation(~ 1 / (1+z^2), data=d, subset = ~x, labels="p")
 expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
 
+  if (!missing(subset)) {
+    subset <- tryCatch(subset, error = function(e) {
+      stop("Unable to evaluate 'subset': ", conditionMessage(e),
+           ". To evaluate an expression in 'data' use a one-sided ",
+           "formula, e.g., `subset = ~ a == 1`", call. = FALSE)
+    })
+  }
+
   if (missing(object)) {
-    # Then we just calculate E[f(Z)] with known f
-    expr <- substitute(f)
-    if (is.symbol(expr)) {
-      nm <- as.character(expr)
-      if (exists(nm, envir = parent.frame(), inherits = TRUE)) {
-      value <- get(nm, envir = parent.frame(), inherits = TRUE)
-      if (is.language(value) || is.expression(value))
-        expr <- value
-      }
-    }
     if (missing(data)) data <- NULL
     out <- expect(
-      expr = as.expression(expr),
+      expr = f,
       data = data,
       envir = parent.frame(),
       id = id,
@@ -128,15 +126,6 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
   pp <- coef(e)
   if (missing(data))
     data <- tryCatch(model.frame(object), error = function(...) NULL)
-
-  if (!missing(subset)) {
-    subset <- resolve_subset(substitute(subset), data, parent.frame())
-    if (length(subset) != N)
-      stop("Length of 'subset' (", length(subset), ") does not agree with ",
-           "the number of values of 'f' (", N, ")")
-  } else {
-    subset <- NULL
-  }
 
   ## Values of 'f' (N x k matrix) and Jacobian (N*k x p)
   dots <- list(...)
@@ -183,11 +172,6 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
          "Supply the ids with 'estimate(x, id=...)'")
 
   if (!missing(subset)) {
-    subset <- tryCatch(subset, error = function(e) {
-      stop("Unable to evaluate 'subset': ", conditionMessage(e),
-           ". To evaluate an expression in 'data' use a one-sided ",
-           "formula, e.g., `subset = ~ a == 1`", call. = FALSE)
-    })
     subset <- resolve_subset(subset, data, N)
   } else {
     subset <- NULL
@@ -204,21 +188,25 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
 }
 
 # Calculate E[f(Z)]
-expect <- function(expr, data = NULL, envir = parent.frame(),
-                   id, quoted = FALSE, subset, ...) {
-  expr <- if (quoted) base::as.expression(expr) else substitute(expr)
-  z <- if (is.null(data)) {
-    eval(expr, envir = envir)
-  } else {
-    eval(expr, envir = data, enclos = envir)
+expect <- function(expr, data = NULL, id, subset, ...) {
+  expr <- tryCatch(expr, error = function(e) {
+      stop("Unable to evaluate 'expr': ", conditionMessage(e),
+           ". To evaluate an expression in 'data' use a one-sided ",
+           "formula, e.g., `expr = ~ y`", call. = FALSE)
+  })
+  if (inherits(expr, "formula")) {
+    if (length(expr) != 2L)
+      stop("'expr' formula must be one-sided, e.g., `~ y`")
+    expr <- eval(expr[[2L]], envir = data, enclos = environment(expr))
+  } else if (is.character(expr) && length(expr) == 1L) {
+    if (is.null(data) || !(expr %in% names(data)))
+      stop("'expr' column '", expr, "' not found in 'data'")
+    expr <- data[[expr]]
   }
-  z <- cbind(z, deparse.level = 0)
+  z <- cbind(expr, deparse.level = 0)
   N <- NROW(z)
   if (!missing(subset)) {
-    subset <- resolve_subset(substitute(subset), data, parent.frame())
-    if (length(subset) != N)
-      stop("Length of 'subset' (", length(subset), ") does not agree with ",
-           "the number of values of 'f' (", N, ")")
+    subset <- resolve_subset(subset, data, N)
   } else {
     subset <- rep(1, N)
   }

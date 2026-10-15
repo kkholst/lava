@@ -103,7 +103,7 @@ expectation(function(p, data) expit(p[1] + p["z"] * data[, "z"]),
             data = d, subset = ~ z > 0, id = "cl")
 
 ## Simple mean of known function
-expectation(x / (1+z^2), data=d)
+expectation(~ 1 / (1+z^2), data=d, subset = ~x, labels="p")
 }
 \seealso{
 \link{estimate.default}, \code{vignette("influencefunction", package = "lava")}
