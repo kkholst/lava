@@ -39,8 +39,7 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="lava-development-version">lava (development version)<a class="anchor" aria-label="anchor" href="#lava-development-version"></a></h2>
-<ul><li>new function <code>expectation(object, f, data, id, subset)</code> for marginal (standardized) estimates via g-computation. <code>estimate(x, f, average=TRUE, ...)</code> now calls <code>expectation</code>. The <code>id</code> argument refers to the values of <code>f</code> (the rows of <code>data</code>; defaults to the names of the values of <code>f</code> or <code>rownames(data)</code>), and the influence function of the model is aligned to these ids via <code>index(x)</code> for <code>estimate</code> objects, or the row names of the model frame. This allows standardization/g-computation over another dataset than the one used to fit the model (e.g., a model fitted on a subset). Use <code>estimate(x, id=...)</code> to link a model to the ids of <code>data</code>. <code>f</code> must have the argument <code>p</code>, and optionally <code>data</code> and <code>object</code>
-</li>
+<ul><li>new function <code>expectation(object, f, data, id, subset)</code> for marginal (standardized) estimates via g-computation. <code>estimate(x, f, average=TRUE, ...)</code> now calls <code>expectation</code>. The <code>id</code> argument refers to the values of <code>f</code> (the rows of <code>data</code>; defaults to the names of the values of <code>f</code> or <code>rownames(data)</code>), and the influence function of the model is aligned to these ids via <code>index(x)</code> for <code>estimate</code> objects, or the row names of the model frame. This allows standardization/g-computation over another dataset than the one used to fit the model (e.g., a model fitted on a subset). Use <code>estimate(x, id=...)</code> to link a model to the ids of <code>data</code>. <code>f</code> must have the argument <code>p</code>, and optionally <code>data</code> and <code>object</code>.</li>
 <li>
 <code>estimate(x, ...)</code> when <code>x</code> is a glm object returns an object of class <code>estimate.glm</code>with a <code>predict.estimate.glm</code> method. Standardized estimates can then easily be obtained with the syntax <code>expectation(e, predict, data=transform(dat, a=1))</code>
 </li>
@@ -51,7 +50,7 @@
 <code>merge.estimate</code>: <code>sort=TRUE</code> now sorts according to the union of all ids, and <code>paired=TRUE</code> requires objects of the same size (as <code>id=TRUE</code>).</li>
 <li>
 <code>ordreg</code> (ordinal regression, proportional odds model) improved summary method and documentation</li>
-<li>methods <code>diff.estimate</code>, <code>pairwise_diff</code>, <code>gamma.estimate</code>, <code>lgamma.estimate</code>, <code>normcdf.estimate</code>, <code>norminv.estimate</code>, <code>normpdf.estimate</code> to for estimating differences of parmaters, (log) gamma transformations, and normal transformations (cumulative distribution function, quantile function, probability density function) with <code>estimate</code> objects</li>
+<li>methods <code>diff.estimate</code>, <code>pairwise_diff</code>, <code>gamma.estimate</code>, <code>lgamma.estimate</code>, <code>normcdf.estimate</code>, <code>norminv.estimate</code>, <code>normpdf.estimate</code> for estimating differences of parameters, (log) gamma transformations, and normal transformations (cumulative distribution function, quantile function, probability density function) with <code>estimate</code> objects</li>
 <li>new subset/ordering methods: <code>tail.estimate</code>, <code>head.estimate</code>, <code>rev.estimate</code>, <code>sort.estimate</code>
 </li>
 </ul></div>
