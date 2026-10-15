@@ -1257,7 +1257,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x556686d9fdf0>
+#> <bytecode: 0x55d997440790>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1705,14 +1705,17 @@ IC(ea) |> head()
 ```
 
 Specifically for GLM models, it is possible to do the above steps
-directly with the `predict.estimate.glm` method:
+directly with the `predict.estimate.glm` method (note the id argument
+here is not strictly needed as the IF of `e`and the data.frame are
+already aligned):
 
 ``` r
 
 e <- estimate(g, id=dw$id)
-expectation(predict, object = e, data = dw, id = "id", labels = "trt=1")
-#>       Estimate Std.Err   2.5%  97.5%    P-value
-#> trt=1    0.565 0.01568 0.5343 0.5957 2.009e-284
+expectation(predict, object = e, data = transform(dw, a=1),
+            id = "id", labels = "trt=1")
+#>       Estimate Std.Err   2.5% 97.5%    P-value
+#> trt=1   0.6628  0.0215 0.6207 0.705 1.314e-208
 ```
 
 ### Average Treatment Effects

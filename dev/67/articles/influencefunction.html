@@ -1074,7 +1074,7 @@ P_{0})</span> such that <span class="math display">\begin{align*} \sqrt{n}(\wide
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p) - log1p(-p)</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x556686d9fdf0&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55d997440790&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
@@ -1407,13 +1407,14 @@ X_1 + \beta_w W</span>, and from this we want to estimate the target parameter <
 <span><span class="co">#&gt; 5 -1.7140</span></span>
 <span><span class="co">#&gt; 6 -0.5285</span></span></code></pre></div>
 </div>
-<p>Specifically for GLM models, it is possible to do the above steps directly with the <code>predict.estimate.glm</code> method:</p>
+<p>Specifically for GLM models, it is possible to do the above steps directly with the <code>predict.estimate.glm</code> method (note the id argument here is not strictly needed as the IF of <code>e</code>and the data.frame are already aligned):</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g</span>, id<span class="op">=</span><span class="va">dw</span><span class="op">$</span><span class="va">id</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/expectation.html">expectation</a></span><span class="op">(</span><span class="va">predict</span>, object <span class="op">=</span> <span class="va">e</span>, data <span class="op">=</span> <span class="va">dw</span>, id <span class="op">=</span> <span class="st">"id"</span>, labels <span class="op">=</span> <span class="st">"trt=1"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       Estimate Std.Err   2.5%  97.5%    P-value</span></span>
-<span><span class="co">#&gt; trt=1    0.565 0.01568 0.5343 0.5957 2.009e-284</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/expectation.html">expectation</a></span><span class="op">(</span><span class="va">predict</span>, object <span class="op">=</span> <span class="va">e</span>, data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">dw</span>, a<span class="op">=</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>            id <span class="op">=</span> <span class="st">"id"</span>, labels <span class="op">=</span> <span class="st">"trt=1"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       Estimate Std.Err   2.5% 97.5%    P-value</span></span>
+<span><span class="co">#&gt; trt=1   0.6628  0.0215 0.6207 0.705 1.314e-208</span></span></code></pre></div>
 </div>
 </section><section class="level2"><h3 id="average-treatment-effects">Average Treatment Effects<a class="anchor" aria-label="anchor" href="#average-treatment-effects"></a>
 </h3>
