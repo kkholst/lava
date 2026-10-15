@@ -183,7 +183,7 @@ Regressions:
    u2~u1_1           2.86231    0.66635  4.29551 1.743e-05
    u2~u1_2           0.00344    0.09925  0.03468    0.9723
    u2~u1_3          -0.26270    0.28907 -0.90880    0.3635
-   u2~u1_4           0.50778    0.34704  1.46315    0.1434
+   u2~u1_4           0.50778    0.34705  1.46315    0.1434
 Intercepts:
    y2               -0.12185    0.10922 -1.11563    0.2646
    y3               -0.09874    0.10545 -0.93638    0.3491
@@ -203,12 +203,12 @@ Residual Variances:
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     u1  Estimate   Std.Err      2.5%     97.5%      P-value
-p1 -4.0 -9.611119 1.2667864 -12.09397 -7.128263 3.273774e-14
-p2 -3.9 -9.324887 1.2076278 -11.69179 -6.957980 1.148273e-14
-p3 -3.8 -9.038656 1.1492877 -11.29122 -6.786093 3.703622e-15
-p4 -3.7 -8.752425 1.0918975 -10.89250 -6.612345 1.094286e-15
-p5 -3.6 -8.466193 1.0356150 -10.49596 -6.436425 2.957706e-16
-p6 -3.5 -8.179962 0.9806311 -10.10196 -6.257960 7.333644e-17</code></pre>
+p1 -4.0 -9.611119 1.2667862 -12.09397 -7.128263 3.273732e-14
+p2 -3.9 -9.324887 1.2076275 -11.69179 -6.957981 1.148259e-14
+p3 -3.8 -9.038656 1.1492875 -11.29122 -6.786094 3.703580e-15
+p4 -3.7 -8.752425 1.0918973 -10.89250 -6.612345 1.094274e-15
+p5 -3.6 -8.466193 1.0356149 -10.49596 -6.436425 2.957677e-16
+p6 -3.5 -8.179962 0.9806309 -10.10196 -6.257961 7.333579e-17</code></pre>
 </div>
 </div>
 <p>The fitted function can be obtained with the following code:</p>
@@ -354,11 +354,11 @@ Residual Variances:
 <span><span class="va">ee1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/twostage.html">twostage</a></span><span class="op">(</span><span class="va">mm1</span>, model2<span class="op">=</span><span class="va">mm2</span>, data<span class="op">=</span><span class="va">d</span>, predict.fun<span class="op">=</span><span class="va">pred</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">ee1</span>,keep<span class="op">=</span><span class="st">"u2~u"</span>,regex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>        Estimate Std.Err     2.5%    97.5%  P-value
-u2~u2     0.4553 0.20744  0.04868  0.86185 0.028190
-u2~u1     0.2294 0.07983  0.07298  0.38591 0.004051
-u2~u1:g   0.5874 0.43371 -0.26262  1.43751 0.175591
-u2~u2:g  -0.1956 0.07472 -0.34202 -0.04913 0.008857</code></pre>
+<pre><code>        Estimate Std.Err     2.5%    97.5%   P-value
+u2~u2     0.4505 0.07379  0.30585  0.59509 1.029e-09
+u2~u1     0.2315 0.12346 -0.01051  0.47344 6.082e-02
+u2~u1:g   0.5926 0.23144  0.13900  1.04624 1.045e-02
+u2~u2:g  -0.1973 0.09662 -0.38668 -0.00792 4.116e-02</code></pre>
 </div>
 </div>
 <p>A formal test show no statistically significant effect of this interaction</p>
@@ -368,15 +368,15 @@ u2~u2:g  -0.1956 0.07472 -0.34202 -0.04913 0.008857</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Call: estimate.default(x = ee1, keep = "(:g)", regex = TRUE)
 ────────────────────────────────────────────────────────────
-        Estimate Std.Err    2.5%    97.5%  P-value
-u2~u1:g   0.5874 0.43371 -0.2626  1.43751 0.175591
-u2~u2:g  -0.1956 0.07472 -0.3420 -0.04913 0.008857
+        Estimate Std.Err    2.5%    97.5% P-value
+u2~u1:g   0.5926 0.23144  0.1390  1.04624 0.01045
+u2~u2:g  -0.1973 0.09662 -0.3867 -0.00792 0.04116
 ────────────────────────────────────────────────────────────
 Null Hypothesis:
   [u2~u1:g] = 0
   [u2~u2:g] = 0
 
-chisq = 7.8386, df = 2, p-value = 0.01985</code></pre>
+chisq = 24.8244, df = 2, p-value = 4.069e-06</code></pre>
 </div>
 </div>
 </section><section class="section level2"><h2 id="mixture-models">Mixture models<a class="anchor" aria-label="anchor" href="#mixture-models"></a>

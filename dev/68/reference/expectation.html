@@ -183,12 +183,13 @@ assign ids (or clusters) to the model.</p>
 <span class="r-in"><span><span class="fu">expectation</span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">p</span>, <span class="va">data</span><span class="op">)</span> <span class="fu"><a href="internal.html">expit</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="va">p</span><span class="op">[</span><span class="st">"z"</span><span class="op">]</span> <span class="op">*</span> <span class="va">data</span><span class="op">[</span>, <span class="st">"z"</span><span class="op">]</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>            <span class="fu"><a href="estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">fit</span>, id <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">cl</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>            data <span class="op">=</span> <span class="va">d</span>, subset <span class="op">=</span> <span class="op">~</span> <span class="va">z</span> <span class="op">&gt;</span> <span class="fl">0</span>, id <span class="op">=</span> <span class="st">"cl"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in resolve_subset(substitute(subset), data, parent.frame()):</span> 'subset' must be a logical vector, a column name of 'data', or a one-sided formula evaluated in 'data' (e.g., `~ a == 1`)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.6903 0.02496 0.6414 0.7392 2.202e-168</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Simple mean of known function</span></span></span>
-<span class="r-in"><span><span class="fu">expectation</span><span class="op">(</span><span class="va">x</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="va">z</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, data<span class="op">=</span><span class="va">d</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Estimate Std.Err   2.5%  97.5%    P-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p1   0.3088 0.01174 0.2858 0.3318 1.638e-152</span>
+<span class="r-in"><span><span class="fu">expectation</span><span class="op">(</span><span class="op">~</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="va">z</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, data<span class="op">=</span><span class="va">d</span>, subset <span class="op">=</span> <span class="op">~</span><span class="va">x</span>, labels<span class="op">=</span><span class="st">"p"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Estimate Std.Err   2.5% 97.5% P-value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p   0.6419 0.01228 0.6178 0.666       0</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

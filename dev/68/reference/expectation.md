@@ -132,10 +132,11 @@ d$cl <- rep(seq(nrow(d) / 4), each = 4)
 expectation(function(p, data) expit(p[1] + p["z"] * data[, "z"]),
             estimate(fit, id = d$cl),
             data = d, subset = ~ z > 0, id = "cl")
-#> Error in resolve_subset(substitute(subset), data, parent.frame()): 'subset' must be a logical vector, a column name of 'data', or a one-sided formula evaluated in 'data' (e.g., `~ a == 1`)
+#>    Estimate Std.Err   2.5%  97.5%    P-value
+#> p1   0.6903 0.02496 0.6414 0.7392 2.202e-168
 
 ## Simple mean of known function
-expectation(x / (1+z^2), data=d)
-#>    Estimate Std.Err   2.5%  97.5%    P-value
-#> p1   0.3088 0.01174 0.2858 0.3318 1.638e-152
+expectation(~ 1 / (1+z^2), data=d, subset = ~x, labels="p")
+#>   Estimate Std.Err   2.5% 97.5% P-value
+#> p   0.6419 0.01228 0.6178 0.666       0
 ```
