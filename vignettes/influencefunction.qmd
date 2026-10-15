@@ -167,7 +167,6 @@ with the necessary derivatives exactly calculated automatically.
 We refer to section
 [IF building blocks](#if-building-blocks-transformations-and-the-delta-theorem) for more details.
 
-
 # Examples
 
 To illustrate the methods we consider data arising from the model $Y_{ij} \sim
@@ -625,37 +624,93 @@ merge(g1, g2, id = NULL) |> (Print %++% IC)()
 merge(g1, g2, id = NULL) |> vcov()
 ```
 
-## Renaming and subsetting parameters
+Note that for `estimate` objects it is also possible to merge objects directly
+with the `c()` operator. See the Section on [IF building
+blocks](#if-building-blocks-transformations-and-the-delta-theorem).
 
-To only keep a subset of the parameters the `keep` argument can be used.
+
+## Selecting, ordering, and renaming parameters
+
+Parameters can be selected or reordered directly within an `estimate` object.
+These operations retain the corresponding influence functions and covariance
+information. They act on the parameters, rather than on the observations
+contributing to their estimation.
+
+### Selecting parameters
+
+Consider the following `estimate` object
+```{r parameter-selection}
+est1 <- estimate(coef=c(1,3), vcov=diag(2), labels=c("ba","ab"))
+est2 <- estimate(coef=c(2,4), vcov=diag(2), labels=c("cb","da"))
+est <- c(est1, est2)
+est
+```
+
+The `subset` or `[` operator selects parameters by position or label:
+```{r parameter-indexing}
+subset(est, 1:2)
+est[c("ba", "cb")]
+```
+
+The `head` and `tail` methods select parameters from the beginning or end of
+the object:
+```{r parameter-head-tail}
+head(est) # First parameter
+tail(est) # Last parameter
+head(est, n = 2) # First two parameters
+tail(est, n = 2) # Last two parameters
+```
+
+
+Parameters can also be selected when combining estimates, using the `keep`
+argument. This accepts either a character vector of parameter labels or a
+vector of positions:
 ```{r mergekeep}
-merge(g1, g2, keep = c("(Intercept)", "(Intercept).1"))
-```
-The argument can be given either as character vector or a vector of indices:
-```{r merge2}
-merge(g1, g2, keep=c(1, 3))
-```
-or as a vector of perl-style regular expressions
-```{r merge3}
-merge(g1, g2, keep = "cept", regex = TRUE)
-merge(g1, g2, keep = c("\\)$", "^a$"), regex = TRUE, ignore.case = TRUE)
+merge(est1, est2, keep = c("a", "b"))
+merge(g1, g2, keep = c(1, 3))
 ```
 
-When merging estimates unique parameter names are created. It is also possible
-to rename the parameters with the `labels` argument
-```{r merge4}
-merge(g1, g2, labels = c("a", "b", "c")) |> estimate(keep = c("a", "c"))
-merge(g1, g2,
-      labels = c("a", "b", "c"),
-      keep = c("a", "c")
-)
-estimate(g1, labels=c("a", "b"))
+With `regex = TRUE`, selection can instead use Perl-style regular expressions:
+```{r merge-regex}
+merge(est1, est2, keep = c("^a", "a$"),
+      regex = TRUE, ignore.case = TRUE)
+subset(est, "b", regex=TRUE)
 ```
 
-Finally, the `subset` argument can be used to subset the parameters and IFs
-before the actual merging is being done
-```{r merge5}
-merge(g1, g2, subset="(Intercept)")
+### Ordering parameters
+
+The `rev` method reverses the parameter order. The `sort` method orders
+parameters by their estimated values or labels:
+```{r parameter-ordering}
+rev(est)
+sort(est, by = "values")
+sort(est, by = "labels")
+```
+
+These methods return `estimate` objects and can therefore be combined withvselection and other operations:
+```{r parameter-ordering-pipe}
+est |>
+  sort(by = "values") |>
+  tail(n = 1) # Parameter with the largest estimated value
+```
+
+### Renaming parameters
+
+When estimates are merged, unique parameter labels are created automatically.
+The `labels` method can be used to rename parameters in an existing object:
+```{r parameter-labels}
+est[1:2] |>
+  labels(c("intercept", "treatment"))
+```
+
+Labels can also be supplied when constructing an `estimate` object:
+```{r estimate-labels}
+estimate(est1, labels = c("intercept", "treatment"))
+```
+
+or directly via the `c()` method
+```{r}
+c(a = est[1], b = est[2])
 ```
 
 ## Clustered data (non-iid case)
@@ -720,16 +775,12 @@ e
 
 # IF building blocks: transformations and the delta theorem
 
-Let $\phi\colon \mathbb{R}^p\to\mathbb{R}^m$ be differentiable at $\theta$
-and assume that $\widehat{\theta}_n$ is RAL estimator with IF given by
-$\IC(\cdot; \Pz)$ such that
-\begin{align*}
-\sqrt{n}(\widehat{\theta}_n - \theta) =
-\frac{1}{\sqrt{n}}\sum_{i=1}^n \IC(Z_i; \Pz) + \op(1),
-\end{align*}
-then by the delta method [@vaart_1998_asymp Theorem 3.1]
-\begin{align*}
-\sqrt{n}\{\phi(\widehat{\theta}_n) - \phi(\theta)\}  =
+Let $\phi\colon \mathbb{R}^p\to\mathbb{R}^m$ be differentiable at $\theta$ and
+assume that $\widehat{\theta}_n$ is RAL estimator with IF given by $\IC(\cdot;
+\Pz)$ such that \begin{align*} \sqrt{n}(\widehat{\theta}_n - \theta) =
+\frac{1}{\sqrt{n}}\sum_{i=1}^n \IC(Z_i; \Pz) + \op(1), \end{align*} then by the
+delta method [@vaart_1998_asymp Theorem 3.1] \begin{align*}
+\sqrt{n}\{\phi(\widehat{\theta}_n) - \phi(\theta)\} =
 \frac{1}{\sqrt{n}}\sum_{i=1}^n \nabla\phi(\theta)\IC(Z_i; \Pz) + \op(1),
 \end{align*}
 
@@ -974,7 +1025,7 @@ The influence function also allows for adjusting for multiple comparisons.
 Let $Z_{1},\ldots,Z_{p}$ denote $Z$-statistics from $p$ distinct two-sided
 hypothesis tests which we will assume is asymptotically distributed under the
 null hypothesis as a zero-mean Gaussian distribution with correlation matrix
-$R.$ Let $ Z_{max} = \max_{i=1,\ldots,p} |Z_i|$ then the family-wise error
+$R.$ Let $Z_{max} = \max_{i=1,\ldots,p} |Z_i|$ then the family-wise error
 rate (FWER) under the null can be approximated by
 $$
 P(Z_{max} > z) =
@@ -1098,8 +1149,7 @@ ea
 IC(ea) |> head()
 ```
 
-The above steps are easily wrapped into
-For `glm` objects this
+Specifically for GLM models, it is possible to do the above steps directly with the `predict.estimate.glm` method:
 ```{r expectation}
 e <- estimate(g, id=dw$id)
 expectation(predict, object = e, data = dw, id = "id", labels = "trt=1")
@@ -1108,16 +1158,14 @@ expectation(predict, object = e, data = dw, id = "id", labels = "trt=1")
 
 ## Average Treatment Effects
 
-Let the observed data be $Z = (W,A,Y)$, where $W$ are covariates, $A$ a binary treatment
-variable, and $Y$ the outcome.
-In the following we are interested in estimating the target parameter
-$\psi_a(P)
-= E_P[Y(a)]$, where $Y(a)$ is the *potential outcome* we would have
-observed if treatment $a$ had been administered, possibly contrary to
-the actual treatment that was observed, i.e., $Y = Y(A)$. To assess the
-treatment effect we can then consider the *average treatment effect*
-(ATE) $$E_P[Y(1)]-E_P[Y(0)],$$ or some other contrast of interest
-$g(\psi_1(P), \psi_0(P))$. Under the following assumptions
+Let the observed data be $Z = (W,A,Y)$, where $W$ are covariates, $A$ a binary
+treatment variable, and $Y$ the outcome. In the following we are interested in
+estimating the target parameter $\psi_a(P) = E_P[Y(a)]$, where $Y(a)$ is the
+*potential outcome* we would have observed if treatment $a$ had been
+administered, possibly contrary to the actual treatment that was observed, i.e.,
+$Y = Y(A)$. To assess the treatment effect we can then consider the *average
+treatment effect* (ATE) $$E_P[Y(1)]-E_P[Y(0)],$$ or some other contrast of
+interest $g(\psi_1(P), \psi_0(P))$. Under the following assumptions
 
 1)  Stable Unit Treatment Values Assumption (the treatment of a specific
     subject is not affecting the potential outcome of other subjects)
