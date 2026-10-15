@@ -1155,10 +1155,13 @@ ea
 IC(ea) |> head()
 ```
 
-Specifically for GLM models, it is possible to do the above steps directly with the `predict.estimate.glm` method:
+Specifically for GLM models, it is possible to do the above steps directly with
+the `predict.estimate.glm` method (note the id argument here is not strictly
+needed as the IF of `e`and the data.frame are already aligned):
 ```{r expectation}
 e <- estimate(g, id=dw$id)
-expectation(predict, object = e, data = dw, id = "id", labels = "trt=1")
+expectation(predict, object = e, data = transform(dw, a=1),
+            id = "id", labels = "trt=1")
 ```
 
 ## Average Treatment Effects
