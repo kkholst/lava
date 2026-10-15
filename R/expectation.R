@@ -189,9 +189,6 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
            "formula, e.g., `subset = ~ a == 1`", call. = FALSE)
     })
     subset <- resolve_subset(subset, data, N)
-    if (length(subset) != N)
-      stop("Length of 'subset' (", length(subset), ") does not agree with ",
-           "the number of values of 'f' (", N, ")")
   } else {
     subset <- NULL
   }

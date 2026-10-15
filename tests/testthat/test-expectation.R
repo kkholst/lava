@@ -467,7 +467,7 @@ test_that("standardization with unsorted and clustered ids (same data)", {
 })
 
 test_that("expectation: expressions and quoted arguments", {
-  d <- data.frame(z=rnorm(10))
+  d <- data.frame(z=rnorm(20), w=rbinom(20, 1, 0.5))
   e1 <- expression(z)
   e2 <- quote(z)
   m1 <- expectation(z, data=d)
@@ -481,4 +481,10 @@ test_that("expectation: expressions and quoted arguments", {
     expect_equal(IC(m1), IC(m2), ignore_attr=TRUE)
   }
   for (m in list(m2, m3, m4, m5)) comp(m1, m)
+
+  # subsets
+  e1 <- estimate(lm(z ~ -1 + factor(w), data=d), keep=2)
+  e2 <- with(d, expectation(z, subset=w))
+  expect_equal(coef(e1), coef(e2), ignore_attr=TRUE)
+  expect_equal(IC(e1), IC(e2), ignore_attr=TRUE)
 })
