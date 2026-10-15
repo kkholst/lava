@@ -29,11 +29,13 @@
 #' @param subset (optional) subpopulation on which the average is conditioned
 #'   (conditional marginal mean estimate). Either a logical vector (or numeric
 #'   0/1 vector) with one value per value of `f`, a column name of `data`, or a
-#'   one-sided formula evaluated in `data` (e.g., `~ a == 1 & z > 0`), The
-#'   formula `subset` is evaluated with the columns of `data` masking the
-#'   environment of the formula. Note that `subset` uses standard evaluation,
-#'   i.e., `subset = a == 1` is evaluated in the calling environment and not in
-#'   `data`.
+#'   one-sided formula evaluated in `data` (e.g., `~ a == 1 & z > 0`). Note
+#'   that `subset` uses standard evaluation, i.e., `subset = a == 1` is
+#'   evaluated in the calling environment and not in `data`. As for model
+#'   formulas (see [stats::model.frame]), the variables of a formula `subset`
+#'   are looked up in the columns of `data` and then in the environment where
+#'   the formula was created (not the environment from which `expectation` is
+#'   called).
 #' @param labels (optional) character vector of parameter names
 #' @param ... additional arguments passed to `f`
 #' @return `estimate` object
@@ -176,7 +178,7 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
            ". To evaluate an expression in 'data' use a one-sided ",
            "formula, e.g., `subset = ~ a == 1`", call. = FALSE)
     })
-    subset <- resolve_subset(subset, data, N, env = parent.frame())
+    subset <- resolve_subset(subset, data, N)
   } else {
     subset <- NULL
   }
@@ -224,18 +226,18 @@ expect <- function(expr, data = NULL, envir = parent.frame(),
 }
 
 # Resolve the 'subset' argument to a logical vector of length 'n':
-#  - one-sided formula: evaluated in 'data', enclosed by environment(formula)
+#  - one-sided formula: evaluated in 'data' enclosed by environment(formula)
+#    (as in model.frame), i.e., columns of 'data' mask variables of the same
+#    name in the environment where the formula was created
 #  - character string: column of 'data'
 #  - logical vector, or numeric vector with values in {0, 1}
-# In formulas a variable that is both a column of 'data' and an
-# object in the calling environment is an error (ambiguous).
-resolve_subset <- function(subset, data, n, env = parent.frame()) {
+resolve_subset <- function(subset, data, n) {
   if (is.null(subset)) return(NULL)
   if (!is.list(data)) data <- NULL
   if (inherits(subset, "formula")) {
     if (length(subset) != 2L)
       stop("'subset' formula must be one-sided, e.g., `~ a == 1`")
-    subset <- eval(subset[[2L]], envir = data, enclos = env)
+    subset <- eval(subset[[2L]], envir = data, enclos = environment(subset))
   } else if (is.character(subset) && length(subset) == 1L) {
     if (is.null(data) || !(subset %in% names(data)))
       stop("'subset' column '", subset, "' not found in 'data'")

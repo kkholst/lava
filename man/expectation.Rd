@@ -32,11 +32,13 @@ of \code{data}). Defaults to the names of the values of \code{f}, and otherwise
 \item{subset}{(optional) subpopulation on which the average is conditioned
 (conditional marginal mean estimate). Either a logical vector (or numeric
 0/1 vector) with one value per value of \code{f}, a column name of \code{data}, or a
-one-sided formula evaluated in \code{data} (e.g., \code{~ a == 1 & z > 0}), The
-formula \code{subset} is evaluated with the columns of \code{data} masking the
-environment of the formula. Note that \code{subset} uses standard evaluation,
-i.e., \code{subset = a == 1} is evaluated in the calling environment and not in
-\code{data}.}
+one-sided formula evaluated in \code{data} (e.g., \code{~ a == 1 & z > 0}). Note
+that \code{subset} uses standard evaluation, i.e., \code{subset = a == 1} is
+evaluated in the calling environment and not in \code{data}. As for model
+formulas (see \link[stats:model.frame]{stats::model.frame}), the variables of a formula \code{subset}
+are looked up in the columns of \code{data} and then in the environment where
+the formula was created (not the environment from which \code{expectation} is
+called).}
 
 \item{labels}{(optional) character vector of parameter names}
 

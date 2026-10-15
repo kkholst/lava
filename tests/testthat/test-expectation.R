@@ -109,12 +109,28 @@ test_that("expectation: 'f' returning values for some rows of data", {
   ms1 <- expectation(object=e, f_all, data = dat, subset = dat$a == 1)
   ms2 <- expectation(object=e, f_all, data = dat, subset = "a")
   ms3 <- expectation(object=e, f_all, data = dat, subset = ~a==1)
+  # variables of a formula (not in 'data') are looked up in the environment
+  # of the formula and not in the calling environment
+  gen <- function(thr) ~ a == thr
+  ms4 <- local({
+    thr <- 0
+    expectation(object = e, f_all, data = dat, subset = gen(1))
+  })
+  # columns of 'data' mask variables in the environment of the formula
+  ms5 <- local({
+    a <- rep(0, nrow(dat))
+    expectation(object = e, f_all, data = dat, subset = ~ a == 1)
+  })
   expect_equal(coef(m), coef(ms1))
   expect_equal(vcov(m), vcov(ms1))
   expect_equal(coef(m), coef(ms2))
   expect_equal(vcov(m), vcov(ms2))
   expect_equal(coef(m), coef(ms3))
   expect_equal(vcov(m), vcov(ms3))
+  expect_equal(coef(m), coef(ms4))
+  expect_equal(vcov(m), vcov(ms4))
+  expect_equal(coef(m), coef(ms5))
+  expect_equal(vcov(m), vcov(ms5))
   expect_identical(index(ms1), rownames(dat))
   # model ids partly outside data
   id1 <- dat1$id
