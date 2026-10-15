@@ -34,6 +34,9 @@ build:
 install:
 	@echo 'remotes::install_local(".", upgrade = "never", force = TRUE)' | $(R)
 
+dependencies-install-bioconductor:
+	@echo 'BiocManager::install("Rgraphviz")' | $(R)
+
 dependencies-install:
 	@echo 'remotes::install_deps(".", dependencies = TRUE)' | $(R)
 
