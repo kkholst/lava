@@ -20,11 +20,12 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' @param f transformation of model parameters. Accepts several input types:
 #'
 #' - A **function** `f(p)` or `f(p, data)`: applies the delta method. When `f`
-#'   returns a named list the names are used as parameter labels. - A
-#'   **matrix**: used as a contrast (linear combination) matrix. - A **numeric
-#'   vector** of parameter indices: converted to a contrast that selects and
-#'   differences those parameters. - A **list** of indices: each element selects
-#'   one parameter. - **Character** expressions: supports wildcards (`"?"`,
+#'   returns a named list the names are used as parameter labels.
+#' - A **matrix**: used as a contrast (linear combination) matrix.
+#' - A **numeric vector** of parameter indices: converted to a contrast that
+#' selects and differences those parameters.
+#' - A **list** of indices: each element selects one parameter.
+#' - **Character** expressions: supports wildcards (`"?"`,
 #'   `"*"`) and arithmetic on parameter names (e.g., `"z" - "x"`, `2 * "z" - 3 *
 #'   "x"`).
 #' @inheritParams stats::glm
@@ -378,9 +379,21 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     if (!missing(data)) args["data"] <- list(data)
     if (!missing(id)) args["id"] <- list(id)
     if (!missing(subset)) {
+      ## Backward compatible (lava <= 1.9.3) non-standard evaluation: 'subset'
+      ## is evaluated in the calling environment, and only if that fails in
+      ## 'data'. See 'expectation' for the standard evaluation alternatives.
       data0 <- if (!missing(data)) data else
         tryCatch(model.frame(x), error=function(...) NULL)
-      args$subset <- resolve_subset(substitute(subset), data0, parent.frame())
+      s <- tryCatch(subset, error = function(e) e)
+      if (inherits(s, "error")) {
+        s <- if (is.list(data0)) {
+          eval(substitute(subset), envir = data0, enclos = parent.frame())
+        } else {
+          eval(substitute(subset), envir = parent.frame())
+        }
+      }
+      if (is.numeric(s)) s <- s > 0
+      args$subset <- s
     }
     res <- do.call(expectation, args)
     if (!missing(keep) && !is.null(keep))

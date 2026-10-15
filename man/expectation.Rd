@@ -29,11 +29,16 @@ of \code{data}). Defaults to the names of the values of \code{f}, and otherwise
 \code{rownames(data)}. \code{id = NULL} uses the default ids but removes the id
 (index) from the returned object.}
 
-\item{subset}{(optional) logical vector (one value per value of \code{f}),
-expression evaluated in \code{data} (columns of \code{data} take precedence over
-variables in the calling environment), or column name. The average is then
-conditioned on the subpopulation where \code{subset} is \code{TRUE} (conditional
-marginal mean estimate).}
+\item{subset}{(optional) subpopulation on which the average is conditioned
+(conditional marginal mean estimate). Either a logical vector (or numeric
+0/1 vector) with one value per value of \code{f}, a column name of \code{data}, or a
+one-sided formula evaluated in \code{data} (e.g., \code{~ a == 1 & z > 0}). Note
+that \code{subset} uses standard evaluation, i.e., \code{subset = a == 1} is
+evaluated in the calling environment and not in \code{data}. As for model
+formulas (see \link[stats:model.frame]{stats::model.frame}), the variables of a formula \code{subset}
+are looked up in the columns of \code{data} and then in the environment where
+the formula was created (not the environment from which \code{expectation} is
+called).}
 
 \item{labels}{(optional) character vector of parameter names}
 
@@ -95,10 +100,10 @@ expectation(f, e1, data = d, id = "id")
 d$cl <- rep(seq(nrow(d) / 4), each = 4)
 expectation(function(p, data) expit(p[1] + p["z"] * data[, "z"]),
             estimate(fit, id = d$cl),
-            data = d, subset = z > 0, id = "cl")
+            data = d, subset = ~ z > 0, id = "cl")
 
 ## Simple mean of known function
-expectation(x / (1+z^2), data=d)
+expectation(~ 1 / (1+z^2), data=d, subset = ~x, labels="p")
 }
 \seealso{
 \link{estimate.default}, \code{vignette("influencefunction", package = "lava")}

@@ -35,11 +35,12 @@ likelihood-ratio test is performed.}
 \item{f}{transformation of model parameters. Accepts several input types:
 \itemize{
 \item A \strong{function} \code{f(p)} or \code{f(p, data)}: applies the delta method. When \code{f}
-returns a named list the names are used as parameter labels. - A
-\strong{matrix}: used as a contrast (linear combination) matrix. - A \strong{numeric
-vector} of parameter indices: converted to a contrast that selects and
-differences those parameters. - A \strong{list} of indices: each element selects
-one parameter. - \strong{Character} expressions: supports wildcards (\code{"?"},
+returns a named list the names are used as parameter labels.
+\item A \strong{matrix}: used as a contrast (linear combination) matrix.
+\item A \strong{numeric vector} of parameter indices: converted to a contrast that
+selects and differences those parameters.
+\item A \strong{list} of indices: each element selects one parameter.
+\item \strong{Character} expressions: supports wildcards (\code{"?"},
 \code{"*"}) and arithmetic on parameter names (e.g., \code{"z" - "x"}, \code{2 * "z" - 3 * "x"}).
 }}
 

@@ -26,11 +26,16 @@
 #'   of `data`). Defaults to the names of the values of `f`, and otherwise
 #'   `rownames(data)`. `id = NULL` uses the default ids but removes the id
 #'   (index) from the returned object.
-#' @param subset (optional) logical vector (one value per value of `f`),
-#'   expression evaluated in `data` (columns of `data` take precedence over
-#'   variables in the calling environment), or column name. The average is then
-#'   conditioned on the subpopulation where `subset` is `TRUE` (conditional
-#'   marginal mean estimate).
+#' @param subset (optional) subpopulation on which the average is conditioned
+#'   (conditional marginal mean estimate). Either a logical vector (or numeric
+#'   0/1 vector) with one value per value of `f`, a column name of `data`, or a
+#'   one-sided formula evaluated in `data` (e.g., `~ a == 1 & z > 0`). Note
+#'   that `subset` uses standard evaluation, i.e., `subset = a == 1` is
+#'   evaluated in the calling environment and not in `data`. As for model
+#'   formulas (see [stats::model.frame]), the variables of a formula `subset`
+#'   are looked up in the columns of `data` and then in the environment where
+#'   the formula was created (not the environment from which `expectation` is
+#'   called).
 #' @param labels (optional) character vector of parameter names
 #' @param ... additional arguments passed to `f`
 #' @return `estimate` object
@@ -82,30 +87,29 @@
 #' d$cl <- rep(seq(nrow(d) / 4), each = 4)
 #' expectation(function(p, data) expit(p[1] + p["z"] * data[, "z"]),
 #'             estimate(fit, id = d$cl),
-#'             data = d, subset = z > 0, id = "cl")
+#'             data = d, subset = ~ z > 0, id = "cl")
 #'
 #' ## Simple mean of known function
-#' expectation(x / (1+z^2), data=d)
+#' expectation(~ 1 / (1+z^2), data=d, subset = ~x, labels="p")
 expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
 
+  if (!missing(subset)) {
+    subset <- tryCatch(subset, error = function(e) {
+      stop("Unable to evaluate 'subset': ", conditionMessage(e),
+           ". To evaluate an expression in 'data' use a one-sided ",
+           "formula, e.g., `subset = ~ a == 1`", call. = FALSE)
+    })
+  }
+
   if (missing(object)) {
-    # Then we just calculate E[f(Z)] with known f
-    expr <- substitute(f)
-    if (is.symbol(expr)) {
-      nm <- as.character(expr)
-      if (exists(nm, envir = parent.frame(), inherits = TRUE)) {
-      value <- get(nm, envir = parent.frame(), inherits = TRUE)
-      if (is.language(value) || is.expression(value))
-        expr <- value
-      }
-    }
     if (missing(data)) data <- NULL
     out <- expect(
-      expr = as.expression(expr),
+      expr = f,
       data = data,
       envir = parent.frame(),
       id = id,
       quoted = TRUE,
+      subset = subset,
       ...
     )
     if (!is.null(labels))
@@ -168,10 +172,7 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
          "Supply the ids with 'estimate(x, id=...)'")
 
   if (!missing(subset)) {
-    subset <- resolve_subset(substitute(subset), data, parent.frame())
-    if (length(subset) != N)
-      stop("Length of 'subset' (", length(subset), ") does not agree with ",
-           "the number of values of 'f' (", N, ")")
+    subset <- resolve_subset(subset, data, N)
   } else {
     subset <- NULL
   }
@@ -187,16 +188,28 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
 }
 
 # Calculate E[f(Z)]
-expect <- function(expr, data = NULL, envir = parent.frame(),
-                   id, quoted = FALSE, ...) {
-  expr <- if (quoted) base::as.expression(expr) else substitute(expr)
-  z <- if (is.null(data)) {
-    eval(expr, envir = envir)
-  } else {
-    eval(expr, envir = data, enclos = envir)
+expect <- function(expr, data = NULL, id, subset, ...) {
+  expr <- tryCatch(expr, error = function(e) {
+      stop("Unable to evaluate 'expr': ", conditionMessage(e),
+           ". To evaluate an expression in 'data' use a one-sided ",
+           "formula, e.g., `expr = ~ y`", call. = FALSE)
+  })
+  if (inherits(expr, "formula")) {
+    if (length(expr) != 2L)
+      stop("'expr' formula must be one-sided, e.g., `~ y`")
+    expr <- eval(expr[[2L]], envir = data, enclos = environment(expr))
+  } else if (is.character(expr) && length(expr) == 1L) {
+    if (is.null(data) || !(expr %in% names(data)))
+      stop("'expr' column '", expr, "' not found in 'data'")
+    expr <- data[[expr]]
   }
-  z <- cbind(z, deparse.level = 0)
+  z <- cbind(expr, deparse.level = 0)
   N <- NROW(z)
+  if (!missing(subset)) {
+    subset <- resolve_subset(subset, data, N)
+  } else {
+    subset <- rep(1, N)
+  }
   id_drop <- !missing(id) && is.null(id)
   if (missing(id) || is.null(id)) {
     id <- rownames(z)
@@ -210,23 +223,48 @@ expect <- function(expr, data = NULL, envir = parent.frame(),
     id <- resolve_id(id, data, n = N, x = NULL)
   }
   if (is.factor(id)) id <- as.character(id)
-  est <- colMeans(z)# avoid integer codes in c(...)
-  ic <- z
-  for (i in seq_len(ncol(z))) ic[, i] <- ic[, i] - est[i]
+  w <- subset / mean(subset)
+  est <- colMeans(w * z)
+  ic <- matrix(ncol=ncol(z), nrow=nrow(z))
+  for (i in seq_len(ncol(z))) {
+    ic[, i] <- w * (z[, i] - est[i])
+  }
   res <- estimate(coef=est, IC=ic, id = id, ...)
   if (id_drop) index(res) <- NULL
   res
 }
 
-# Evaluate 'subset' (an expression evaluated in 'data' (enclosed by 'env'),
-# or a column name of 'data') to a logical vector. Columns of 'data' take
-# precedence over variables in 'env' (as in 'subset', 'with')
-resolve_subset <- function(expr, data, env) {
-  s <- if (!is.list(data)) eval(expr, envir = env) else
-         eval(expr, envir = data, enclos = env)
-  if (is.character(s) && length(s) == 1) s <- data[, s, drop = TRUE]
-  if (is.numeric(s)) s <- s > 0
-  s
+# Resolve the 'subset' argument to a logical vector of length 'n':
+#  - one-sided formula: evaluated in 'data' enclosed by environment(formula)
+#    (as in model.frame), i.e., columns of 'data' mask variables of the same
+#    name in the environment where the formula was created
+#  - character string: column of 'data'
+#  - logical vector, or numeric vector with values in {0, 1}
+resolve_subset <- function(subset, data, n) {
+  if (is.null(subset)) return(NULL)
+  if (!is.list(data)) data <- NULL
+  if (inherits(subset, "formula")) {
+    if (length(subset) != 2L)
+      stop("'subset' formula must be one-sided, e.g., `~ a == 1`")
+    subset <- eval(subset[[2L]], envir = data, enclos = environment(subset))
+  } else if (is.character(subset) && length(subset) == 1L) {
+    if (is.null(data) || !(subset %in% names(data)))
+      stop("'subset' column '", subset, "' not found in 'data'")
+    subset <- data[[subset]]
+  }
+  if (is.numeric(subset) && !anyNA(subset)) {
+    if (!all(subset %in% c(0, 1)))
+      stop("Numeric 'subset' must only contain the values 0 and 1")
+    subset <- subset == 1
+  }
+  if (!is.logical(subset))
+    stop("'subset' must be a logical vector, a column name of 'data', or a ",
+         "one-sided formula evaluated in 'data' (e.g., `~ a == 1`)")
+  if (anyNA(subset)) stop("Missing values in 'subset'")
+  if (length(subset) != n)
+    stop("Length of 'subset' (", length(subset), ") does not agree with ",
+         "the number of values of 'f' (", n, ")")
+  subset
 }
 
 # Ids attached to the rows of the influence function 'ic' of 'x': the id of an

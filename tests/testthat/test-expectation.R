@@ -107,28 +107,41 @@ test_that("expectation: 'f' returning values for some rows of data", {
   # same estimate and variance as the conditional average over all rows of
   # 'data' (the IF of the latter also contains the rows with a == 0)
   ms1 <- expectation(object=e, f_all, data = dat, subset = dat$a == 1)
-  ms2 <- expectation(object=e, f_all, data = dat, subset = a == 1)
+  ms2 <- expectation(object=e, f_all, data = dat, subset = "a")
+  ms3 <- expectation(object=e, f_all, data = dat, subset = ~a==1)
+  # variables of a formula (not in 'data') are looked up in the environment
+  # of the formula and not in the calling environment
+  gen <- function(thr) ~ a == thr
+  ms4 <- local({
+    thr <- 0
+    expectation(object = e, f_all, data = dat, subset = gen(1))
+  })
+  # columns of 'data' mask variables in the environment of the formula
+  ms5 <- local({
+    a <- rep(0, nrow(dat))
+    expectation(object = e, f_all, data = dat, subset = ~ a == 1)
+  })
   expect_equal(coef(m), coef(ms1))
   expect_equal(vcov(m), vcov(ms1))
   expect_equal(coef(m), coef(ms2))
   expect_equal(vcov(m), vcov(ms2))
+  expect_equal(coef(m), coef(ms3))
+  expect_equal(vcov(m), vcov(ms3))
+  expect_equal(coef(m), coef(ms4))
+  expect_equal(vcov(m), vcov(ms4))
+  expect_equal(coef(m), coef(ms5))
+  expect_equal(vcov(m), vcov(ms5))
   expect_identical(index(ms1), rownames(dat))
-  # columns of 'data' take precedence over variables in the calling environment
-  a <- rep(0, nrow(dat))
-  ms3 <- expectation(object=e, f_all, data = dat, subset = a == 1)
-  expect_equal(coef(ms3), coef(ms1))
-  expect_equal(vcov(ms3), vcov(ms1))
-  rm(a)
   # model ids partly outside data
   id1 <- dat1$id
   id1[1:100] <- seq_len(100)
   m1 <- expectation(object=estimate(g, id = id1), f_all, data = dat, id = "id",
-                 subset = (a == 1))
+                 subset = "a")
   expect_equal(nrow(IC(m1)), nrow(dat) + 100)
   # 'id' and 'subset' must have one value per value of 'f'
   expect_error(expectation(object=e, f, data = dat, id = "id"), "does not agree")
   expect_error(expectation(object=e, f, data = dat, id = dat$id), "does not agree")
-  expect_error(expectation(object=e, f, data = dat, subset = w1 > 0), "does not agree")
+  expect_error(expectation(object=e, f, data = dat, subset = ~w1 > 0), "does not agree")
   # unnamed values for some of the rows cannot be linked
   expect_error(
     expectation(object=e, function(p, data) as.vector(f(p, data)), data = dat),
@@ -180,10 +193,12 @@ test_that("expectation: subset (conditional average)", {
   expect_equal(coef(m), mm / phat, ignore_attr = TRUE)
   expect_equal(IC(m), icc, ignore_attr = TRUE)
   # expression evaluated in data, and column name
-  expect_equal(vcov(expectation(object=e, f, data = dat, id = "id", subset = w1 > 0)),
+  expect_equal(vcov(expectation(object=e, f, data = dat,
+                                id = "id", subset = ~w1 > 0)),
                vcov(m))
   dat$s <- s
-  expect_equal(vcov(expectation(object=e, f, data = dat, id = "id", subset = "s")),
+  expect_equal(vcov(expectation(object=e, f, data = dat,
+                                id = "id", subset = "s")),
                vcov(m))
   # via estimate
 })
@@ -452,18 +467,21 @@ test_that("standardization with unsorted and clustered ids (same data)", {
 })
 
 test_that("expectation: expressions and quoted arguments", {
-  d <- data.frame(z=rnorm(10))
-  e1 <- expression(z)
-  e2 <- quote(z)
-  m1 <- expectation(z, data=d)
-  m2 <- expectation(e1, data=d)
-  m3 <- expectation(e2, data=d)
+  d <- data.frame(z=rnorm(20), w=rbinom(20, 1, 0.5))
+  m1 <- expectation("z", data=d)
+  m2 <- expectation(~z, data=d)
+  m3 <- expectation(d$z)
   m4 <- with(d, expectation(z))
-  m5 <- expectation(d$z)
 
   comp <- function(m1, m2) {
     expect_equal(coef(m1), coef(m2), ignore_attr=TRUE)
     expect_equal(IC(m1), IC(m2), ignore_attr=TRUE)
   }
-  for (m in list(m2, m3, m4, m5)) comp(m1, m)
+  for (m in list(m2, m3, m4)) comp(m1, m)
+
+  # subsets
+  e1 <- estimate(lm(z ~ -1 + factor(w), data=d), keep=2)
+  e2 <- with(d, expectation(z, subset=w))
+  expect_equal(coef(e1), coef(e2), ignore_attr=TRUE)
+  expect_equal(IC(e1), IC(e2), ignore_attr=TRUE)
 })
