@@ -408,7 +408,6 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   if (missing(data))
     data <- tryCatch(model.frame(x), error=function(...) NULL)
 
-
   use_ic <- ( isTRUE(IC) || (length(IC)>0 && !is.logical(IC)) ) &&
     ( missing(vcov) || isFALSE(vcov) )
   if (use_ic) {
@@ -420,8 +419,8 @@ estimate.default <- function(x=NULL, f=NULL, ...,
       ic_theta <- check_ic_mean_zero(ic_theta, center=center)
       IC <- TRUE
     } else { # estimate IF
-      ic_theta <- IC(x)
-      if (!inherits(x, "estimate")) {
+      ic_theta <- tryCatch(IC(x), error=function(...) NULL)
+      if (!inherits(x, "estimate") && !is.null(ic_theta)) {
         ic_theta <- check_ic_mean_zero(ic_theta, center=center)
       }
     }
