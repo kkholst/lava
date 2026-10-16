@@ -20,12 +20,11 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' @param f transformation of model parameters. Accepts several input types:
 #'
 #' - A **function** `f(p)` or `f(p, data)`: applies the delta method. When `f`
-#'   returns a named list the names are used as parameter labels.
-#' - A **matrix**: used as a contrast (linear combination) matrix.
-#' - A **numeric vector** of parameter indices: converted to a contrast that
-#' selects and differences those parameters.
-#' - A **list** of indices: each element selects one parameter.
-#' - **Character** expressions: supports wildcards (`"?"`,
+#'   returns a named list the names are used as parameter labels. - A
+#'   **matrix**: used as a contrast (linear combination) matrix. - A **numeric
+#'   vector** of parameter indices: converted to a contrast that selects and
+#'   differences those parameters. - A **list** of indices: each element selects
+#'   one parameter. - **Character** expressions: supports wildcards (`"?"`,
 #'   `"*"`) and arithmetic on parameter names (e.g., `"z" - "x"`, `2 * "z" - 3 *
 #'   "x"`).
 #' @inheritParams stats::glm
@@ -65,10 +64,12 @@ estimate <- function(x, ...) UseMethod("estimate")
 #' @param labels (optional) character vector of coefficient names
 #' @param label.width (optional) max display width of labels
 #' @param average (Deprecated) if `TRUE` the function computes the standardized
-#'   estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the
-#'   empirical mean of `f(p, data)`, as defined by the \code{f} argument, over
-#'   all rows of `data`. The influence function accounts for both the empirical
-#'   averaging and the parameter estimation uncertainty (see [expectation]).
+#'   estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the empirical mean of
+#'   `f(p, data)`, as defined by the \code{f} argument, over all rows of `data`.
+#'   The influence function accounts for both the empirical averaging and the
+#'   parameter estimation uncertainty (see [expectation]).
+#' @param center if TRUE the influence function will automatically be centered
+#'   (zero mean)
 #' @details
 #'
 #' # Influence functions and robust standard errors
@@ -289,7 +290,8 @@ estimate.default <- function(x=NULL, f=NULL, ...,
                              average=FALSE, subset,
                              keep, use,
                              regex=FALSE, ignore.case=FALSE,
-                             print=NULL, labels, label.width
+                             print=NULL, labels, label.width,
+                             center = FALSE
                              ) {
   cl <- match.call(expand.dots = TRUE)
   cal <- match.call()
@@ -405,31 +407,28 @@ estimate.default <- function(x=NULL, f=NULL, ...,
 
   if (missing(data))
     data <- tryCatch(model.frame(x), error=function(...) NULL)
-  nn <- NULL
-  if (
-    (
-      (is.logical(IC) && IC) || (length(IC)>0 && !is.logical(IC))) &&
-    (missing(vcov) ||
-      is.null(vcov) ||
-      (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1])))
-    ) {
-    ## If user supplied vcov, then don't estimate IC
-    if (!is.logical(IC)) {
+
+  use_ic <- ( isTRUE(IC) || (length(IC)>0 && !is.logical(IC)) ) &&
+    ( missing(vcov) || isFALSE(vcov) )
+  if (use_ic) {
+    if (!is.logical(IC)) { # user-provided IF
       ic_theta <- cbind(IC)
       if (NCOL(ic_theta) != length(pp)) {
         warning("Wrong dimension of influence function IC")
       }
-      if (lava.options()$check.ic) {
-        check_ic_mean_zero(ic_theta)
-      }
+      ic_theta <- check_ic_mean_zero(ic_theta, center=center)
       IC <- TRUE
-    } else {
-      ic_theta <- IC(x)
+    } else { # estimate IF
+      ic_theta <- tryCatch(IC(x), error=function(...) NULL)
+      if (!inherits(x, "estimate") && !is.null(ic_theta)) {
+        ic_theta <- check_ic_mean_zero(ic_theta, center=center)
+      }
     }
-  } else {
+  } else { # Use model-based vcov
     if (!is.null(x) && (missing(vcov) ||
-                        (is.logical(vcov) && !is.na(vcov)[1])))
+                        (is.logical(vcov) && !is.na(vcov)[1]))) {
       suppressWarnings(vcov <- stats::vcov(x))
+    } # other-wise user-supplied vcov
     ic_theta <- NULL
   }
 
@@ -464,7 +463,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   if (!is.null(ic_theta) && (length(idstack)==nrow(ic_theta))) {
     rownames(ic_theta) <- idstack
   }
-  if (!is.null(ic_theta) && (missing(vcov) || is.null(vcov))) {
+  if (!is.null(ic_theta) && (missing(vcov))) {
     V <- var_ic(ic_theta)
   } else {
     if (!missing(vcov)) {
@@ -493,6 +492,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     f <- NULL
   }
 
+  nn <- NULL
   derivative <- NULL
   if (!is.null(f)) {
     form <- names(formals(f))
