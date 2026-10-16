@@ -547,7 +547,7 @@ sessionInfo()
     [16] evaluate_1.0.5         fastmap_1.2.0          mvtnorm_1.4-2
     [19] numDeriv_2016.8-1.1    yaml_2.3.12            timereg_2.0.7
     [22] compiler_4.6.1         codetools_0.2-20       Rcpp_1.1.2
-    [25] future_1.76.0          Rgraphviz_2.56.0       lattice_0.22-9
+    [25] future_1.80.0          Rgraphviz_2.56.0       lattice_0.22-9
     [28] digest_0.6.39          parallelly_1.48.0      parallel_4.6.1
     [31] splines_4.6.1          Matrix_1.7-5           RcppArmadillo_15.6.0-1
     [34] tools_4.6.1            globals_0.20.0         survival_3.8-6
