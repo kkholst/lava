@@ -301,7 +301,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     stop("The 'R' and 'null.sim' arguments have been removed. ")
   }
   if ("robust" %in% names(cl)) {
-    stop(
+    warning(
       "The 'robust' argument has been removed. ",
       "Robust standard errors are now always computed. ",
       "Use the 'vcov' argument to compute model-based SEs."
