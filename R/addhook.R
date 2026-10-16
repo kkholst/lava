@@ -123,7 +123,8 @@ assign("options",
             symbols=c("~","~~"),
             devel=FALSE, # development flag, extra debug information
             check.ic=TRUE, # check if influence functions has zero-mean
-            check.ic.tol=0.01, # tolerance for checking zero-mean
-                               # abs(mean(ic)) / se(ic) > check.ic.tol
+            check.ic.tol = 0.05, # tolerance for checking zero-mean
+                                 # abs(mean(ic)) / se(ic) > check.ic.tol
+            check.ic.abs.tol = sqrt(.Machine$double.eps),
             debug=FALSE),
        envir=lava.env) # nolint

@@ -421,14 +421,11 @@ estimate.default <- function(x=NULL, f=NULL, ...,
       if (NCOL(ic_theta) != length(pp)) {
         warning("Wrong dimension of influence function IC")
       }
-      if (isTRUE(lava.options()$check.ic)) {
-        ic_theta <- check_ic_mean_zero(ic_theta, center=center)
-      }
+      ic_theta <- check_ic_mean_zero(ic_theta, center=center)
       IC <- TRUE
     } else {
       ic_theta <- IC(x)
-      if (!inherits(x, "estimate") &&
-          isTRUE(lava.options()$check.ic)) {
+      if (!inherits(x, "estimate")) {
         ic_theta <- check_ic_mean_zero(ic_theta, center=center)
       }
     }
