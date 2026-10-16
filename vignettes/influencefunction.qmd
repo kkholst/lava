@@ -8,6 +8,7 @@ format:
     toc: true
     html-math-method: mathjax
     fig-format: 'svg'
+    embed-resources: true
 execute:
   echo: true
   warning: false
@@ -166,7 +167,6 @@ c(exp(b)^0.5, exp(b * a) / (1 + exp(-b)))
 with the necessary derivatives exactly calculated automatically.
 We refer to section
 [IF building blocks](#if-building-blocks-transformations-and-the-delta-theorem) for more details.
-
 
 # Examples
 
@@ -597,6 +597,8 @@ vcov(ecomb)
 list(vcov(e2), vcov(e3))
 ```
 
+
+
 Note, it is also possible to directly specify the id-variables in the `merge` call:
 ```{r merge}
 merge(e2, e3, id = list(dw$id, dwc$id))
@@ -623,37 +625,93 @@ merge(g1, g2, id = NULL) |> (Print %++% IC)()
 merge(g1, g2, id = NULL) |> vcov()
 ```
 
-## Renaming and subsetting parameters
+Note that for `estimate` objects it is also possible to merge objects directly
+with the `c()` operator. See the Section on [IF building
+blocks](#if-building-blocks-transformations-and-the-delta-theorem).
 
-To only keep a subset of the parameters the `keep` argument can be used.
+
+## Selecting, ordering, and renaming parameters
+
+Parameters can be selected or reordered directly within an `estimate` object.
+These operations retain the corresponding influence functions and covariance
+information. They act on the parameters, rather than on the observations
+contributing to their estimation.
+
+### Selecting parameters
+
+Consider the following `estimate` object
+```{r parameter-selection}
+est1 <- estimate(coef=c(1,3), vcov=diag(2), labels=c("ba","ab"))
+est2 <- estimate(coef=c(2,4), vcov=diag(2), labels=c("cb","da"))
+est <- c(est1, est2)
+est
+```
+
+The `subset` or `[` operator selects parameters by position or label:
+```{r parameter-indexing}
+subset(est, 1:2)
+est[c("ba", "cb")]
+```
+
+The `head` and `tail` methods select parameters from the beginning or end of
+the object:
+```{r parameter-head-tail}
+head(est) # First parameter
+tail(est) # Last parameter
+head(est, n = 2) # First two parameters
+tail(est, n = 2) # Last two parameters
+```
+
+
+Parameters can also be selected when combining estimates, using the `keep`
+argument. This accepts either a character vector of parameter labels or a
+vector of positions:
 ```{r mergekeep}
-merge(g1, g2, keep = c("(Intercept)", "(Intercept).1"))
-```
-The argument can be given either as character vector or a vector of indices:
-```{r merge2}
-merge(g1, g2, keep=c(1, 3))
-```
-or as a vector of perl-style regular expressions
-```{r merge3}
-merge(g1, g2, keep = "cept", regex = TRUE)
-merge(g1, g2, keep = c("\\)$", "^a$"), regex = TRUE, ignore.case = TRUE)
+merge(est1, est2, keep = c("a", "b"))
+merge(g1, g2, keep = c(1, 3))
 ```
 
-When merging estimates unique parameter names are created. It is also possible
-to rename the parameters with the `labels` argument
-```{r merge4}
-merge(g1, g2, labels = c("a", "b", "c")) |> estimate(keep = c("a", "c"))
-merge(g1, g2,
-      labels = c("a", "b", "c"),
-      keep = c("a", "c")
-)
-estimate(g1, labels=c("a", "b"))
+With `regex = TRUE`, selection can instead use Perl-style regular expressions:
+```{r merge-regex}
+merge(est1, est2, keep = c("^a", "a$"),
+      regex = TRUE, ignore.case = TRUE)
+subset(est, "b", regex=TRUE)
 ```
 
-Finally, the `subset` argument can be used to subset the parameters and IFs
-before the actual merging is being done
-```{r merge5}
-merge(g1, g2, subset="(Intercept)")
+### Ordering parameters
+
+The `rev` method reverses the parameter order. The `sort` method orders
+parameters by their estimated values or labels:
+```{r parameter-ordering}
+rev(est)
+sort(est, by = "values")
+sort(est, by = "labels")
+```
+
+These methods return `estimate` objects and can therefore be combined with selection and other operations:
+```{r parameter-ordering-pipe}
+est |>
+  sort(by = "values") |>
+  tail(n = 1) # Parameter with the largest estimated value
+```
+
+### Renaming parameters
+
+When estimates are merged, unique parameter labels are created automatically.
+The `labels` method can be used to rename parameters in an existing object:
+```{r parameter-labels}
+est[1:2] |>
+  labels(c("intercept", "treatment"))
+```
+
+Labels can also be supplied when constructing an `estimate` object:
+```{r estimate-labels}
+estimate(est1, labels = c("intercept", "treatment"))
+```
+
+or directly via the `c()` method
+```{r}
+c(a = est[1], b = est[2])
 ```
 
 ## Clustered data (non-iid case)
@@ -718,16 +776,12 @@ e
 
 # IF building blocks: transformations and the delta theorem
 
-Let $\phi\colon \mathbb{R}^p\to\mathbb{R}^m$ be differentiable at $\theta$
-and assume that $\widehat{\theta}_n$ is RAL estimator with IF given by
-$\IC(\cdot; \Pz)$ such that
-\begin{align*}
-\sqrt{n}(\widehat{\theta}_n - \theta) =
-\frac{1}{\sqrt{n}}\sum_{i=1}^n \IC(Z_i; \Pz) + \op(1),
-\end{align*}
-then by the delta method [@vaart_1998_asymp Theorem 3.1]
-\begin{align*}
-\sqrt{n}\{\phi(\widehat{\theta}_n) - \phi(\theta)\}  =
+Let $\phi\colon \mathbb{R}^p\to\mathbb{R}^m$ be differentiable at $\theta$ and
+assume that $\widehat{\theta}_n$ is RAL estimator with IF given by $\IC(\cdot;
+\Pz)$ such that \begin{align*} \sqrt{n}(\widehat{\theta}_n - \theta) =
+\frac{1}{\sqrt{n}}\sum_{i=1}^n \IC(Z_i; \Pz) + \op(1), \end{align*} then by the
+delta method [@vaart_1998_asymp Theorem 3.1] \begin{align*}
+\sqrt{n}\{\phi(\widehat{\theta}_n) - \phi(\theta)\} =
 \frac{1}{\sqrt{n}}\sum_{i=1}^n \nabla\phi(\theta)\IC(Z_i; \Pz) + \op(1),
 \end{align*}
 
@@ -778,7 +832,7 @@ a * b
 (3 * cos(a) / sqrt(b) + 1) / a
 e <- c(a,b) # merge
 c(sum=sum(e), sum2=a+b,
-  prod=prod(e), prod2=a*b) # sum and prod function 
+  prod=prod(e), prod2=a*b) # sum and prod function
 e %*% e # inner prod.
 c(1, 2) %*% e
 c(pow = a^b) # power-function, rename parameter
@@ -951,7 +1005,7 @@ estimate(gg, B)
 
 Such linear statistics can also be specified directly as expressions of the parameter names
 ```{r}
-estimate(gg, a + a.1, 2*a - a.2, a) |> summary(null=c(2,1,1))
+estimate(gg, a + a.1, 2*a - a.2, a) |> summary(null = c(2, 1, 1))
 ```
 
 We refer to the function `lava::contr`  and `lava::parsedesign` for defining contrast matrices.
@@ -966,13 +1020,18 @@ pairwise_diff(3)
 summary(estimate(gg, pairwise_diff(3), use=c(2,4,6)), null=c(1,1,1))
 ```
 
+It is also possible to use this function directly on an `estimate` object:
+```{r pairwise_diff2}
+pairwise_diff(gg[c(2,4,6)]) == 1
+```
+
 When conducting multiple tests each at a nominal-level of $\alpha$ the overall
 type I error is not controlled at $\alpha$-level.
 The influence function also allows for adjusting for multiple comparisons.
 Let $Z_{1},\ldots,Z_{p}$ denote $Z$-statistics from $p$ distinct two-sided
 hypothesis tests which we will assume is asymptotically distributed under the
 null hypothesis as a zero-mean Gaussian distribution with correlation matrix
-$R.$ Let $ Z_{max} = \max_{i=1,\ldots,p} |Z_i|$ then the family-wise error
+$R.$ Let $Z_{max} = \max_{i=1,\ldots,p} |Z_i|$ then the family-wise error
 rate (FWER) under the null can be approximated by
 $$
 P(Z_{max} > z) =
@@ -992,7 +1051,7 @@ can be estimated from the IFs. This is implemented in the `alpha_zmax` method
 
 ```{r pcorrect }
 #| eval: !expr lava:::versioncheck('mets', 1)
-gg0 <- estimate(gg, use="^a", regex=TRUE)
+gg0 <- estimate(gg, keep="^a", regex=TRUE)
 alpha_zmax(gg0, null=rep(.8, 3))
 ```
 
@@ -1000,7 +1059,7 @@ While this always yields a more powerful test compared to Bonferroni
 adjustments, another powerful closed-testing procedure [@marcus1976], can be generally
 obtained by considering all intersection hypotheses.
 
-![*Figure: closed testing via Wald tests of all intersections hypotheses.*](../man/figures/closedtesting.svg){width=60%}
+![*Figure: closed testing via Wald tests of all intersections hypotheses.*](../man/figures/closedtesting.svg){width=65%}
 
 To reject the $H_{1}$ at
 an correct $\alpha$-level we should test all intersection hypotheses involving
@@ -1085,32 +1144,36 @@ value $1$
 ```{r estpred}
 g <- glm(y1 ~ a + x1 + w, data=dw, family=binomial)
 pr <- function(p, data, ...) {
-  X <- model.matrix(g, transform(data, a=1))
-  expit(X %*% p)
-  ## alternatively:
-  ## with(data, expit(p[1] + p["a"] + p["x1"]*x1 + p["w"]*w))
+  with(data, expit(p[1] + p["a"] + p["x1"]*x1 + p["w"]*w))
 }
 pr(coef(g), dw) |> head()
 ```
-The target parameter can now be estimated with the syntax
+The target parameter can now be estimated with the `expectation` function
 ```{r average}
-ea <- estimate(g, pr, average=TRUE)
+ea <- expectation(pr, object = g)
 ea
 IC(ea) |> head()
 ```
 
+Specifically for GLM models, it is possible to do the above steps directly with
+the `predict.estimate.glm` method (note the id argument here is not strictly
+needed as the IF of `e`and the data.frame are already aligned):
+```{r expectation}
+e <- estimate(g, id=dw$id)
+expectation(predict, object = e, data = transform(dw, a=1),
+            id = "id", labels = "trt=1")
+```
+
 ## Average Treatment Effects
 
-Let the observed data be $Z = (W,A,Y)$, where $W$ are covariates, $A$ a binary treatment
-variable, and $Y$ the outcome.
-In the following we are interested in estimating the target parameter
-$\psi_a(P)
-= E_P[Y(a)]$, where $Y(a)$ is the *potential outcome* we would have
-observed if treatment $a$ had been administered, possibly contrary to
-the actual treatment that was observed, i.e., $Y = Y(A)$. To assess the
-treatment effect we can then consider the *average treatment effect*
-(ATE) $$E_P[Y(1)]-E_P[Y(0)],$$ or some other contrast of interest
-$g(\psi_1(P), \psi_0(P))$. Under the following assumptions
+Let the observed data be $Z = (W,A,Y)$, where $W$ are covariates, $A$ a binary
+treatment variable, and $Y$ the outcome. In the following we are interested in
+estimating the target parameter $\psi_a(P) = E_P[Y(a)]$, where $Y(a)$ is the
+*potential outcome* we would have observed if treatment $a$ had been
+administered, possibly contrary to the actual treatment that was observed, i.e.,
+$Y = Y(A)$. To assess the treatment effect we can then consider the *average
+treatment effect* (ATE) $$E_P[Y(1)]-E_P[Y(0)],$$ or some other contrast of
+interest $g(\psi_1(P), \psi_0(P))$. Under the following assumptions
 
 1)  Stable Unit Treatment Values Assumption (the treatment of a specific
     subject is not affecting the potential outcome of other subjects)
@@ -1201,4 +1264,3 @@ sessionInfo()
 ```
 
 # Bibliography
-
