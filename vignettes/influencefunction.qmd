@@ -688,7 +688,7 @@ sort(est, by = "values")
 sort(est, by = "labels")
 ```
 
-These methods return `estimate` objects and can therefore be combined withvselection and other operations:
+These methods return `estimate` objects and can therefore be combined with selection and other operations:
 ```{r parameter-ordering-pipe}
 est |>
   sort(by = "values") |>
@@ -832,7 +832,7 @@ a * b
 (3 * cos(a) / sqrt(b) + 1) / a
 e <- c(a,b) # merge
 c(sum=sum(e), sum2=a+b,
-  prod=prod(e), prod2=a*b) # sum and prod function 
+  prod=prod(e), prod2=a*b) # sum and prod function
 e %*% e # inner prod.
 c(1, 2) %*% e
 c(pow = a^b) # power-function, rename parameter
@@ -1264,4 +1264,3 @@ sessionInfo()
 ```
 
 # Bibliography
-
