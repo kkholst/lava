@@ -18,9 +18,9 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/correlation.html">Estimating partial correlations with lava</a></li>
-    <li><a class="dropdown-item" href="../articles/influencefunction.html">The Art of Influence</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/influencefunction.html">The Art of Influence</a></li>
     <li><a class="dropdown-item" href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a></li>
+    <li><a class="dropdown-item" href="../articles/partialcorrelation.html">Estimating partial correlations with lava</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -104,12 +104,12 @@ associations/arrows from model/graph (wald test)</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.003352 0.9538 y3~~x  1    0.9538</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.003352 0.9538 y3~x   1    0.9538</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.003352 0.9538 x~y3   1    0.9538</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.221    0.6383 y2~~y3 1    0.9538</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.221    0.6383 y2~y3  1    0.9538</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.221    0.6383 y3~y2  1    0.9538</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.221    0.6383 y1~~x  1    0.9538</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.221    0.6383 y1~x   1    0.9538</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.221    0.6383 x~y1   1    0.9538</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.221    0.6383 y2~~y3 1    0.9538</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.221    0.6383 y2~y3  1    0.9538</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.221    0.6383 y3~y2  1    0.9538</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.3867   0.534  y1~~y3 1    0.9538</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.3867   0.534  y1~y3  1    0.9538</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.3867   0.534  y3~y1  1    0.9538</span>
@@ -120,8 +120,8 @@ associations/arrows from model/graph (wald test)</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Score: S P(S&gt;s) Index  holm BH    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.003352 0.9538 y1~~y2 1    0.9538</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.003352 0.9538 y3~~x  1    0.9538</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.221    0.6383 y2~~y3 1    0.9538</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.221    0.6383 y1~~x  1    0.9538</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.221    0.6383 y2~~y3 1    0.9538</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.3867   0.534  y1~~y3 1    0.9538</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.3867   0.534  y2~~x  1    0.9538</span>
 </code></pre></div>
