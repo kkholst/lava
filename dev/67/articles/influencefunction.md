@@ -954,7 +954,7 @@ sort(est, by = "labels")
 ```
 
 These methods return `estimate` objects and can therefore be combined
-withvselection and other operations:
+with selection and other operations:
 
 ``` r
 
@@ -1182,7 +1182,7 @@ a * b
 #> a    7.887   5.379 -2.656 18.43  0.1426
 e <- c(a,b) # merge
 c(sum=sum(e), sum2=a+b,
-  prod=prod(e), prod2=a*b) # sum and prod function 
+  prod=prod(e), prod2=a*b) # sum and prod function
 #>       Estimate Std.Err     2.5%  97.5%  P-value
 #> sum        1.3  0.3350  0.64350 1.9565 0.000104
 #> sum2       1.3  0.3350  0.64350 1.9565 0.000104
@@ -1257,7 +1257,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x55d997440790>
+#> <bytecode: 0x55634ad35b30>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1888,7 +1888,7 @@ sessionInfo()
 #> [10] globals_0.20.0         splines_4.6.1          yaml_2.3.12           
 #> [13] fastmap_1.2.0          lattice_0.22-9         R6_2.6.1              
 #> [16] generics_0.1.4         knitr_1.52             backports_1.5.1       
-#> [19] MASS_7.3-65            tibble_3.3.1           future_1.76.0         
+#> [19] MASS_7.3-65            tibble_3.3.1           future_1.80.0         
 #> [22] pillar_1.11.1          rlang_1.3.0            broom_1.0.13          
 #> [25] xfun_0.61              otel_0.2.0             cli_3.6.6             
 #> [28] magrittr_2.0.5         digest_0.6.39          grid_4.6.1            
