@@ -407,32 +407,29 @@ estimate.default <- function(x=NULL, f=NULL, ...,
 
   if (missing(data))
     data <- tryCatch(model.frame(x), error=function(...) NULL)
-  nn <- NULL
-  if (
-    (
-      (is.logical(IC) && IC) || (length(IC)>0 && !is.logical(IC))) &&
-    (missing(vcov) ||
-      is.null(vcov) ||
-      (is.logical(vcov) && vcov[1]==FALSE && !is.na(vcov[1])))
-    ) {
-    ## If user supplied vcov, then don't estimate IC
-    if (!is.logical(IC)) {
+
+
+  use_ic <- ( isTRUE(IC) || (length(IC)>0 && !is.logical(IC)) ) &&
+    ( missing(vcov) || isFALSE(vcov) )
+  if (use_ic) {
+    if (!is.logical(IC)) { # user-provided IF
       ic_theta <- cbind(IC)
       if (NCOL(ic_theta) != length(pp)) {
         warning("Wrong dimension of influence function IC")
       }
       ic_theta <- check_ic_mean_zero(ic_theta, center=center)
       IC <- TRUE
-    } else {
+    } else { # estimate IF
       ic_theta <- IC(x)
       if (!inherits(x, "estimate")) {
         ic_theta <- check_ic_mean_zero(ic_theta, center=center)
       }
     }
-  } else {
+  } else { # Use model-based vcov
     if (!is.null(x) && (missing(vcov) ||
-                        (is.logical(vcov) && !is.na(vcov)[1])))
+                        (is.logical(vcov) && !is.na(vcov)[1]))) {
       suppressWarnings(vcov <- stats::vcov(x))
+    } # other-wise user-supplied vcov
     ic_theta <- NULL
   }
 
@@ -467,7 +464,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
   if (!is.null(ic_theta) && (length(idstack)==nrow(ic_theta))) {
     rownames(ic_theta) <- idstack
   }
-  if (!is.null(ic_theta) && (missing(vcov) || is.null(vcov))) {
+  if (!is.null(ic_theta) && (missing(vcov))) {
     V <- var_ic(ic_theta)
   } else {
     if (!missing(vcov)) {
@@ -496,6 +493,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     f <- NULL
   }
 
+  nn <- NULL
   derivative <- NULL
   if (!is.null(f)) {
     form <- names(formals(f))
