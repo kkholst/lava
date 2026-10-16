@@ -75,7 +75,8 @@ general container for parameter estimates and their influence functions
 <span>  ignore.case <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  print <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">labels</span>,</span>
-<span>  <span class="va">label.width</span></span>
+<span>  <span class="va">label.width</span>,</span>
+<span>  center <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -91,12 +92,11 @@ likelihood-ratio test is performed.</p></dd>
 
 <dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
 <dd><p>transformation of model parameters. Accepts several input types:</p><ul><li><p>A <strong>function</strong> <code>f(p)</code> or <code>f(p, data)</code>: applies the delta method. When <code>f</code>
-returns a named list the names are used as parameter labels.</p></li>
-<li><p>A <strong>matrix</strong>: used as a contrast (linear combination) matrix.</p></li>
-<li><p>A <strong>numeric vector</strong> of parameter indices: converted to a contrast that
-selects and differences those parameters.</p></li>
-<li><p>A <strong>list</strong> of indices: each element selects one parameter.</p></li>
-<li><p><strong>Character</strong> expressions: supports wildcards (<code>"?"</code>,
+returns a named list the names are used as parameter labels. - A
+<strong>matrix</strong>: used as a contrast (linear combination) matrix. - A <strong>numeric
+vector</strong> of parameter indices: converted to a contrast that selects and
+differences those parameters. - A <strong>list</strong> of indices: each element selects
+one parameter. - <strong>Character</strong> expressions: supports wildcards (<code>"?"</code>,
 <code>"*"</code>) and arithmetic on parameter names (e.g., <code>"z" - "x"</code>, <code>2 * "z" - 3 * "x"</code>).</p></li>
 </ul></dd>
 
@@ -151,10 +151,10 @@ un-stacked (per-observation) decomposition.</p></dd>
 
 <dt id="arg-average">average<a class="anchor" aria-label="anchor" href="#arg-average"></a></dt>
 <dd><p>(Deprecated) if <code>TRUE</code> the function computes the standardized
-estimate \(\hat\Psi = P_n f(X; \hat\theta)\), i.e., the
-empirical mean of <code>f(p, data)</code>, as defined by the <code>f</code> argument, over
-all rows of <code>data</code>. The influence function accounts for both the empirical
-averaging and the parameter estimation uncertainty (see <a href="expectation.html">expectation</a>).</p></dd>
+estimate \(\hat\Psi = P_n f(X; \hat\theta)\), i.e., the empirical mean of
+<code>f(p, data)</code>, as defined by the <code>f</code> argument, over all rows of <code>data</code>.
+The influence function accounts for both the empirical averaging and the
+parameter estimation uncertainty (see <a href="expectation.html">expectation</a>).</p></dd>
 
 
 <dt id="arg-subset">subset<a class="anchor" aria-label="anchor" href="#arg-subset"></a></dt>
@@ -196,6 +196,11 @@ object</p></dd>
 
 <dt id="arg-label-width">label.width<a class="anchor" aria-label="anchor" href="#arg-label-width"></a></dt>
 <dd><p>(optional) max display width of labels</p></dd>
+
+
+<dt id="arg-center">center<a class="anchor" aria-label="anchor" href="#arg-center"></a></dt>
+<dd><p>if TRUE the influence function will automatically be centered
+(zero mean)</p></dd>
 
 </dl></div>
     <div class="section level2">

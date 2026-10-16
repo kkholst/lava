@@ -28,7 +28,8 @@ estimate(
   ignore.case = FALSE,
   print = NULL,
   labels,
-  label.width
+  label.width,
+  center = FALSE
 )
 ```
 
@@ -46,18 +47,12 @@ estimate(
 
   - A **function** `f(p)` or `f(p, data)`: applies the delta method.
     When `f` returns a named list the names are used as parameter
-    labels.
-
-  - A **matrix**: used as a contrast (linear combination) matrix.
-
-  - A **numeric vector** of parameter indices: converted to a contrast
-    that selects and differences those parameters.
-
-  - A **list** of indices: each element selects one parameter.
-
-  - **Character** expressions: supports wildcards (`"?"`, `"*"`) and
-    arithmetic on parameter names (e.g., `"z" - "x"`,
-    `2 * "z" - 3 * "x"`).
+    labels. - A **matrix**: used as a contrast (linear combination)
+    matrix. - A **numeric vector** of parameter indices: converted to a
+    contrast that selects and differences those parameters. - A **list**
+    of indices: each element selects one parameter. - **Character**
+    expressions: supports wildcards (`"?"`, `"*"`) and arithmetic on
+    parameter names (e.g., `"z" - "x"`, `2 * "z" - 3 * "x"`).
 
 - ...:
 
@@ -158,6 +153,11 @@ estimate(
 - label.width:
 
   (optional) max display width of labels
+
+- center:
+
+  if TRUE the influence function will automatically be centered (zero
+  mean)
 
 ## Value
 
