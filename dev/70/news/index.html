@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.3.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="lava-development-version">lava (development version)<a class="anchor" aria-label="anchor" href="#lava-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.10" id="lava-110">lava 1.10<a class="anchor" aria-label="anchor" href="#lava-110"></a></h2>
 <ul><li>new function <code>expectation(object, f, data, id, subset)</code> for marginal (standardized) estimates via g-computation. <code>estimate(x, f, average=TRUE, ...)</code> now calls <code>expectation</code>. The <code>id</code> argument refers to the values of <code>f</code> (the rows of <code>data</code>; defaults to the names of the values of <code>f</code> or <code>rownames(data)</code>), and the influence function of the model is aligned to these ids via <code>index(x)</code> for <code>estimate</code> objects, or the row names of the model frame. This allows standardization/g-computation over another dataset than the one used to fit the model (e.g., a model fitted on a subset). Use <code>estimate(x, id=...)</code> to link a model to the ids of <code>data</code>. <code>f</code> must have the argument <code>p</code>, and optionally <code>data</code> and <code>object</code>.</li>
 <li>
 <code>estimate(x, ...)</code> when <code>x</code> is a glm object returns an object of class <code>estimate.glm</code>with a <code>predict.estimate.glm</code> method. Standardized estimates can then easily be obtained with the syntax <code>expectation(e, predict, data=transform(dat, a=1))</code>
