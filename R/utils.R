@@ -383,24 +383,31 @@ decomp.specials <- function(x,pattern="[()]",pattern2=NULL, pattern.ignore=NULL,
   unlist(strsplit(st,sep,perl=perl,...))
 }
 
-## Check that IC columns have empirical mean zero (relative to RMS)
-check_ic_mean_zero <- function(ic, tol = lava.options()$check.ic.tol) {
-  ic <- cbind(ic)
-  n <- nrow(ic)
-  if (is.null(n) || n < 2L) return(invisible(NULL))
-  m <- colMeans(ic, na.rm = TRUE)
-  rms <- sqrt(colMeans(ic^2, na.rm = TRUE))
-  ratio <- abs(m) / rms
-  flag <- any(ratio > tol, na.rm=TRUE)
-  if (flag) {
-    warning(
-      sprintf(
-        "IC does not have mean zero (max |mean|/rms = %.2g). %s",
-        max(ratio),
-        "Using lava.options(check.ic = FALSE) disables the warning globally."
-      ))
-  }
-  return(invisible(flag))
-}
 
-center_ic <- function(x) scale(x, scale=FALSE, center=TRUE)
+## Check (and optionally center) the columns of the influence function 'ic'.
+##
+## The mean of the IC is (to first order) a bias of the estimate and is compared
+## to its standard error, sd(ic)/sqrt(n) (see var_ic).
+check_ic_mean_zero <- function(ic,
+                               tol = lava.options()$check.ic.tol,
+                               center = FALSE
+                               ) {
+  ic <- cbind(ic)
+  if (center || identical(lava.options()$check_ic, "center")) {
+    ic <- scale(ic, scale = FALSE, center = TRUE)
+    return(ic)
+  }
+  m <- colMeans(ic, na.rm = TRUE)
+  n <- colSums(!is.na(ic))
+  s <- sqrt(colMeans(sweep(ic, 2, m)^2, na.rm = TRUE))
+  ratio <- abs(m) / (s / sqrt(n))
+  ratio[n < 2L | s == 0] <- NA
+  if (any(ratio > tol, na.rm = TRUE)) {
+    warning(sprintf(
+      "IC does not have mean zero (max |mean|/std.err = %.2g > %g). %s",
+      max(ratio, na.rm = TRUE), tol,
+      "Use lava.options(check.ic = \"center\") to center",
+      "or check.ic = FALSE to disable."))
+  }
+  ic
+}

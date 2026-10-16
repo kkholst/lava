@@ -97,9 +97,9 @@ merge.estimate <- function(x, y,
     for (i in seq_along(objects)) {
         icz <- IC(objects[[i]])
         if (!missing(subset)) icz <- icz[, subset, drop = FALSE]
-        if (lava.options()$check.ic) {
-          check_ic_mean_zero(icz)
-        }
+        ## if (lava.options()$check.ic) {
+        ##   check_ic_mean_zero(icz)
+        ## }
         ics <- c(ics, list(cluster_sum_ic(icz, id[[i]])))
         model.index <- c(model.index, list(colpos + seq_len(ncol(icz))))
         colpos <- colpos + ncol(icz)
