@@ -24,7 +24,8 @@
   ignore.case = FALSE,
   print = NULL,
   labels,
-  label.width
+  label.width,
+  center = FALSE
 )
 }
 \arguments{
@@ -35,12 +36,11 @@ likelihood-ratio test is performed.}
 \item{f}{transformation of model parameters. Accepts several input types:
 \itemize{
 \item A \strong{function} \code{f(p)} or \code{f(p, data)}: applies the delta method. When \code{f}
-returns a named list the names are used as parameter labels.
-\item A \strong{matrix}: used as a contrast (linear combination) matrix.
-\item A \strong{numeric vector} of parameter indices: converted to a contrast that
-selects and differences those parameters.
-\item A \strong{list} of indices: each element selects one parameter.
-\item \strong{Character} expressions: supports wildcards (\code{"?"},
+returns a named list the names are used as parameter labels. - A
+\strong{matrix}: used as a contrast (linear combination) matrix. - A \strong{numeric
+vector} of parameter indices: converted to a contrast that selects and
+differences those parameters. - A \strong{list} of indices: each element selects
+one parameter. - \strong{Character} expressions: supports wildcards (\code{"?"},
 \code{"*"}) and arithmetic on parameter names (e.g., \code{"z" - "x"}, \code{2 * "z" - 3 * "x"}).
 }}
 
@@ -79,10 +79,10 @@ summed within each cluster defined by \code{id}. Set to \code{FALSE} to keep the
 un-stacked (per-observation) decomposition.}
 
 \item{average}{(Deprecated) if \code{TRUE} the function computes the standardized
-estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the
-empirical mean of \code{f(p, data)}, as defined by the \code{f} argument, over
-all rows of \code{data}. The influence function accounts for both the empirical
-averaging and the parameter estimation uncertainty (see \link{expectation}).}
+estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the empirical mean of
+\code{f(p, data)}, as defined by the \code{f} argument, over all rows of \code{data}.
+The influence function accounts for both the empirical averaging and the
+parameter estimation uncertainty (see \link{expectation}).}
 
 \item{subset}{an optional vector specifying a subset of observations
     to be used in the fitting process.  (See additional details about how
@@ -108,6 +108,9 @@ object}
 \item{labels}{(optional) character vector of coefficient names}
 
 \item{label.width}{(optional) max display width of labels}
+
+\item{center}{if TRUE the influence function will automatically be centered
+(zero mean)}
 }
 \value{
 Object of class \code{estimate} with the following elements:
