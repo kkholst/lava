@@ -6,8 +6,6 @@
 #
 # Trigger manually from the Actions tab ("Run workflow").
 on:
- push:
-    branches: [develop/revdep-gh-actions]
  workflow_dispatch:
     inputs:
       which:
