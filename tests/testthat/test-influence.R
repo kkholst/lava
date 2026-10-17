@@ -135,8 +135,9 @@ test_that("IC misc", {
 })
 
 test_that("IC.coxph", {
-  require("survival")
+  library("survival")
 
+  bladder1 <- bladder[bladder$enum < 5, ]
   a1 <- coxph(formula = Surv(stop, event) ~ (rx + size + number) * strata(enum),
              data=bladder1, robust=TRUE)
   b1 <- estimate(a1)
@@ -147,7 +148,6 @@ test_that("IC.coxph", {
   coxph_se <- summary(a1)$coefficients[, "robust se"]
   estimate_se <- parameter(b1)[, 2]
   estimate_se2 <- parameter(b2)[, 2]
-  expect_equivalent(coxph_se, estimate_se, ignore_attr=TRUE)
-  expect_equivalent(estimate_se2, estimate_se, ignore_attr=TRUE)
-
+  expect_equal(coxph_se, estimate_se, ignore_attr=TRUE)
+  expect_equal(estimate_se2, estimate_se, ignore_attr=TRUE)
 })
