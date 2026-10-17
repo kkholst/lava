@@ -419,7 +419,7 @@ estimate.default <- function(x=NULL, f=NULL, ...,
       ic_theta <- check_ic_mean_zero(ic_theta, center=center)
       IC <- TRUE
     } else { # estimate IF
-      ic_theta <- tryCatch(IC(x), error=function(...) NULL)
+      ic_theta <- suppressWarnings(tryCatch(IC(x), error=function(...) NULL))
       if (!inherits(x, "estimate") && !is.null(ic_theta)) {
         ic_theta <- check_ic_mean_zero(ic_theta, center=center)
       }
