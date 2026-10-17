@@ -69,6 +69,17 @@ IC.default <- function(x, bread, id=NULL,
 }
 
 ##' @export
+IC.coxph <- function(x, ...) {
+  w <- x$weights
+  if (is.null(w)) w <- 1
+  A <- if (is.null(x$naive.var)) x$var else x$naive.var
+  u <- w * residuals(x, type = "score", ...)
+  res <- NROW(u) * u %*% t(A)
+  colnames(res) <- names(coef(x))
+  return(res)
+}
+
+##' @export
 IC.multigroupfit <- function(x, ...) IC.default(x, combine=TRUE, ...)
 
 ##' @export
