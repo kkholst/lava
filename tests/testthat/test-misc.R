@@ -126,3 +126,34 @@ test_that("frobnorm", {
   y <- rmvn0(100, sigma=diag(3))
   expect_equal(frobnorm(x, y), sum((x-y)^2)^.5)
 })
+
+test_that("warnings_on_success", {
+  # warnings are replayed on success
+   expect_warning(
+    result <- warnings_on_success({
+      warning("test warning")
+      42
+    }),
+    "test warning"
+  )
+   expect_equal(result, 42)
+
+   # warnings are suppressed when an error occurs"
+   expect_no_warning(
+     result <- warnings_on_success({
+       warning("discard this warning")
+       stop("test error")
+     })
+   )
+  expect_null(result)
+
+  # a successful NULL result still replays warnings
+  expect_warning(
+    result <- warnings_on_success({
+      warning("keep this warning")
+      NULL
+    }),
+    "keep this warning"
+  )
+  expect_null(result)
+})

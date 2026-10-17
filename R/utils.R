@@ -445,3 +445,26 @@ restore_attr <- function(x, atr) {
 }
 
 center_ic <- function(x) scale(x, scale = FALSE, center = TRUE)
+
+# tryCatch function evaluation and only show warnings if successful
+warnings_on_success <- function(expr) {
+  warnings <- list()
+  failed <- FALSE
+  result <- tryCatch(
+    withCallingHandlers(
+      expr,
+      warning = function(w) {
+        warnings[[length(warnings) + 1L]] <<- w
+        invokeRestart("muffleWarning")
+      }
+    ),
+    error = function(e) {
+      failed <<- TRUE
+      NULL
+    }
+  )
+  if (!failed) {
+    for (w in warnings) warning(w)
+  }
+  result
+}
