@@ -403,4 +403,34 @@ check_ic_mean_zero <- function(ic, tol = lava.options()$check.ic.tol) {
   return(invisible(flag))
 }
 
-center_ic <- function(x) scale(x, scale=FALSE, center=TRUE)
+## Copy attributes (except dim/dimnames/names) from 'atr' to 'x'
+restore_attr <- function(x, atr) {
+  atr <- atr[setdiff(names(atr), c("dim", "dimnames", "names"))]
+  attributes(x)[names(atr)] <- atr
+  x
+}
+
+center_ic <- function(x) scale(x, scale = FALSE, center = TRUE)
+
+# tryCatch function evaluation and only show warnings if successful
+warnings_on_success <- function(expr) {
+  warnings <- list()
+  failed <- FALSE
+  result <- tryCatch(
+    withCallingHandlers(
+      expr,
+      warning = function(w) {
+        warnings[[length(warnings) + 1L]] <<- w
+        invokeRestart("muffleWarning")
+      }
+    ),
+    error = function(e) {
+      failed <<- TRUE
+      NULL
+    }
+  )
+  if (!failed) {
+    for (w in warnings) warning(w)
+  }
+  result
+}
