@@ -133,3 +133,21 @@ test_that("IC misc", {
   expect_error(IC(l, id = cl), "Missing values in 'id'")
 
 })
+
+test_that("IC.coxph", {
+  require("survival")
+
+  a1 <- coxph(formula = Surv(stop, event) ~ (rx + size + number) * strata(enum),
+             data=bladder1, robust=TRUE)
+  b1 <- estimate(a1)
+  a2 <- coxph(formula = Surv(stop, event) ~ (rx + size + number) * strata(enum),
+             data=bladder1)
+  b2 <- estimate(a2)
+
+  coxph_se <- summary(a1)$coefficients[, "robust se"]
+  estimate_se <- parameter(b1)[, 2]
+  estimate_se2 <- parameter(b2)[, 2]
+  expect_equivalent(coxph_se, estimate_se, ignore_attr=TRUE)
+  expect_equivalent(estimate_se2, estimate_se, ignore_attr=TRUE)
+
+})
