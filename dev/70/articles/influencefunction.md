@@ -57,10 +57,10 @@ that the directional derivative has a unique representer, \phi\_{P\_{0}}
 lying in the closure of the submodel score space (the *tangent space*),
 s.t. \begin{align\*} \dot\Psi(P_0)(g) = \langle\phi\_{P_0}, g\rangle =
 \int \phi\_{P_0}(z)g(z)\\dP_0(z) \end{align\*} The unique representer is
-exactly the IF which can be found by solving the above integral
-equation. For more details on how to derive influence functions, we
-refer to ([Laan and Rose 2011](#ref-targetedlearning_2011); [Hines et
-al. 2022](#ref-hines2022)).
+exactly the efficient IF which can be found by solving the above
+integral equation. For more details on how to derive influence
+functions, we refer to ([Laan and Rose
+2011](#ref-targetedlearning_2011); [Hines et al. 2022](#ref-hines2022)).
 
 As an example we might be interested in the target parameter \Psi(P) =
 \mathbb{E}\_P(Z) which can be shown to have the unique (and thereby
@@ -371,8 +371,8 @@ The same estimates can be obtained with a *cumulative link regression*
 model which also generalizes to ordinal outcomes. Here we consider the
 proportional odds model given by \begin{align\*}
 \log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid
-x)}\right) = \operatorname{expit}(\alpha\_{j} - \beta^{\top}x), \quad
-j=1,\ldots,J-1 \end{align\*}
+x)}\right) = \alpha\_{j} - \beta^{\top}x) \quad j=1,\ldots,J-1
+\end{align\*}
 
 ``` r
 
@@ -484,11 +484,11 @@ semfit <- estimate(sem, data = dw)
 ## Robust standard errors
 estimate(semfit)
 #>      Estimate Std.Err     2.5%  97.5%   P-value
-#> y2   -0.01236 0.06099 -0.13190 0.1072 8.394e-01
-#> u     0.21656 0.04596  0.12648 0.3066 2.454e-06
-#> y1~w  0.59037 0.05306  0.48637 0.6944 9.366e-29
-#> y2~w  0.65419 0.05597  0.54449 0.7639 1.470e-31
-#> u~~u  0.19001 0.07609  0.04087 0.3391 1.252e-02
+#> y2   -0.01236 0.06350 -0.13682 0.1121 8.457e-01
+#> u     0.21656 0.04681  0.12482 0.3083 3.713e-06
+#> y1~w  0.59037 0.05307  0.48636 0.6944 9.491e-29
+#> y2~w  0.65419 0.05598  0.54447 0.7639 1.510e-31
+#> u~~u  0.19001 0.07610  0.04086 0.3392 1.253e-02
 ```
 
 ### Example: quantile
@@ -810,11 +810,11 @@ between the estimates, the argument `id=NULL` can be used
 
 merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #>      (Intercept) a          (Intercept).1
-#> 1    -5.770e-16   5.698e+00  0.000e+00   
-#> 2    -5.770e-16   5.698e+00  0.000e+00   
-#> 3    -5.770e-16   5.698e+00  0.000e+00   
-#> 4    -5.770e-16   5.698e+00  0.000e+00   
-#> 5     2.155e-15  -1.600e+01  0.000e+00   
+#> 1    -5.097e-16   5.698e+00  0.000e+00   
+#> 2    -5.097e-16   5.698e+00  0.000e+00   
+#> 3    -5.097e-16   5.698e+00  0.000e+00   
+#> 4    -5.097e-16   5.698e+00  0.000e+00   
+#> 5     3.043e-15  -1.600e+01  0.000e+00   
 #> ---                                      
 #> 1996  0.000       0.000     -4.545       
 #> 1997  0.000       0.000      3.571       
@@ -823,9 +823,9 @@ merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #> 2000  0.000       0.000     -4.545
 merge(g1, g2, id = NULL) |> vcov()
 #>                 (Intercept)             a (Intercept).1
-#> (Intercept)    7.898704e-03 -7.898704e-03 -1.700594e-28
-#> a             -7.898704e-03  1.874767e-02 -2.717325e-24
-#> (Intercept).1 -1.700594e-28 -2.717325e-24  4.058270e-03
+#> (Intercept)    7.898704e-03 -7.898704e-03  4.539224e-28
+#> a             -7.898704e-03  1.874767e-02 -2.718185e-24
+#> (Intercept).1  4.539224e-28 -2.718185e-24  4.058270e-03
 ```
 
 Note that for `estimate` objects it is also possible to merge objects
@@ -1257,7 +1257,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x556396709640>
+#> <bytecode: 0x55cacff47b10>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
