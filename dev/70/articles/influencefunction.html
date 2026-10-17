@@ -60,7 +60,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>The Art of Influence</h1>
       <p class="subtitle">A Practical Guide to Working with Influence Functions</p>
       <p class="author">Klaus Kähler Holst</p>
-      <p class="date">2026-10-16</p>
+      <p class="date">2026-10-17</p>
 
       <small class="dont-index">Source: <a href="https://github.com/kkholst/lava/blob/release/cran-1.9.4/vignettes/influencefunction.qmd" class="external-link"><code>vignettes/influencefunction.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -435,11 +435,11 @@ Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent covariates <spa
 <span><span class="co">## Robust standard errors</span></span>
 <span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">semfit</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      Estimate Std.Err     2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; y2   -0.01236 0.06350 -0.13682 0.1121 8.457e-01</span></span>
-<span><span class="co">#&gt; u     0.21656 0.04681  0.12482 0.3083 3.713e-06</span></span>
-<span><span class="co">#&gt; y1~w  0.59037 0.05307  0.48636 0.6944 9.491e-29</span></span>
-<span><span class="co">#&gt; y2~w  0.65419 0.05598  0.54447 0.7639 1.510e-31</span></span>
-<span><span class="co">#&gt; u~~u  0.19001 0.07610  0.04086 0.3392 1.253e-02</span></span></code></pre></div>
+<span><span class="co">#&gt; y2   -0.01236 0.06099 -0.13190 0.1072 8.394e-01</span></span>
+<span><span class="co">#&gt; u     0.21656 0.04596  0.12648 0.3066 2.454e-06</span></span>
+<span><span class="co">#&gt; y1~w  0.59037 0.05306  0.48637 0.6944 9.366e-29</span></span>
+<span><span class="co">#&gt; y2~w  0.65419 0.05597  0.54449 0.7639 1.470e-31</span></span>
+<span><span class="co">#&gt; u~~u  0.19001 0.07609  0.04087 0.3391 1.252e-02</span></span></code></pre></div>
 </div>
 </section><section class="level2"><h3 id="example-quantile">Example: quantile<a class="anchor" aria-label="anchor" href="#example-quantile"></a>
 </h3>
@@ -706,11 +706,11 @@ IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 <div class="sourceCode cell-code" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="op">(</span><span class="va">Print</span> <span class="op"><a href="../reference/op_concat.html">%++%</a></span> <span class="va">IC</span><span class="op">)</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      (Intercept) a          (Intercept).1</span></span>
-<span><span class="co">#&gt; 1    -5.097e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 2    -5.097e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 3    -5.097e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 4    -5.097e-16   5.698e+00  0.000e+00   </span></span>
-<span><span class="co">#&gt; 5     3.043e-15  -1.600e+01  0.000e+00   </span></span>
+<span><span class="co">#&gt; 1    -5.770e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 2    -5.770e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 3    -5.770e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 4    -5.770e-16   5.698e+00  0.000e+00   </span></span>
+<span><span class="co">#&gt; 5     2.155e-15  -1.600e+01  0.000e+00   </span></span>
 <span><span class="co">#&gt; ---                                      </span></span>
 <span><span class="co">#&gt; 1996  0.000       0.000     -4.545       </span></span>
 <span><span class="co">#&gt; 1997  0.000       0.000      3.571       </span></span>
@@ -719,9 +719,9 @@ IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 <span><span class="co">#&gt; 2000  0.000       0.000     -4.545</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, id <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                 (Intercept)             a (Intercept).1</span></span>
-<span><span class="co">#&gt; (Intercept)    7.898704e-03 -7.898704e-03  4.539224e-28</span></span>
-<span><span class="co">#&gt; a             -7.898704e-03  1.874767e-02 -2.718185e-24</span></span>
-<span><span class="co">#&gt; (Intercept).1  4.539224e-28 -2.718185e-24  4.058270e-03</span></span></code></pre></div>
+<span><span class="co">#&gt; (Intercept)    7.898704e-03 -7.898704e-03 -1.700594e-28</span></span>
+<span><span class="co">#&gt; a             -7.898704e-03  1.874767e-02 -2.717325e-24</span></span>
+<span><span class="co">#&gt; (Intercept).1 -1.700594e-28 -2.717325e-24  4.058270e-03</span></span></code></pre></div>
 </div>
 <p>Note that for <code>estimate</code> objects it is also possible to merge objects directly with the <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> operator. See the Section on <a href="#if-building-blocks-transformations-and-the-delta-theorem">IF building blocks</a>.</p>
 </section><section class="level2"><h3 id="selecting-ordering-and-renaming-parameters">Selecting, ordering, and renaming parameters<a class="anchor" aria-label="anchor" href="#selecting-ordering-and-renaming-parameters"></a>
@@ -1074,7 +1074,7 @@ P_{0})</span> such that <span class="math display">\begin{align*} \sqrt{n}(\wide
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p) - log1p(-p)</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x557485dfec98&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55c0698105a0&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
@@ -1543,7 +1543,7 @@ E[Y(1)]  - E[Y(0)]
 <span><span class="co">#&gt; [1] survival_3.8-6 lava_1.10     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] Matrix_1.7-5           future.apply_1.20.2    jsonlite_2.0.0        </span></span>
+<span><span class="co">#&gt;  [1] Matrix_1.7-5           future.apply_1.21.0    jsonlite_2.0.0        </span></span>
 <span><span class="co">#&gt;  [4] dplyr_1.2.1            compiler_4.6.1         tidyselect_1.2.1      </span></span>
 <span><span class="co">#&gt;  [7] Rcpp_1.1.2             parallel_4.6.1         tidyr_1.3.2           </span></span>
 <span><span class="co">#&gt; [10] globals_0.20.0         splines_4.6.1          yaml_2.3.12           </span></span>
@@ -1551,7 +1551,7 @@ E[Y(1)]  - E[Y(0)]
 <span><span class="co">#&gt; [16] generics_0.1.4         knitr_1.52             backports_1.5.1       </span></span>
 <span><span class="co">#&gt; [19] MASS_7.3-65            tibble_3.3.1           future_1.80.0         </span></span>
 <span><span class="co">#&gt; [22] pillar_1.11.1          rlang_1.3.0            broom_1.0.13          </span></span>
-<span><span class="co">#&gt; [25] xfun_0.61              otel_0.2.0             cli_3.6.6             </span></span>
+<span><span class="co">#&gt; [25] xfun_0.62              otel_0.2.0             cli_3.6.6             </span></span>
 <span><span class="co">#&gt; [28] magrittr_2.0.5         digest_0.6.39          grid_4.6.1            </span></span>
 <span><span class="co">#&gt; [31] mvtnorm_1.4-2          geepack_1.3.13         lifecycle_1.0.5       </span></span>
 <span><span class="co">#&gt; [34] RcppArmadillo_15.6.0-1 timereg_2.0.7          vctrs_0.7.3           </span></span>
