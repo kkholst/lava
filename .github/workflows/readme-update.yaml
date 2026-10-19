@@ -1,6 +1,7 @@
 name: Update README
 
 on:
+  push:
   schedule:
     - cron: '0 4 * * 1'  # Every Monday at 04:00 UTC
   workflow_dispatch:       # Also allow manual triggering
@@ -30,13 +31,13 @@ jobs:
           cache: true
           extra-packages: |
             any::rmarkdown
-            any::remotes
+            any::pak
           needs: website
 
       - name: Install R dependencies
         run: |
-          remotes::install_github("kkholst/gof")
-          remotes::install_deps(".", dep=TRUE, upgrade=TRUE)
+          pak::pkg_install("kkholst/gof")
+          pak::local_install_deps(".", dependencies=TRUE, upgrade=TRUE)
         shell: Rscript {0}
 
       - name: Render README
