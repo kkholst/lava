@@ -92,11 +92,12 @@ likelihood-ratio test is performed.</p></dd>
 
 <dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
 <dd><p>transformation of model parameters. Accepts several input types:</p><ul><li><p>A <strong>function</strong> <code>f(p)</code> or <code>f(p, data)</code>: applies the delta method. When <code>f</code>
-returns a named list the names are used as parameter labels. - A
-<strong>matrix</strong>: used as a contrast (linear combination) matrix. - A <strong>numeric
-vector</strong> of parameter indices: converted to a contrast that selects and
-differences those parameters. - A <strong>list</strong> of indices: each element selects
-one parameter. - <strong>Character</strong> expressions: supports wildcards (<code>"?"</code>,
+returns a named list the names are used as parameter labels.</p></li>
+<li><p>A <strong>matrix</strong>: used as a contrast (linear combination) matrix.</p></li>
+<li><p>A <strong>numeric vector</strong> of parameter indices: converted to a contrast that
+selects and differences those parameters.</p></li>
+<li><p>A <strong>list</strong> of indices: each element selects one parameter.</p></li>
+<li><p><strong>Character</strong> expressions: supports wildcards (<code>"?"</code>,
 <code>"*"</code>) and arithmetic on parameter names (e.g., <code>"z" - "x"</code>, <code>2 * "z" - 3 * "x"</code>).</p></li>
 </ul></dd>
 

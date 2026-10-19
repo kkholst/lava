@@ -1257,7 +1257,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x55cacff47b10>
+#> <bytecode: 0x55f0b652a7e0>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1893,7 +1893,7 @@ sessionInfo()
 #> [25] xfun_0.62              otel_0.2.0             cli_3.6.6             
 #> [28] magrittr_2.0.5         digest_0.6.39          grid_4.6.1            
 #> [31] mvtnorm_1.4-2          geepack_1.3.13         lifecycle_1.0.5       
-#> [34] RcppArmadillo_15.6.0-1 timereg_2.0.7          vctrs_0.7.3           
+#> [34] RcppArmadillo_15.6.2-1 timereg_2.0.7          vctrs_0.7.3           
 #> [37] evaluate_1.0.5         glue_1.8.1             numDeriv_2016.8-1.1   
 #> [40] listenv_1.1.0          codetools_0.2-20       parallelly_1.48.0     
 #> [43] purrr_1.2.2            rmarkdown_2.32         pkgconfig_2.0.3       
