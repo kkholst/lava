@@ -38,6 +38,7 @@ jobs:
         run: |
           pak::pkg_install("kkholst/gof")
           pak::local_install_deps(".", dependencies=TRUE, upgrade=TRUE)
+          pak::install(".")
         shell: Rscript {0}
 
       - name: Render README
