@@ -314,7 +314,7 @@ Stage 2
 
 ```{r}
 pp <- function(mu,var,data,...) cbind(u=mu[,"u"], u2=mu[,"u"]^2+var["u","u"])
-(e <- measurement.error(e1, z~1+x, data=d, predictfun=pp))
+(e <- measurement_error(e1, z~1+x, data=d, predictfun=pp))
 ```
 
 
