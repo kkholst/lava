@@ -1,6 +1,6 @@
 # Changelog
 
-## lava (development version)
+## lava 1.10
 
 - new function `expectation(object, f, data, id, subset)` for marginal
   (standardized) estimates via g-computation.

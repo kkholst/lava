@@ -57,10 +57,10 @@ that the directional derivative has a unique representer, \phi\_{P\_{0}}
 lying in the closure of the submodel score space (the *tangent space*),
 s.t. \begin{align\*} \dot\Psi(P_0)(g) = \langle\phi\_{P_0}, g\rangle =
 \int \phi\_{P_0}(z)g(z)\\dP_0(z) \end{align\*} The unique representer is
-exactly the IF which can be found by solving the above integral
-equation. For more details on how to derive influence functions, we
-refer to ([Laan and Rose 2011](#ref-targetedlearning_2011); [Hines et
-al. 2022](#ref-hines2022)).
+exactly the efficient IF which can be found by solving the above
+integral equation. For more details on how to derive influence
+functions, we refer to ([Laan and Rose
+2011](#ref-targetedlearning_2011); [Hines et al. 2022](#ref-hines2022)).
 
 As an example we might be interested in the target parameter \Psi(P) =
 \mathbb{E}\_P(Z) which can be shown to have the unique (and thereby
@@ -371,8 +371,8 @@ The same estimates can be obtained with a *cumulative link regression*
 model which also generalizes to ordinal outcomes. Here we consider the
 proportional odds model given by \begin{align\*}
 \log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid
-x)}\right) = \operatorname{expit}(\alpha\_{j} - \beta^{\top}x), \quad
-j=1,\ldots,J-1 \end{align\*}
+x)}\right) = \alpha\_{j} - \beta^{\top}x) \quad j=1,\ldots,J-1
+\end{align\*}
 
 ``` r
 
@@ -1257,7 +1257,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x55b72cfa6670>
+#> <bytecode: 0x55c4d7c8a778>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1879,7 +1879,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] survival_3.8-6  lava_1.9.3.9000
+#> [1] survival_3.8-6 lava_1.10     
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] Matrix_1.7-5           future.apply_1.21.0    jsonlite_2.0.0        

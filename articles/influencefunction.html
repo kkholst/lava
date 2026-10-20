@@ -24,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.3.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,9 +37,9 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/correlation.html">Estimating partial correlations with lava</a></li>
-    <li><a class="dropdown-item" href="../articles/influencefunction.html">The Art of Influence</a></li>
+<li><a class="dropdown-item" href="../articles/influencefunction.html">The Art of Influence</a></li>
     <li><a class="dropdown-item" href="../articles/nonlinear.html">Non-linear latent variable models and error-in-variable models</a></li>
+    <li><a class="dropdown-item" href="../articles/partialcorrelation.html">Estimating partial correlations with lava</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -89,7 +89,7 @@ P_{0})\}=0</span> and <span class="math inline">\mathbb{V}\!\text{ar}\{\operator
 L_{2}(P_{0})\to\mathbb{R}</span> such that <span class="math inline">[\Psi(P_{t}) - \Psi(P_{0})]t^{-1} \to \dot\Psi(P_{0})(g)</span> as <span class="math inline">t\to 0</span> for any parametric submodel <span class="math inline">P_t</span> with score model <span class="math inline">g(z)= \partial/(\partial t) \log (p_t)(z)|_{t=0}</span>. Riesz’s representation theorem then tells us that the directional derivative has a unique representer, <span class="math inline">\phi_{P_{0}}</span> lying in the closure of the submodel score space (the <em>tangent space</em>), s.t. <span class="math display">\begin{align*}
     \dot\Psi(P_0)(g) = \langle\phi_{P_0}, g\rangle =
     \int \phi_{P_0}(z)g(z)\,dP_0(z)
-\end{align*}</span> The unique representer is exactly the IF which can be found by solving the above integral equation. For more details on how to derive influence functions, we refer to <span class="citation" data-cites="targetedlearning_2011 hines2022">(<a href="#ref-targetedlearning_2011" role="doc-biblioref">Laan and Rose 2011</a>; <a href="#ref-hines2022" role="doc-biblioref">Hines et al. 2022</a>)</span>.</p>
+\end{align*}</span> The unique representer is exactly the efficient IF which can be found by solving the above integral equation. For more details on how to derive influence functions, we refer to <span class="citation" data-cites="targetedlearning_2011 hines2022">(<a href="#ref-targetedlearning_2011" role="doc-biblioref">Laan and Rose 2011</a>; <a href="#ref-hines2022" role="doc-biblioref">Hines et al. 2022</a>)</span>.</p>
 <p>As an example we might be interested in the target parameter <span class="math inline">\Psi(P) =
 \mathbb{E}_P(Z)</span> which can be shown to have the unique (and thereby efficient) influence function <span class="math inline">Z\mapsto Z-\mathbb{E}_P(Z)</span> under the non-parametric model. Another target parameter could be <span class="math inline">\Psi_{a}(P) = \mathbb{E}_{P}[\mathbb{E}_{P}(Y\mid A=a, W)]</span> which is often a key interest in causal inference and which has the IF <span class="math display">\begin{align*}
 \operatorname{IC}(Y,A,W; P) = \frac{\mathbf{1}(A=a)}{\mathbb{P}(A=a\mid W)}(Y-\mathbb{E}_{P}[Y\mid A=a,W]) + \mathbb{E}_{P}[Y\mid
@@ -346,7 +346,7 @@ Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent covariates <spa
 <span><span class="co">#&gt; 6 -2.43751385   2.931614  1.5365778</span></span></code></pre></div>
 </div>
 <p>The same estimates can be obtained with a <em>cumulative link regression</em> model which also generalizes to ordinal outcomes. Here we consider the proportional odds model given by <span class="math display">\begin{align*}
-\log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid x)}\right) = \operatorname{expit}(\alpha_{j} - \beta^{\top}x), \quad j=1,\ldots,J-1
+\log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid x)}\right) = \alpha_{j} - \beta^{\top}x) \quad j=1,\ldots,J-1
 \end{align*}</span></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
@@ -1074,7 +1074,7 @@ P_{0})</span> such that <span class="math display">\begin{align*} \sqrt{n}(\wide
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p) - log1p(-p)</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55b72cfa6670&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55c4d7c8a778&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
@@ -1540,7 +1540,7 @@ E[Y(1)]  - E[Y(0)]
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] survival_3.8-6  lava_1.9.3.9000</span></span>
+<span><span class="co">#&gt; [1] survival_3.8-6 lava_1.10     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Matrix_1.7-5           future.apply_1.21.0    jsonlite_2.0.0        </span></span>

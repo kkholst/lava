@@ -28,7 +28,8 @@ estimate(
   ignore.case = FALSE,
   print = NULL,
   labels,
-  label.width
+  label.width,
+  center = FALSE
 )
 ```
 
@@ -158,6 +159,11 @@ estimate(
 - label.width:
 
   (optional) max display width of labels
+
+- center:
+
+  if TRUE the influence function will automatically be centered (zero
+  mean)
 
 ## Value
 
