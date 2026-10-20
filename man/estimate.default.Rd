@@ -24,7 +24,8 @@
   ignore.case = FALSE,
   print = NULL,
   labels,
-  label.width
+  label.width,
+  center = FALSE
 )
 }
 \arguments{
@@ -79,10 +80,10 @@ summed within each cluster defined by \code{id}. Set to \code{FALSE} to keep the
 un-stacked (per-observation) decomposition.}
 
 \item{average}{(Deprecated) if \code{TRUE} the function computes the standardized
-estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the
-empirical mean of \code{f(p, data)}, as defined by the \code{f} argument, over
-all rows of \code{data}. The influence function accounts for both the empirical
-averaging and the parameter estimation uncertainty (see \link{expectation}).}
+estimate \eqn{\hat\Psi = P_n f(X; \hat\theta)}, i.e., the empirical mean of
+\code{f(p, data)}, as defined by the \code{f} argument, over all rows of \code{data}.
+The influence function accounts for both the empirical averaging and the
+parameter estimation uncertainty (see \link{expectation}).}
 
 \item{subset}{an optional vector specifying a subset of observations
     to be used in the fitting process.  (See additional details about how
@@ -108,6 +109,9 @@ object}
 \item{labels}{(optional) character vector of coefficient names}
 
 \item{label.width}{(optional) max display width of labels}
+
+\item{center}{if TRUE the influence function will automatically be centered
+(zero mean)}
 }
 \value{
 Object of class \code{estimate} with the following elements:

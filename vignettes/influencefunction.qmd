@@ -106,7 +106,7 @@ space (the *tangent space*), s.t.
     \dot\Psi(P_0)(g) = \langle\phi_{P_0}, g\rangle =
     \int \phi_{P_0}(z)g(z)\,dP_0(z)
 \end{align*}
-The unique representer is exactly the IF which can be found by solving the above
+The unique representer is exactly the efficient IF which can be found by solving the above
 integral equation.
 For more details on how to derive influence
 functions, we refer to [@targetedlearning_2011; @hines2022].
@@ -305,7 +305,7 @@ The same estimates can be obtained with a
 *cumulative link regression* model which also generalizes to
 ordinal outcomes. Here we consider the proportional odds model given by
 \begin{align*}
-\log\left(\frac{\pr(Y\leq j\mid x)}{1-\pr(Y\leq j\mid x)}\right) = \operatorname{expit}(\alpha_{j} - \beta^{\top}x), \quad j=1,\ldots,J-1
+\log\left(\frac{\pr(Y\leq j\mid x)}{1-\pr(Y\leq j\mid x)}\right) = \alpha_{j} - \beta^{\top}x) \quad j=1,\ldots,J-1
 \end{align*}
 ```{r ordreg}
 ordreg(y1 ~ a + x1, dw, family=binomial(logit)) |> estimate()

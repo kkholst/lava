@@ -383,24 +383,58 @@ decomp.specials <- function(x,pattern="[()]",pattern2=NULL, pattern.ignore=NULL,
   unlist(strsplit(st,sep,perl=perl,...))
 }
 
-## Check that IC columns have empirical mean zero (relative to RMS)
-check_ic_mean_zero <- function(ic, tol = lava.options()$check.ic.tol) {
+
+## Check (and optionally center) the empirical column means of 'ic'.
+##
+## Flag columns for which abs(mean(ic)) exceeds both abs.tol and
+## tol * s / sqrt(n), where s is the empirical standard deviation and
+## n is the number of non-missing observations. The absolute tolerance
+## provides a numerical floor in the units of the IC.
+##
+## This diagnostic is intended for estimated ICs expected to be empirically
+## centered; it is not a test of whether the population IC has expectation zero.
+## Centering subtracts the column means without changing the estimate itself.
+check_ic_mean_zero <- function(ic,
+                               tol = lava.options()$check.ic.tol,
+                               abs.tol = lava.options()$check.ic.abs.tol,
+                               center = FALSE,
+                               check = lava.options()$check.ic) {
+  atr <- attributes(ic)
   ic <- cbind(ic)
-  n <- nrow(ic)
-  if (is.null(n) || n < 2L) return(invisible(NULL))
+  center <- center || identical(check, "center")
+  if (!center && !isTRUE(check)) return(restore_attr(ic, atr))
   m <- colMeans(ic, na.rm = TRUE)
-  rms <- sqrt(colMeans(ic^2, na.rm = TRUE))
-  ratio <- abs(m) / rms
-  flag <- any(ratio > tol, na.rm=TRUE)
-  if (flag) {
-    warning(
-      sprintf(
-        "IC does not have mean zero (max |mean|/rms = %.2g). %s",
-        max(ratio),
-        "Using lava.options(check.ic = FALSE) disables the warning globally."
-      ))
+  if (center) {
+    ic <- ic - rep(m, each = nrow(ic)) # keeps dimnames and NAs
+    return(restore_attr(ic, atr))
   }
-  return(invisible(flag))
+  n <- colSums(!is.na(ic))
+  s <- sqrt(colMeans((ic - rep(m, each = nrow(ic)))^2, na.rm = TRUE))
+  ratio <- sqrt(n) * abs(m) / s
+  ratio[s == 0 & m == 0] <- 0      # constant zero column
+  ratio[n < 2L] <- NA
+  if (!is.numeric(tol) || length(tol) != 1L ||
+      !is.finite(tol) || tol < 0) {
+    stop("'tol' must be a finite, non-negative numeric scalar.")
+  }
+  if (!is.numeric(abs.tol) || length(abs.tol) != 1L ||
+      !is.finite(abs.tol) || abs.tol < 0) {
+    stop("'abs.tol' must be a finite, non-negative numeric scalar.")
+  }
+  bad <- ratio > tol & abs(m) > abs.tol
+  if (any(bad, na.rm = TRUE)) {
+    warning(sprintf(
+      paste0(
+        "Estimated IC has a large empirical mean ",
+        "(max |mean|/SE among flagged columns = %.2g > %g; ",
+        "absolute tolerance = %g). %s"
+      ),
+      max(ratio[which(bad)]), tol, abs.tol,
+      paste("Use lava.options(check.ic = \"center\") to center",
+            "or lava.options(check.ic = FALSE) to disable this check.")
+    ))
+  }
+  restore_attr(ic, atr)
 }
 
 ## Copy attributes (except dim/dimnames/names) from 'atr' to 'x'
