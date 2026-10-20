@@ -127,7 +127,7 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
   if (missing(data))
     data <- tryCatch(model.frame(object), error = function(...) NULL)
 
-  ## Values of 'f' (N x k matrix) and Jacobian (N*k x p)
+  ## Values of 'f' (N x k matrix)
   dots <- list(...)
   fval <- function(p) {
     args <- c(list(p = p, data = data, object = object), dots)
@@ -138,9 +138,7 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
     structure(cbind(val, deparse.level = 0), grad = attr(val, "grad"))
   }
   val <- fval(pp)
-  D <- attr(val, "grad")
-  if (is.null(D)) D <- numDeriv::jacobian(fval, pp,
-                                          method=lava.options()$Dmethod)
+
   N <- NROW(val)
   if (N <= 1L)
     stop("'f' must return one value per observation (row of 'data')")
@@ -177,13 +175,25 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
     subset <- NULL
   }
 
+  w <- if (is.null(subset)) rep(1, N) else as.numeric(subset)
+  D <- attr(val, "grad") # optional analytic Jacobian (N*k x p)
+  val <- cbind(val)
+  k <- NCOL(val)
   colnames(val) <- nn
-  out <- average_estimate(val, D, ic, id_data = id, id_model = id_model,
-                          subset = subset)
+  ## Derivative of the (weighted) average, k x p (dim(f) x dim(theta))
+  G <- if (!is.null(D)) {
+    rowsum(rbind(D) * w, rep(seq_len(k), each = N), reorder = FALSE) / sum(w)
+       } else {
+         meanf <- function(theta) colSums(fval(theta) * w) / sum(w)
+         rbind(numDeriv::jacobian(meanf,
+                             pp, method = lava.options()$Dmethod))
+  }
+  out <- average_estimate(val, G, ic,
+                          id_data = id, id_model = id_model,
+                          w = w)
   out <- labels(out, if (is.null(labels)) nn else labels)
   if (id_drop) index(out) <- NULL
   out$n <- if (is.null(subset)) N else sum(subset)
-  out$derivative <- D
   out
 }
 
@@ -277,20 +287,19 @@ ic_ids <- function(x, ic) {
 }
 
 # Estimate of the average E[f(X; theta)] (or conditional_E[f(X; theta)|W=1])
-average_estimate <- function(val, D, ic, id_data, id_model, subset = NULL) {
+average_estimate <- function(val, expectdf, ic,
+                             id_data, id_model, w = NULL) {
   val <- cbind(val)
   N <- nrow(val)
   k <- ncol(val)
-  w <- if (is.null(subset)) rep(1, N) else as.numeric(subset)
+  if (is.null(w)) w <- rep(1, N)
   psi <- colSums(val * w) / sum(w)
-  G <- rowsum(rbind(D) * w, rep(seq_len(k), each = N), reorder = FALSE) /
-    sum(w)
   if (!any(unique(id_model) %in% unique(id_data))) {
     message("Assuming independence between model iid decomposition and new data frame") #nolint
   }
   e_data <- estimate(coef = psi, id = id_data,
                      IC = w * (val - matrix(psi, N, k, byrow = TRUE)) / mean(w))
-  e_model <- estimate(coef = 0 * psi, IC = ic %*% t(G), id = id_model)
+  e_model <- estimate(coef = 0 * psi, IC = ic %*% t(expectdf), id = id_model)
   e_data + e_model # IC automatically aligned via merge.estimate
 }
 
