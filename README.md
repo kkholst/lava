@@ -1,6 +1,5 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/kkholst/lava/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kkholst/lava/actions/workflows/R-CMD-check.yaml)
@@ -349,7 +348,7 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 2.154s
+#> 100 replications                 Time: 4.259s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
 #> Mean           1.99533         1.00468           0.99066        0.99066
