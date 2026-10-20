@@ -10,7 +10,7 @@ jobs:
   update-readme:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       #   with:
       #     ref: main
       #     fetch-depth: 0
@@ -38,7 +38,6 @@ jobs:
         run: |
           pak::pkg_install("kkholst/gof")
           pak::local_install_deps(".", dependencies=TRUE, upgrade=TRUE)
-          pak::pkg_install(".")
         shell: Rscript {0}
 
       - name: Render README
