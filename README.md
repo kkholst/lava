@@ -301,12 +301,12 @@ Stage 2
 
 ``` r
 pp <- function(mu,var,data,...) cbind(u=mu[,"u"], u2=mu[,"u"]^2+var["u","u"])
-(e <- measurement.error(e1, z~1+x, data=d, predictfun=pp))
+(e <- measurement_error(e1, z~1+x, data=d, predictfun=pp))
 #>             Estimate Std.Err    2.5%   97.5%   P-value
 #> (Intercept)  -1.1181 0.13555 -1.3838 -0.8524 1.602e-16
 #> x            -0.0537 0.14361 -0.3352  0.2278 7.085e-01
-#> u             1.0039 0.12651  0.7560  1.2519 2.093e-15
-#> u2           -0.4718 0.05858 -0.5867 -0.3570 7.974e-16
+#> u             1.0039 0.12651  0.7560  1.2519 2.091e-15
+#> u2           -0.4718 0.05858 -0.5867 -0.3570 7.967e-16
 ```
 
 ``` r
@@ -349,7 +349,7 @@ onerun <- function(...) {
 }
 val <- sim(onerun, 100)
 summary(val, estimate=1:4, se=5:8, short=TRUE)
-#> 100 replications                 Time: 2.154s
+#> 100 replications                 Time: 2.392s
 #> 
 #>         Total.Estimate Direct.Estimate Indirect.Estimate S~x~z.Estimate
 #> Mean           1.99533         1.00468           0.99066        0.99066
