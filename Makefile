@@ -71,12 +71,6 @@ test-slow:
 
 test-all: test test-slow
 
-.PHONE: revdep
-revdep:
-	echo 'pak::pak("r-lib/revdepcheck")' | $(R) 2>&1
-	echo 'devtools::revdep(dependencies = c("Depends", "Imports", "Suggests", "LinkingTo"))' | $(R) 2>&1
-	echo 'revdepcheck::revdep_check(num_workers=8); revdep_report("$(pkg)")' | $(R) 2>&1
-
 coverage:
 	@echo 'covr::report(file="tests/coverage-report.html")' | $(R)
 	@open tests/coverage-report.html
