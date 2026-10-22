@@ -33,8 +33,7 @@ knitr::opts_chunk$set(
 has_mets <- lava:::versioncheck('mets', 1)
 has_geepack <- lava:::versioncheck('geepack', 1)
 ```
-::: {.hidden}
-$$
+
 \newcommand{\arctanh}{\operatorname{arctanh}}
 \newcommand{\indep}{\!\perp\!\!\!\!\perp\!}
 \newcommand{\pr}{\mathbb{P}}
@@ -43,16 +42,14 @@ $$
 \newcommand{\cov}{\mathbb{C}\!\text{ov}}
 \newcommand{\cor}{\mathbb{C}\!\text{or}}
 \newcommand{\IC}{\operatorname{IC}}
-\DeclarePairedDelimiterX{\norm}[1]{\lVert}{\rVert}{#1}
-\DeclarePairedDelimiterX{\abs}[1]{\lvert}{\rvert}{#1}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
 \newcommand{\one}{\mathbf{1}}
 \newcommand{\Dto}{\rightsquigarrow}
 \newcommand{\Pto}{\overset{P}{\longrightarrow}}
 \newcommand{\bm}[1]{\mathbf{#1}}
 \newcommand{\Pz}{P_{0}}
 \newcommand{\op}{o_{P}}
-$$
-:::
 
 # Influence functions
 
