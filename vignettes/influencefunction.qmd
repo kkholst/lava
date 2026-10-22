@@ -33,8 +33,7 @@ knitr::opts_chunk$set(
 has_mets <- lava:::versioncheck('mets', 1)
 has_geepack <- lava:::versioncheck('geepack', 1)
 ```
-::: {.hidden}
-$$
+
 \newcommand{\arctanh}{\operatorname{arctanh}}
 \newcommand{\indep}{\!\perp\!\!\!\!\perp\!}
 \newcommand{\pr}{\mathbb{P}}
@@ -43,16 +42,14 @@ $$
 \newcommand{\cov}{\mathbb{C}\!\text{ov}}
 \newcommand{\cor}{\mathbb{C}\!\text{or}}
 \newcommand{\IC}{\operatorname{IC}}
-\DeclarePairedDelimiterX{\norm}[1]{\lVert}{\rVert}{#1}
-\DeclarePairedDelimiterX{\abs}[1]{\lvert}{\rvert}{#1}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
 \newcommand{\one}{\mathbf{1}}
 \newcommand{\Dto}{\rightsquigarrow}
-<!-- \newcommand{\Dto}{\overset{\mathcal{D}}{\longrightarrow}} -->
+\newcommand{\Pto}{\overset{P}{\longrightarrow}}
 \newcommand{\bm}[1]{\mathbf{#1}}
 \newcommand{\Pz}{P_{0}}
 \newcommand{\op}{o_{P}}
-$$
-:::
 
 # Influence functions
 
@@ -740,7 +737,7 @@ $$
 \sum_{i=1}^{n} \widetilde{\IC}(O_{i}) + \op(1)
 $$
 where $\widetilde{\IC}(O_i) = S_i\E(N_1)^{-1}$, and
-$$\sqrt{n}(\widehat{\theta}-\theta) \rightsquigarrow \mathcal{N}(0,\Omega).$$
+$$\sqrt{n}(\widehat{\theta}-\theta) \Dto \mathcal{N}(0,\Omega).$$
 ::::
 
 ::: {.proof}
@@ -751,7 +748,7 @@ It follows that
 &= \frac{1}{\E N_1}\frac{1}{\sqrt{n}}\sum_{i=1}^{n} S_i +
 \left(\frac{n}{N} - \frac{1}{\E N_1}\right)\sum_{i=1}^{n} S_i + o_p(1).
 \end{align}
-By the CLT $n^{-1/2}\sum_{i=1}^n S_i \rightsquigarrow \mathcal{N}\{0,
+By the CLT $n^{-1/2}\sum_{i=1}^n S_i \Dto \mathcal{N}\{0,
 \var(S_1)\}$
 and $(n/N - \E N_1^{-1}) = o_p(1)$, hence by Slutsky's theorem it follows that
 $\sqrt{n}(\widehat{\theta}-\theta) =
