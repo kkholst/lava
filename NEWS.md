@@ -1,3 +1,9 @@
+# lava (development version)
+  - `sim.default` with `mc.cores` (parallel backend) now uses one L'Ecuyer-CMRG
+    random number stream per replication. Results are reproducible via
+    `set.seed()` or the `seed` argument, do not depend on `mc.cores`, and are
+    identical to the future backend.
+
 # lava 1.10
   - new function `expectation(object, f, data, id, subset)` for marginal
     (standardized) estimates via g-computation. `estimate(x, f,
@@ -33,10 +39,6 @@
     objects
   - new subset/ordering methods: `tail.estimate`, `head.estimate`,
     `rev.estimate`, `sort.estimate`
-  - `sim.default` with `mc.cores` (parallel backend) now uses one L'Ecuyer-CMRG
-    random number stream per replication. Results are reproducible via
-    `set.seed()` or the `seed` argument, do not depend on `mc.cores`, and are
-    identical to the future backend.
 
 # lava 1.9.3
   - `merge.estimate` no longer sort IC by id by default. The previous
