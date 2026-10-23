@@ -1,13 +1,5 @@
 # Changelog
 
-## lava (development version)
-
-- `sim.default` with `mc.cores` (parallel backend) now uses one
-  L’Ecuyer-CMRG random number stream per replication. Results are
-  reproducible via [`set.seed()`](https://rdrr.io/r/base/Random.html) or
-  the `seed` argument, do not depend on `mc.cores`, and are identical to
-  the future backend.
-
 ## lava 1.10
 
 CRAN release: 2026-10-22
@@ -47,6 +39,11 @@ CRAN release: 2026-10-22
   function) with `estimate` objects
 - new subset/ordering methods: `tail.estimate`, `head.estimate`,
   `rev.estimate`, `sort.estimate`
+- `sim.default` with `mc.cores` (parallel backend) now uses one
+  L’Ecuyer-CMRG random number stream per replication. Results are
+  reproducible via [`set.seed()`](https://rdrr.io/r/base/Random.html) or
+  the `seed` argument, do not depend on `mc.cores`, and are identical to
+  the future backend.
 
 ## lava 1.9.3
 
