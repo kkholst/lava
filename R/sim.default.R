@@ -12,7 +12,7 @@
 #' @param R Number of replications or data.frame with parameters
 #' @param f Optional function (i.e., if x is a matrix)
 #' @param colnames Optional column names
-#' @param seed (optional) Seed (needed with cl=TRUE)
+#' @param seed (optional) Seed passed to [set.seed()] before the simulation.
 #' @param args (optional) list of named arguments passed to (mc)mapply
 #' @param iter If TRUE the iteration number is passed as first argument to
 #'   (mc)mapply
@@ -29,6 +29,12 @@
 #'   the `R` replications on all available cores). The output is controlled via
 #'   the progressr package (e.g., `progressr::handlers(global=TRUE)` to enable
 #'   progress information).
+#'
+#'   Each replication uses its own L'Ecuyer-CMRG random number stream derived
+#'   from the current state of the random number generator (or `seed`) as in
+#'   [future.apply::future_mapply()] with `future.seed = TRUE` (the default
+#'   here). The random number generator state of the calling session is restored
+#'   afterwards.
 #' @examples
 #' m <- lvm(y~x+e)
 #' distribution(m,~y) <- 0
@@ -152,7 +158,7 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
     attr(res, "par.index") <- par.index
     attr(res, "seeds") <- seed_sequence
     return(res)
-  })
+  }, add = TRUE)
   if (inherits(R, c("matrix", "data.frame")) || length(R) > 1) {
     if (is.list(R)) {
       parval <- R
@@ -232,6 +238,18 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
   if (!missing(mc.cores)) {
     pp$future.seed <- NULL
     pp$mc.cores <- mc.cores
+    # Forked workers draw a random seed (see ?parallel::mcparallel). Instead,
+    # use one RNG stream per replication (as future.seed = TRUE)
+    pp$seed__ <- rng_streams(repl)
+    pp$FUN <- function(..., seed__) {
+      assign(".Random.seed", seed__, envir = .GlobalEnv)
+      robx(...)
+    }
+    # mapply and mc.cores = 1 run in this process and change .Random.seed.
+    # Restore it first on exit (before the restore of `seed` above)
+    rng_state <- get(".Random.seed", envir = .GlobalEnv)
+    on.exit(assign(".Random.seed", rng_state, envir = .GlobalEnv),
+            add = TRUE, after = FALSE)
   }
 
   if (!missing(mc.cores)) {
@@ -288,6 +306,32 @@ sim.default <- function(x = NULL, R = 100, f = NULL,
   res
 }
 
+# Random number generator seeds for `n` replications, i.e., one L'Ecuyer-CMRG
+# stream per replication. The seeds and the forwarding of the global RNG state
+# replicate `future.apply::future_mapply(..., future.seed = TRUE)` (see
+# `future:::make_rng_seeds`), such that the parallel and the future backends of
+# `sim.default` give identical results.
+rng_streams <- function(n) {
+  oseed <- get(".Random.seed", envir = .GlobalEnv)
+  if (length(oseed) == 7L && oseed[1L] %% 10000L == 407L) {
+    seed <- oseed # already L'Ecuyer-CMRG
+  } else {
+    RNGkind("L'Ecuyer-CMRG") # seeded by a draw from the current generator
+    seed <- get(".Random.seed", envir = .GlobalEnv)
+    assign(".Random.seed", oseed, envir = .GlobalEnv) # also restores RNGkind
+  }
+  # forward the global RNG state (twice as future.apply), such that
+  # consecutive calls use different streams
+  sample.int(1L)
+  sample.int(1L)
+  seeds <- vector("list", n)
+  for (i in seq_len(n)) {
+    seeds[[i]] <- parallel::nextRNGSubStream(seed)
+    seed <- parallel::nextRNGStream(seed)
+  }
+  seeds
+}
+
 #' @export
 cbind.sim <- function(x, ...) {
   res <- cbind(as.data.frame(x), ...)
@@ -336,7 +380,7 @@ as.matrix.sim <- function(x, ...) {
       pidx <- atr[["par.index"]]
       if (!is.null(pidx)) {
         if (is.character(j)) {
-        j <- which(cname %in% j)
+          j <- which(cname %in% j)
         }
         pidx <- lapply(pidx, function(x) which(j %in% x))
         atr[["par.index"]] <- pidx
