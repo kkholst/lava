@@ -31,6 +31,7 @@ jobs:
           extra-packages: |
             any::rmarkdown
             any::pak
+            any::devtools
           needs: website
 
       - name: Install R dependencies
