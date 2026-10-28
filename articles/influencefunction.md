@@ -484,11 +484,11 @@ semfit <- estimate(sem, data = dw)
 ## Robust standard errors
 estimate(semfit)
 #>      Estimate Std.Err     2.5%  97.5%   P-value
-#> y2   -0.01236 0.06099 -0.13190 0.1072 8.394e-01
-#> u     0.21656 0.04596  0.12648 0.3066 2.454e-06
-#> y1~w  0.59037 0.05306  0.48637 0.6944 9.366e-29
-#> y2~w  0.65419 0.05597  0.54449 0.7639 1.470e-31
-#> u~~u  0.19001 0.07609  0.04087 0.3391 1.252e-02
+#> y2   -0.01236 0.06100 -0.13192 0.1072 8.394e-01
+#> u     0.21656 0.04596  0.12648 0.3066 2.457e-06
+#> y1~w  0.59037 0.05306  0.48637 0.6944 9.346e-29
+#> y2~w  0.65419 0.05597  0.54449 0.7639 1.472e-31
+#> u~~u  0.19001 0.07608  0.04089 0.3391 1.251e-02
 ```
 
 ### Example: quantile
@@ -1302,7 +1302,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x56509e569e38>
+#> <bytecode: 0x59c322eb1168>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1905,11 +1905,11 @@ est <- targeted::cate(qmod, amod, data=dw, second.order = FALSE)
 sessionInfo()
 #> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.5 LTS
+#> Running under: Ubuntu 26.04.1 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.32.so;  LAPACK version 3.12.0
 #> 
 #> locale:
 #>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       

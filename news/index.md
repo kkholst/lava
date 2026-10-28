@@ -2,6 +2,8 @@
 
 ## lava 1.10
 
+CRAN release: 2026-10-22
+
 - new function `expectation(object, f, data, id, subset)` for marginal
   (standardized) estimates via g-computation.
   `estimate(x, f, average=TRUE, ...)` now calls `expectation`. The `id`
