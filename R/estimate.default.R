@@ -320,6 +320,12 @@ estimate.default <- function(x=NULL, f=NULL, ...,
         "level=, df=, var.adj=) instead."
       )
   }
+  if (!missing(id) && is.logical(id) && length(id) == 1L) {
+    stop(
+      "Logical values of 'id' ('id = TRUE' or 'id = FALSE') are no longer ",
+      "supported (removed in lava 1.10)."
+    )
+  }
 
   if (!missing(use)) {
     p0 <- c(
