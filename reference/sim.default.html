@@ -13,7 +13,7 @@ future::plan() function)."><meta property="og:image" content="https://kkholst.gi
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,7 +90,7 @@ Carlo experiment. Can be parallelized via the future package (use the
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
-<dd><p>(optional) Seed (needed with cl=TRUE)</p></dd>
+<dd><p>(optional) Seed passed to <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> before the simulation.</p></dd>
 
 
 <dt id="arg-args">args<a class="anchor" aria-label="anchor" href="#arg-args"></a></dt>
@@ -127,6 +127,11 @@ these column indices are extracted (estimate, se, lower, upper, p-val)</p></dd>
 the <code>R</code> replications on all available cores). The output is controlled via
 the progressr package (e.g., <code>progressr::handlers(global=TRUE)</code> to enable
 progress information).</p>
+<p>Each replication uses its own L'Ecuyer-CMRG random number stream derived
+from the current state of the random number generator (or <code>seed</code>) as in
+<code><a href="https://future.apply.futureverse.org/reference/future_mapply.html" class="external-link">future.apply::future_mapply()</a></code> with <code>future.seed = TRUE</code> (the default
+here). The random number generator state of the calling session is restored
+afterwards.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -170,7 +175,7 @@ progress information).</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">val</span> <span class="op">&lt;-</span> <span class="fu">sim</span><span class="op">(</span><span class="va">val</span>,R<span class="op">=</span><span class="fl">40</span>,b0<span class="op">=</span><span class="fl">1</span><span class="op">)</span> <span class="co">## append results</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,confint<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">4</span>,<span class="fl">6</span>,<span class="fl">7</span><span class="op">)</span>,true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 0.947s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.229s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate Estimate.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean     1.0051843  1.0051843</span>
@@ -192,7 +197,7 @@ progress information).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 0.947s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.229s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Model Sandwich</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean    1.005184 1.005184</span>
@@ -210,7 +215,7 @@ progress information).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val</span>,estimate<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,se<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>        names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Model"</span>,<span class="st">"Sandwich"</span><span class="op">)</span>,confint<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 0.947s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 replications					Time: 1.229s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Model  Sandwich</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean     1.0051843 1.0051843</span>
@@ -315,7 +320,7 @@ progress information).</p>
 <span class="r-in"><span><span class="co"># extra columns are stored but excluded from default summary statistics</span></span></span>
 <span class="r-in"><span><span class="va">idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"(Intercept)"</span>, <span class="st">"x"</span>, <span class="st">"niter"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">val2</span>, estimate<span class="op">=</span><span class="va">idx</span>, true<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0.5</span>,<span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 replications					Time: 0.167s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 replications					Time: 0.254s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          (Intercept)        x   niter</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mean       0.0094681 0.536154 11.7000</span>

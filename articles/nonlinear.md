@@ -133,7 +133,7 @@ e2
        y3~u2             1.04508    0.03488 29.95874    <1e-12
     Regressions:
        u2~z              0.86729    0.20271  4.27846 1.882e-05
-       u2~u1_1           2.86231    0.66635  4.29552 1.743e-05
+       u2~u1_1           2.86231    0.66635  4.29553 1.743e-05
        u2~u1_2           0.00344    0.09925  0.03468    0.9723
        u2~u1_3          -0.26270    0.28907 -0.90880    0.3635
        u2~u1_4           0.50778    0.34704  1.46315    0.1434
@@ -158,12 +158,12 @@ head(p)
 ```
 
          u1  Estimate   Std.Err      2.5%     97.5%      P-value
-    p1 -4.0 -9.611119 1.2667850 -12.09397 -7.128266 3.273562e-14
-    p2 -3.9 -9.324887 1.2076265 -11.69179 -6.957983 1.148200e-14
-    p3 -3.8 -9.038656 1.1492866 -11.29122 -6.786096 3.703394e-15
-    p4 -3.7 -8.752425 1.0918965 -10.89250 -6.612347 1.094221e-15
-    p5 -3.6 -8.466193 1.0356142 -10.49596 -6.436427 2.957539e-16
-    p6 -3.5 -8.179962 0.9806303 -10.10196 -6.257962 7.333256e-17
+    p1 -4.0 -9.611119 1.2667839 -12.09397 -7.128268 3.273389e-14
+    p2 -3.9 -9.324887 1.2076255 -11.69179 -6.957985 1.148140e-14
+    p3 -3.8 -9.038656 1.1492857 -11.29121 -6.786097 3.703201e-15
+    p4 -3.7 -8.752425 1.0918957 -10.89250 -6.612348 1.094165e-15
+    p5 -3.6 -8.466193 1.0356134 -10.49596 -6.436428 2.957390e-16
+    p6 -3.5 -8.179962 0.9806297 -10.10196 -6.257963 7.332901e-17
 
 The fitted function can be obtained with the following code:
 
@@ -325,11 +325,11 @@ ee1 <- twostage(mm1, model2=mm2, data=d, predict.fun=pred)
 estimate(ee1,keep="u2~u",regex=TRUE)
 ```
 
-            Estimate Std.Err     2.5%    97.5% P-value
-    u2~u2    0.09419  0.1218 -0.14444  0.33282 0.43914
-    u2~u1    0.38153  0.2040 -0.01838  0.78145 0.06150
-    u2~u1:g  0.97683  0.3799  0.23224  1.72141 0.01013
-    u2~u2:g -0.32521  0.1596 -0.63811 -0.01232 0.04164
+            Estimate Std.Err     2.5%    97.5%  P-value
+    u2~u2     0.2195  0.2674 -0.30452  0.74351 0.411658
+    u2~u1     0.3288  0.1209  0.09181  0.56570 0.006541
+    u2~u1:g   0.8417  0.5677 -0.27100  1.95441 0.138179
+    u2~u2:g  -0.2802  0.1083 -0.49243 -0.06802 0.009647
 
 A formal test show no statistically significant effect of this
 interaction
@@ -341,15 +341,15 @@ summary(estimate(ee1,keep="(:g)", regex=TRUE))
 
     Call: estimate.default(x = ee1, keep = "(:g)", regex = TRUE)
     ────────────────────────────────────────────────────────────
-            Estimate Std.Err    2.5%    97.5% P-value
-    u2~u1:g   0.9768  0.3799  0.2322  1.72141 0.01013
-    u2~u2:g  -0.3252  0.1596 -0.6381 -0.01232 0.04164
+            Estimate Std.Err    2.5%    97.5%  P-value
+    u2~u1:g   0.8417  0.5677 -0.2710  1.95441 0.138179
+    u2~u2:g  -0.2802  0.1083 -0.4924 -0.06802 0.009647
     ────────────────────────────────────────────────────────────
     Null Hypothesis:
       [u2~u1:g] = 0
       [u2~u2:g] = 0
 
-    chisq = 24.9756, df = 2, p-value = 3.772e-06
+    chisq = 9.0003, df = 2, p-value = 0.01111
 
 ## Mixture models
 
@@ -515,7 +515,7 @@ legend("bottomright", c("Gaussian","Mixture"),
 sessionInfo()
 ```
 
-    R version 4.6.1 (2026-06-24)
+    R version 4.6.2 (2026-10-29)
     Platform: x86_64-pc-linux-gnu
     Running under: Ubuntu 26.04.1 LTS
 
@@ -536,21 +536,21 @@ sessionInfo()
     [1] stats     graphics  grDevices utils     datasets  methods   base
 
     other attached packages:
-    [1] lava_1.10
+    [1] lava_1.10.0.9001
 
     loaded via a namespace (and not attached):
      [1] mets_1.3.12            cli_3.6.6              knitr_1.52
      [4] rlang_1.3.0            xfun_0.62              otel_0.2.0
      [7] generics_0.1.4         jsonlite_2.0.0         future.apply_1.21.0
     [10] listenv_1.1.0          htmltools_0.5.9        graph_1.90.0
-    [13] stats4_4.6.1           rmarkdown_2.32         grid_4.6.1
+    [13] stats4_4.6.2           rmarkdown_2.32         grid_4.6.2
     [16] evaluate_1.0.5         fastmap_1.2.0          mvtnorm_1.4-2
     [19] numDeriv_2016.8-1.1    yaml_2.3.12            timereg_2.0.7
-    [22] compiler_4.6.1         codetools_0.2-20       Rcpp_1.1.2
-    [25] future_1.80.0          Rgraphviz_2.56.0       lattice_0.22-9
-    [28] digest_0.6.39          parallelly_1.48.0      parallel_4.6.1
-    [31] splines_4.6.1          Matrix_1.7-5           RcppArmadillo_15.6.2-1
-    [34] tools_4.6.1            globals_0.20.0         survival_3.8-6
+    [22] compiler_4.6.2         codetools_0.2-20       Rcpp_1.1.2
+    [25] future_1.80.0          Rgraphviz_2.56.0       lattice_0.23-1
+    [28] digest_0.6.39          parallelly_1.48.0      parallel_4.6.2
+    [31] splines_4.6.2          Matrix_1.7-6           RcppArmadillo_15.6.2-1
+    [34] tools_4.6.2            globals_0.20.0         survival_3.8-12
     [37] BiocGenerics_0.58.1   
 
 ## Bibliography

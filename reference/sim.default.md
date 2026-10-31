@@ -46,7 +46,9 @@ sim(
 
 - seed:
 
-  (optional) Seed (needed with cl=TRUE)
+  (optional) Seed passed to
+  [`set.seed()`](https://rdrr.io/r/base/Random.html) before the
+  simulation.
 
 - args:
 
@@ -83,6 +85,12 @@ function (e.g., `future::plan(multisession())` to distribute the
 calculations over the `R` replications on all available cores). The
 output is controlled via the progressr package (e.g.,
 `progressr::handlers(global=TRUE)` to enable progress information).
+
+Each replication uses its own L'Ecuyer-CMRG random number stream derived
+from the current state of the random number generator (or `seed`) as in
+[`future.apply::future_mapply()`](https://future.apply.futureverse.org/reference/future_mapply.html)
+with `future.seed = TRUE` (the default here). The random number
+generator state of the calling session is restored afterwards.
 
 ## See also
 
@@ -128,7 +136,7 @@ val
 
 val <- sim(val,R=40,b0=1) ## append results
 summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
-#> 50 replications                  Time: 0.947s
+#> 50 replications                  Time: 1.229s
 #> 
 #>           Estimate Estimate.1
 #> Mean     1.0051843  1.0051843
@@ -150,7 +158,7 @@ summary(val,estimate=c(1,1),confint=c(3,4,6,7),true=c(1,1))
 #> 
 
 summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
-#> 50 replications                  Time: 0.947s
+#> 50 replications                  Time: 1.229s
 #> 
 #>            Model Sandwich
 #> Mean    1.005184 1.005184
@@ -168,7 +176,7 @@ summary(val,estimate=c(1,1),se=c(2,5),names=c("Model","Sandwich"))
 #> 
 summary(val,estimate=c(1,1),se=c(2,5),true=c(1,1),
         names=c("Model","Sandwich"),confint=TRUE)
-#> 50 replications                  Time: 0.947s
+#> 50 replications                  Time: 1.229s
 #> 
 #>              Model  Sandwich
 #> Mean     1.0051843 1.0051843
@@ -273,7 +281,7 @@ val2
 # extra columns are stored but excluded from default summary statistics
 idx <- c("(Intercept)", "x", "niter")
 summary(val2, estimate=idx, true=c(0,0.5,NA))
-#> 10 replications                  Time: 0.167s
+#> 10 replications                  Time: 0.254s
 #> 
 #>          (Intercept)        x   niter
 #> Mean       0.0094681 0.536154 11.7000
