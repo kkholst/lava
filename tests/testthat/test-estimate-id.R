@@ -149,6 +149,10 @@ test_that("id=NULL removes the id (index)", {
   expect_error(merge(e0, e0), "Need id")
   expect_equal(vcov(merge(e0, e0, id = NULL))[1:2, 1:2], vcov(e))
   expect_equal(vcov(merge(e0, e0, paired = TRUE)), vcov(merge(e, e)))
+  expect_equal(
+    IC(merge(e, e, id = TRUE)), IC(merge(e0, e0, paired = TRUE)),
+    ignore_attr = TRUE
+  )
 })
 
 test_that("cluster aggregation of IF (stack)", {
