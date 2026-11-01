@@ -113,6 +113,74 @@ test_that("sim.default exported seeds reproduce results (mc.cores = 1)", {
   }
 })
 
+test_that("sim.default with mc.cores is reproducible", {
+  skip_on_os("windows")
+  foo <- function(...) rnorm(1)
+  r1 <- sim(foo, R = 10, seed = 1, mc.cores = 2L)
+  expect_identical(as.numeric(sim(foo, R = 10, seed = 1, mc.cores = 2L)),
+                   as.numeric(r1))
+  # independent of the number of cores and of forking
+  expect_identical(as.numeric(sim(foo, R = 10, seed = 1, mc.cores = 1L)),
+                   as.numeric(r1))
+  expect_identical(as.numeric(sim(foo, R = 10, seed = 1, mc.cores = NULL)),
+                   as.numeric(r1))
+
+  # set.seed instead of the seed argument
+  set.seed(1)
+  r2 <- sim(foo, R = 10, mc.cores = 2L)
+  r3 <- sim(foo, R = 10, mc.cores = 2L) # continues from the forwarded state
+  set.seed(1)
+  expect_identical(as.numeric(sim(foo, R = 10, mc.cores = 2L)),
+                   as.numeric(r2))
+  expect_false(any(as.numeric(r2) %in% as.numeric(r3)))
+
+  # exported seeds reproduce results from the forked processes
+  seeds <- attr(r1, "seeds")
+  for (i in seq_len(10)) {
+    assign(".Random.seed", seeds[[i]], envir = .GlobalEnv)
+    expect_equal(foo(), as.numeric(r1[i, 1]))
+  }
+})
+
+test_that("sim.default gives identical results with future and mc.cores", {
+  # relies on mirroring the RNG streams of future.apply (future.seed = TRUE)
+  skip_on_cran()
+  skip_on_os("windows")
+  future::plan("sequential")
+  foo <- function(...) rnorm(1)
+
+  for (kind in c("Mersenne-Twister", "L'Ecuyer-CMRG")) {
+    RNGkind(kind)
+    expect_identical(as.numeric(sim(foo, R = 10, seed = 1, mc.cores = 2L)),
+                     as.numeric(sim(foo, R = 10, seed = 1)))
+    # consecutive calls without seed (forwarding of the RNG state)
+    set.seed(1)
+    r_mc <- c(sim(foo, R = 5, mc.cores = 2L), sim(foo, R = 5, mc.cores = 2L))
+    set.seed(1)
+    r_future <- c(sim(foo, R = 5), sim(foo, R = 5))
+    expect_identical(r_mc, r_future)
+  }
+})
+
+test_that("sim.default restores the RNG state of the caller", {
+  foo <- function(...) rnorm(1)
+  future::plan("sequential")
+  set.seed(1)
+  old_seed <- get(".Random.seed", envir = .GlobalEnv)
+  for (mc in list(NULL, 1L)) {
+    sim(foo, R = 5, seed = 2, mc.cores = mc)
+    expect_identical(get(".Random.seed", envir = .GlobalEnv), old_seed)
+  }
+  sim(foo, R = 5, seed = 2)
+  expect_identical(get(".Random.seed", envir = .GlobalEnv), old_seed)
+
+  # RNG streams of the replications do not change the RNG kind of the caller
+  kind <- RNGkind()
+  sim(foo, R = 5, mc.cores = NULL)
+  sim(foo, R = 5, mc.cores = 1L)
+  expect_identical(RNGkind(), kind)
+})
+
 test_that("sim.default subsets", {
   onerun <- function(...) estimate(coef=runif(2),
                                    vcov=diag(runif(2)),

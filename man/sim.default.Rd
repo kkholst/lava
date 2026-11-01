@@ -29,7 +29,7 @@
 
 \item{colnames}{Optional column names}
 
-\item{seed}{(optional) Seed (needed with cl=TRUE)}
+\item{seed}{(optional) Seed passed to \code{\link[=set.seed]{set.seed()}} before the simulation.}
 
 \item{args}{(optional) list of named arguments passed to (mc)mapply}
 
@@ -58,6 +58,12 @@ To parallelize the calculation use the \code{\link[future:plan]{future::plan()}}
 the \code{R} replications on all available cores). The output is controlled via
 the progressr package (e.g., \code{progressr::handlers(global=TRUE)} to enable
 progress information).
+
+Each replication uses its own L'Ecuyer-CMRG random number stream derived
+from the current state of the random number generator (or \code{seed}) as in
+\code{\link[future.apply:future_mapply]{future.apply::future_mapply()}} with \code{future.seed = TRUE} (the default
+here). The random number generator state of the calling session is restored
+afterwards.
 }
 \examples{
 m <- lvm(y~x+e)
