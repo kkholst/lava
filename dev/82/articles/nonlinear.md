@@ -515,7 +515,7 @@ legend("bottomright", c("Gaussian","Mixture"),
 sessionInfo()
 ```
 
-    R version 4.6.1 (2026-06-24)
+    R version 4.6.2 (2026-10-29)
     Platform: x86_64-pc-linux-gnu
     Running under: Ubuntu 26.04.1 LTS
 
@@ -536,21 +536,21 @@ sessionInfo()
     [1] stats     graphics  grDevices utils     datasets  methods   base
 
     other attached packages:
-    [1] lava_1.10.0.9000
+    [1] lava_1.10.0.9001
 
     loaded via a namespace (and not attached):
      [1] mets_1.3.12            cli_3.6.6              knitr_1.52
      [4] rlang_1.3.0            xfun_0.62              otel_0.2.0
      [7] generics_0.1.4         jsonlite_2.0.0         future.apply_1.21.0
     [10] listenv_1.1.0          htmltools_0.5.9        graph_1.90.0
-    [13] stats4_4.6.1           rmarkdown_2.32         grid_4.6.1
+    [13] stats4_4.6.2           rmarkdown_2.32         grid_4.6.2
     [16] evaluate_1.0.5         fastmap_1.2.0          mvtnorm_1.4-2
     [19] numDeriv_2016.8-1.1    yaml_2.3.12            timereg_2.0.7
-    [22] compiler_4.6.1         codetools_0.2-20       Rcpp_1.1.2
-    [25] future_1.80.0          Rgraphviz_2.56.0       lattice_0.22-9
-    [28] digest_0.6.39          parallelly_1.48.0      parallel_4.6.1
-    [31] splines_4.6.1          Matrix_1.7-5           RcppArmadillo_15.6.2-1
-    [34] tools_4.6.1            globals_0.20.0         survival_3.8-6
+    [22] compiler_4.6.2         codetools_0.2-20       Rcpp_1.1.2
+    [25] future_1.80.0          Rgraphviz_2.56.0       lattice_0.23-1
+    [28] digest_0.6.39          parallelly_1.50.0      parallel_4.6.2
+    [31] splines_4.6.2          Matrix_1.7-6           RcppArmadillo_15.6.2-1
+    [34] tools_4.6.2            globals_0.20.0         survival_3.8-12
     [37] BiocGenerics_0.58.1   
 
 ## Bibliography

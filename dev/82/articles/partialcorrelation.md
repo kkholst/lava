@@ -489,7 +489,7 @@ tanh(confint(e3b, 'z', profile=TRUE))
 sessionInfo()
 ```
 
-    R version 4.6.1 (2026-06-24)
+    R version 4.6.2 (2026-10-29)
     Platform: x86_64-pc-linux-gnu
     Running under: Ubuntu 26.04.1 LTS
 
@@ -510,22 +510,22 @@ sessionInfo()
     [1] stats     graphics  grDevices utils     datasets  methods   base
 
     other attached packages:
-    [1] lava_1.10.0.9000
+    [1] lava_1.10.0.9001
 
     loaded via a namespace (and not attached):
      [1] mets_1.3.12            progressr_1.1.0        cli_3.6.6
      [4] knitr_1.52             rlang_1.3.0            xfun_0.62
      [7] otel_0.2.0             generics_0.1.4         jsonlite_2.0.0
     [10] future.apply_1.21.0    listenv_1.1.0          htmltools_0.5.9
-    [13] graph_1.90.0           stats4_4.6.1           rmarkdown_2.32
-    [16] grid_4.6.1             evaluate_1.0.5         fastmap_1.2.0
+    [13] graph_1.90.0           stats4_4.6.2           rmarkdown_2.32
+    [16] grid_4.6.2             evaluate_1.0.5         fastmap_1.2.0
     [19] mvtnorm_1.4-2          numDeriv_2016.8-1.1    yaml_2.3.12
-    [22] timereg_2.0.7          compiler_4.6.1         codetools_0.2-20
+    [22] timereg_2.0.7          compiler_4.6.2         codetools_0.2-20
     [25] Rcpp_1.1.2             future_1.80.0          Rgraphviz_2.56.0
-    [28] lattice_0.22-9         digest_0.6.39          parallelly_1.48.0
-    [31] parallel_4.6.1         splines_4.6.1          Matrix_1.7-5
-    [34] RcppArmadillo_15.6.2-1 tools_4.6.1            globals_0.20.0
-    [37] survival_3.8-6         BiocGenerics_0.58.1   
+    [28] lattice_0.23-1         digest_0.6.39          parallelly_1.50.0
+    [31] parallel_4.6.2         splines_4.6.2          Matrix_1.7-6
+    [34] RcppArmadillo_15.6.2-1 tools_4.6.2            globals_0.20.0
+    [37] survival_3.8-12        BiocGenerics_0.58.1   
 
 ## Bibliography
 

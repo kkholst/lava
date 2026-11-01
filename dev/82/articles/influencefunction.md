@@ -1302,7 +1302,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x5afa5bee43c8>
+#> <bytecode: 0x570a44072fb8>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1903,7 +1903,7 @@ est <- targeted::cate(qmod, amod, data=dw, second.order = FALSE)
 ``` r
 
 sessionInfo()
-#> R version 4.6.1 (2026-06-24)
+#> R version 4.6.2 (2026-10-29)
 #> Platform: x86_64-pc-linux-gnu
 #> Running under: Ubuntu 26.04.1 LTS
 #> 
@@ -1924,25 +1924,25 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] survival_3.8-6   lava_1.10.0.9000
+#> [1] survival_3.8-12  lava_1.10.0.9001
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] Matrix_1.7-5           future.apply_1.21.0    jsonlite_2.0.0        
-#>  [4] dplyr_1.2.1            compiler_4.6.1         tidyselect_1.2.1      
-#>  [7] Rcpp_1.1.2             parallel_4.6.1         tidyr_1.3.2           
-#> [10] globals_0.20.0         splines_4.6.1          yaml_2.3.12           
-#> [13] fastmap_1.2.0          lattice_0.22-9         R6_2.6.1              
+#>  [1] Matrix_1.7-6           future.apply_1.21.0    jsonlite_2.0.0        
+#>  [4] dplyr_1.2.1            compiler_4.6.2         tidyselect_1.2.1      
+#>  [7] Rcpp_1.1.2             parallel_4.6.2         tidyr_1.3.2           
+#> [10] globals_0.20.0         splines_4.6.2          yaml_2.3.12           
+#> [13] fastmap_1.2.0          lattice_0.23-1         R6_2.6.1              
 #> [16] generics_0.1.4         knitr_1.52             backports_1.5.1       
-#> [19] MASS_7.3-65            tibble_3.3.1           future_1.80.0         
+#> [19] MASS_7.3-66            tibble_3.3.1           future_1.80.0         
 #> [22] pillar_1.11.1          rlang_1.3.0            broom_1.0.13          
 #> [25] xfun_0.62              otel_0.2.0             cli_3.6.6             
-#> [28] magrittr_2.0.5         digest_0.6.39          grid_4.6.1            
+#> [28] magrittr_2.0.5         digest_0.6.39          grid_4.6.2            
 #> [31] mvtnorm_1.4-2          geepack_1.3.13         lifecycle_1.0.5       
 #> [34] RcppArmadillo_15.6.2-1 timereg_2.0.7          vctrs_0.7.3           
 #> [37] evaluate_1.0.5         glue_1.8.1             numDeriv_2016.8-1.1   
-#> [40] listenv_1.1.0          codetools_0.2-20       parallelly_1.48.0     
+#> [40] listenv_1.1.0          codetools_0.2-20       parallelly_1.50.0     
 #> [43] purrr_1.2.2            rmarkdown_2.32         pkgconfig_2.0.3       
-#> [46] tools_4.6.1            htmltools_0.5.9        mets_1.3.12
+#> [46] tools_4.6.2            htmltools_0.5.9        mets_1.3.12
 ```
 
 ## Bibliography
