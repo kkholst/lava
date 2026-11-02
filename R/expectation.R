@@ -29,14 +29,19 @@
 #' @param subset (optional) subpopulation on which the average is conditioned
 #'   (conditional marginal mean estimate). Either a logical vector (or numeric
 #'   0/1 vector) with one value per value of `f`, a column name of `data`, or a
-#'   one-sided formula evaluated in `data` (e.g., `~ a == 1 & z > 0`). Note
-#'   that `subset` uses standard evaluation, i.e., `subset = a == 1` is
-#'   evaluated in the calling environment and not in `data`. As for model
-#'   formulas (see [stats::model.frame]), the variables of a formula `subset`
-#'   are looked up in the columns of `data` and then in the environment where
-#'   the formula was created (not the environment from which `expectation` is
-#'   called).
+#'   one-sided formula evaluated in `data` (e.g., `~ a == 1 & z > 0`). Note that
+#'   `subset` uses standard evaluation, i.e., `subset = a == 1` is evaluated in
+#'   the calling environment and not in `data`. As for model formulas (see
+#'   [stats::model.frame]), the variables of a formula `subset` are looked up in
+#'   the columns of `data` and then in the environment where the formula was
+#'   created (not the environment from which `expectation` is called).
 #' @param labels (optional) character vector of parameter names
+#' @param details (optional) if TRUE extra information from the estimation
+#'   procedure will be stored in the output as attributes: `ic.theta` contains
+#'   the term \eqn{E[Df(theta) s]IC(theta)} where \eqn{Df} is gradient of `f`
+#'   evaluted in the data and parameter estimate of `object` and `s` is the
+#'   subset indicator. \eqn{IF(theta)} is the influence function of
+#'   `object`.
 #' @param ... additional arguments passed to `f`
 #' @return `estimate` object
 #' @details
@@ -91,7 +96,8 @@
 #'
 #' ## Simple mean of known function
 #' expectation(~ 1 / (1+z^2), data=d, subset = ~x, labels="p")
-expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
+expectation <- function(f, object, data, id, subset, labels = NULL,
+                        details = FALSE, ...) {
 
   if (!missing(subset)) {
     subset <- tryCatch(subset, error = function(e) {
@@ -182,18 +188,27 @@ expectation <- function(f, object, data, id, subset, labels = NULL, ...) {
   colnames(val) <- nn
   ## Derivative of the (weighted) average, k x p (dim(f) x dim(theta))
   G <- if (!is.null(D)) {
-    rowsum(rbind(D) * w, rep(seq_len(k), each = N), reorder = FALSE) / sum(w)
+         rowsum(rbind(D) * w, rep(seq_len(k), each = N), reorder = FALSE) / sum(w)
        } else {
          meanf <- function(theta) colSums(fval(theta) * w) / sum(w)
          rbind(numDeriv::jacobian(meanf,
-                             pp, method = lava.options()$Dmethod))
-  }
-  out <- average_estimate(val, G, ic,
+                                  pp, method = lava.options()$Dmethod))
+       }
+  est <- average_estimate(val, G, ic,
                           id_data = id, id_model = id_model,
                           w = w)
+  # est containts two estimate objects. The first corresponds to the estimate
+  # and IF for the mean of f(Z;theta) with 'theta' known the second element
+  # contains the IF corresponding to the uncertainty introduced by estimating
+  # theta (the coef for this object is set to zero).
+  # The IF's are then automatically aligned via merge.estimate
+  out <- est[[1]] + est[[2]]
   out <- labels(out, if (is.null(labels)) nn else labels)
   if (id_drop) index(out) <- NULL
   out$n <- if (is.null(subset)) N else sum(subset)
+  if (details) {
+    out <- structure(out, ic.theta=IC(est[[2]])*mean(w))
+  }
   out
 }
 
@@ -300,7 +315,7 @@ average_estimate <- function(val, expectdf, ic,
   e_data <- estimate(coef = psi, id = id_data,
                      IC = w * (val - matrix(psi, N, k, byrow = TRUE)) / mean(w))
   e_model <- estimate(coef = 0 * psi, IC = ic %*% t(expectdf), id = id_model)
-  e_data + e_model # IC automatically aligned via merge.estimate
+  list(e_data, e_model) # ICs automatically aligned via merge.estimate
 }
 
 checkarg <- function(object, f, arg=NULL) {
