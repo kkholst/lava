@@ -1302,7 +1302,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x626f1eecdf08>
+#> <bytecode: 0x59ac2b4bfb58>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1933,7 +1933,7 @@ sessionInfo()
 #> [10] globals_0.20.0         splines_4.6.2          yaml_2.3.12           
 #> [13] fastmap_1.2.0          lattice_0.23-1         R6_2.6.1              
 #> [16] generics_0.1.4         knitr_1.52             backports_1.5.1       
-#> [19] MASS_7.3-66            tibble_3.3.1           future_1.80.0         
+#> [19] MASS_7.3-66            tibble_3.3.1           future_1.82.0         
 #> [22] pillar_1.11.1          rlang_1.3.0            broom_1.0.13          
 #> [25] xfun_0.62              otel_0.2.0             cli_3.6.6             
 #> [28] magrittr_2.0.5         digest_0.6.39          grid_4.6.2            
