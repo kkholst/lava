@@ -504,8 +504,7 @@ test_that("expection: details = TRUE", {
     fam <- family(imputation.model$fit)
     if (fam$family == "binomial" && fam$link == "logit") {
       nabla <- pred * (1 - pred)
-    } else if (fam$family == "gaussian" && fam$link == "identity") {
-      nabla <- 1
+    } else if (fam$family == "gaussian" && fam$link == "identity") {      nabla <- 1
     } else {
       stop("Unsupported family/link combination")
     }
