@@ -83,6 +83,7 @@ reference:
   - pcor
   - plot.lvm
   - predict.lvm
+  - predict.estimate.mmrm
   - predict_glm
   - predictlvm
   - scheffe
@@ -135,6 +136,7 @@ reference:
   - rotate2
   - tr
   - vec
+  - vec2sigma
 
 - title: "Utility functions"
   contents:
@@ -148,6 +150,7 @@ reference:
   - Print
   - click
   - commutation
+  - complete_visits
   - csplit
   - foldr
   - getSAS
