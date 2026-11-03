@@ -1,29 +1,4 @@
-library("mmrm")
-library("lava")
-
-data(fev_data, package = "mmrm")
-ctrl <- list(eval.max = 1000, iter.max = 1000, rel.tol = 1e-9)
-
-## Lightweight estimate.mmrm object on the sigma scale (avoids computing the
-## influence function)
-est_obj <- function(fit) {
-  structure(list(coef = c(fit$beta_est, targeted:::mmrm2sigma(fit)()), fit = fit,
-                 sigma = TRUE),
-            class = c("estimate.mmrm", "estimate"))
-}
-
-## mmrm's conditional prediction at visit 'time' for each subject
-pred_mmrm <- function(fit, data, time) {
-  fp <- fit$formula_parts
-  d <- complete_visits(data, fp$subject_var, fp$visit_var, fp$response_var,
-                   levels(fit$tmb_data$full_frame[[fp$visit_var]]))
-  pm <- predict(fit, newdata = d, conditional = TRUE)
-  rr <- which(as.integer(d[[fp$visit_var]]) == time)
-  setNames(pm[rr], as.character(d[[fp$subject_var]][rr]))
-}
-
-## complete_visits
-test_complete_visits <- function() {
+test_that("complete_visits", {
   d <- data.frame(id = c("b", "b", "a", "a", "c"),
                   visit = c(3, 1, 1, 2, 2),
                   y = c(1, 2, 3, 4, 5), x = c(10, 20, 30, 40, 50))
@@ -46,11 +21,33 @@ test_complete_visits <- function() {
   ## Errors
   expect_error(complete_visits(d, "id", "visit", levels = 1:2))
   expect_error(complete_visits(rbind(d, d[1, ]), "id", "visit"))
-}
-test_complete_visits()
+})
 
-## Comparison with the conditional predictions of mmrm
-test_predict_vs_mmrm <- function(formula) {
+skip_if_not_installed("mmrm")
+library("mmrm")
+
+data(fev_data, package = "mmrm")
+ctrl <- list(eval.max = 1000, iter.max = 1000, rel.tol = 1e-9)
+
+## Lightweight estimate.mmrm object on the sigma scale (avoids computing the
+## influence function)
+est_obj <- function(fit) {
+  structure(list(coef = c(fit$beta_est, mmrm2sigma(fit)()), fit = fit,
+                 sigma = TRUE),
+            class = c("estimate.mmrm", "estimate"))
+}
+
+## mmrm's conditional prediction at visit 'time' for each subject
+pred_mmrm <- function(fit, data, time) {
+  fp <- fit$formula_parts
+  d <- complete_visits(data, fp$subject_var, fp$visit_var, fp$response_var,
+                       levels(fit$tmb_data$full_frame[[fp$visit_var]]))
+  pm <- predict(fit, newdata = d, conditional = TRUE)
+  rr <- which(as.integer(d[[fp$visit_var]]) == time)
+  setNames(pm[rr], as.character(d[[fp$subject_var]][rr]))
+}
+
+check_predict_vs_mmrm <- function(formula) {
   ## Data with entire rows removed
   dsub <- subset(fev_data, !is.na(FEV1) | VISITN %% 2 == 0)
   for (w in list(NULL, fev_data$WEIGHT)) {
@@ -59,26 +56,27 @@ test_predict_vs_mmrm <- function(formula) {
     e <- est_obj(fit)
     for (time in 1:4) {
       pr <- predict(e, time = time)
-      expect_equal(length(pr), nlevels(fev_data$USUBJID))
-      expect_equivalent(pr, pred_mmrm(fit, fev_data, time)[names(pr)],
-                        tolerance = 1e-8)
+      expect_length(pr, nlevels(fev_data$USUBJID))
+      expect_equal(pr, pred_mmrm(fit, fev_data, time)[names(pr)],
+                   tolerance = 1e-8, ignore_attr = TRUE)
       obs <- attr(pr, "observed")
       y <- fev_data$FEV1[fev_data$AVISIT == levels(fev_data$AVISIT)[time]]
       expect_equal(obs, !is.na(y))
-      expect_equivalent(pr[obs], y[obs])
+      expect_equal(pr[obs], y[obs], ignore_attr = TRUE)
 
       pr <- predict(e, newdata = dsub, time = time)
-      expect_equivalent(pr, pred_mmrm(fit, dsub, time)[names(pr)],
-                        tolerance = 1e-8)
+      expect_equal(pr, pred_mmrm(fit, dsub, time)[names(pr)],
+                   tolerance = 1e-8, ignore_attr = TRUE)
     }
   }
 }
-test_predict_vs_mmrm(FEV1 ~ ARMCD * AVISIT + us(AVISIT | USUBJID))
-test_predict_vs_mmrm(FEV1 ~ ARMCD * AVISIT + toep(AVISIT | ARMCD / USUBJID))
 
+test_that("predict.estimate.mmrm agrees with conditional predictions of mmrm", {
+  check_predict_vs_mmrm(FEV1 ~ ARMCD * AVISIT + us(AVISIT | USUBJID))
+  check_predict_vs_mmrm(FEV1 ~ ARMCD * AVISIT + toep(AVISIT | ARMCD / USUBJID))
+})
 
-## Delta method
-test_predict_delta <- function() {
+test_that("predict.estimate.mmrm with delta method", {
   d <- subset(fev_data, USUBJID %in% levels(USUBJID)[1:80])
   fit <- mmrm(FEV1 ~ ARMCD * AVISIT + us(AVISIT | USUBJID), data = d,
               reml = FALSE, optimizer = "nlminb", optimizer_control = ctrl)
@@ -86,15 +84,15 @@ test_predict_delta <- function() {
   newd <- subset(d, USUBJID %in% c("PT1", "PT2", "PT3"))
   ## PT1 is unobserved at the first visit
   pr <- predict(e, newdata = newd, time = 1)
-  expect_true(!all(attr(pr, "observed")))
+  expect_false(all(attr(pr, "observed")))
   ep <- estimate(e, function(p) {
     mean(predict(e, p = p, newdata = newd, time = 1))
   })
-  expect_equivalent(coef(ep), mean(pr))
-  expect_true(is.finite(vcov(ep)) && vcov(ep) > 0)
+  expect_equal(coef(ep), mean(pr), ignore_attr = TRUE)
+  expect_true(is.finite(vcov(ep)))
+  expect_gt(vcov(ep)[1], 0)
   ## Only observed outcomes: no uncertainty
   expect_true(all(attr(predict(e, newdata = newd), "observed")))
   ep <- estimate(e, function(p) mean(predict(e, p = p, newdata = newd)))
-  expect_equivalent(as.numeric(vcov(ep)), 0)
-}
-test_predict_delta()
+  expect_equal(as.numeric(vcov(ep)), 0)
+})
