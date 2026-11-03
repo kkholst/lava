@@ -57,6 +57,7 @@ Suggests:
     MASS,
     Matrix (>= 1.6.3),
     mets (>= 1.1),
+    mmrm,
     nlme,
     optimx,
     polycor,
