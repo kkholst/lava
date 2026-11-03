@@ -40,8 +40,8 @@
 #'   procedure will be stored in the output as attributes: `ic.theta` contains
 #'   the term \eqn{E[Df(theta) s]IC(theta)} where \eqn{Df} is gradient of `f`
 #'   evaluted in the data and parameter estimate of `object` and `s` is the
-#'   subset indicator. \eqn{IF(theta)} is the influence function of
-#'   `object`.
+#'   subset indicator. \eqn{IC(theta)} is the influence function of
+#'   `object`. The `subset` attribute holds the subset indicator if provided.
 #' @param ... additional arguments passed to `f`
 #' @return `estimate` object
 #' @details
@@ -207,7 +207,10 @@ expectation <- function(f, object, data, id, subset, labels = NULL,
   if (id_drop) index(out) <- NULL
   out$n <- if (is.null(subset)) N else sum(subset)
   if (details) {
-    out <- structure(out, ic.theta=IC(est[[2]])*mean(w))
+    out <- structure(out,
+                     ic.theta = IC(est[[2]]) * mean(w),
+                     subset = subset
+                     )
   }
   out
 }

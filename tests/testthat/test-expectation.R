@@ -486,11 +486,76 @@ test_that("expectation: expressions and quoted arguments", {
   expect_equal(IC(e1), IC(e2), ignore_attr=TRUE)
 })
 
-test_that("expectation: details", {
-  e <- glm(y ~ w1, data=dat) |> estimate()
-  m1 <- expectation(predict, object=e, subset="a",
-                    data=dat, details=TRUE)
+test_that("expection: details = TRUE", {
+  library("targeted")
 
-  # Check that ic.theta is an attribute
-  expect_true(!is.null(attr(m1, "ic.theta")))
+  imputation.model <- learner_glm(y ~ w1, family = binomial())
+  imputation.model$estimate(data = dat, weights = (dat$a == 0) * 1)
+
+  ## Direct influence function correction
+  ## P(I(A = a) / E[I(A = a)] (1 - Delta) \nabla f) IC(theta)
+  ic_reference <- function(data, delta, imputation.model, A, id) {
+    pred <- imputation.model$predict(newdata = data, type = "response")
+    design_matrix <- imputation.model$design(data = data,
+                                             intercept = TRUE,
+                                             response = FALSE)$x
+    IC_epsilon <- IC(imputation.model$fit)
+
+    fam <- family(imputation.model$fit)
+    if (fam$family == "binomial" && fam$link == "logit") {
+      nabla <- pred * (1 - pred)
+    } else if (fam$family == "gaussian" && fam$link == "identity") {
+      nabla <- 1
+    } else {
+      stop("Unsupported family/link combination")
+    }
+    nabla <- nabla * design_matrix
+
+    fun <- function(a) {
+      g <- mean(A == a)
+
+      IC <- t(colMeans((delta == 0) * (A == a) / g * nabla) %*%
+              t(IC_epsilon))
+
+      estimate(coef = 0,
+               IC = IC,
+               id = id,
+               labels = paste0("direct", a))
+    }
+    do.call("merge", lapply(c(1, 0), fun))
+  }
+
+  ref <- ic_reference(data = dat,
+                      delta = dat$z,
+                      imputation.model = imputation.model,
+                      A = dat$a,
+                      id = dat$id)
+
+  expec1 <- expectation(f = lava:::predict.estimate.glm,
+                        object = estimate(imputation.model$fit, id = dat$id),
+                        data = dat,
+                        subset = (dat$a == 1) & (dat$z == 0),
+                        id = dat$id,
+                        details = TRUE)
+  ## P(A (1 - Delta) \ nabla f) IC(theta)
+  ic1 <- attr(expec1, "ic.theta")
+  ic1 <- ic1 / mean(dat$a == 1) # scaling with 1/g(a = 1)
+
+  expec0 <- expectation(f = lava:::predict.estimate.glm,
+                        object = estimate(imputation.model$fit, id = dat$id),
+                        data = dat,
+                        subset = (dat$a == 0) & (dat$z == 0),
+                        id = dat$id,
+                        details = TRUE)
+  ## P((1 - A)(1 - Delta) \ nabla f) IC(theta)
+  ic0 <- attr(expec0, "ic.theta")
+  ic0 <- ic0 / mean(dat$a == 0)
+
+  expect_true(
+    all(abs(ref$IC[,1] - ic1) < 1e-10)
+  )
+  expect_true(
+    all(abs(ref$IC[,2] - ic0) < 1e-10)
+  )
+
 })

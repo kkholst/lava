@@ -45,8 +45,8 @@ created (not the environment from which \code{expectation} is called).}
 procedure will be stored in the output as attributes: \code{ic.theta} contains
 the term \eqn{E[Df(theta) s]IC(theta)} where \eqn{Df} is gradient of \code{f}
 evaluted in the data and parameter estimate of \code{object} and \code{s} is the
-subset indicator. \eqn{IF(theta)} is the influence function of
-\code{object}.}
+subset indicator. \eqn{IC(theta)} is the influence function of
+\code{object}. The \code{subset} attribute holds the subset indicator if provided.}
 
 \item{...}{additional arguments passed to \code{f}}
 }
