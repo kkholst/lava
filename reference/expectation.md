@@ -10,7 +10,7 @@ applications of this function.
 ## Usage
 
 ``` r
-expectation(f, object, data, id, subset, labels = NULL, ...)
+expectation(f, object, data, id, subset, labels = NULL, details = FALSE, ...)
 ```
 
 ## Arguments
@@ -62,6 +62,15 @@ expectation(f, object, data, id, subset, labels = NULL, ...)
 - labels:
 
   (optional) character vector of parameter names
+
+- details:
+
+  (optional) if TRUE extra information from the estimation procedure
+  will be stored in the output as attributes: `ic.theta` contains the
+  term \\E\[Df(theta) s\]IC(theta)\\ where \\Df\\ is gradient of `f`
+  evaluted in the data and parameter estimate of `object` and `s` is the
+  subset indicator. \\IC(theta)\\ is the influence function of `object`.
+  The `subset` attribute holds the subset indicator if provided.
 
 - ...:
 

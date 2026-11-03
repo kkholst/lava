@@ -62,7 +62,7 @@ applications of this function.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">expectation</span><span class="op">(</span><span class="va">f</span>, <span class="va">object</span>, <span class="va">data</span>, <span class="va">id</span>, <span class="va">subset</span>, labels <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">expectation</span><span class="op">(</span><span class="va">f</span>, <span class="va">object</span>, <span class="va">data</span>, <span class="va">id</span>, <span class="va">subset</span>, labels <span class="op">=</span> <span class="cn">NULL</span>, details <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -103,17 +103,25 @@ of <code>data</code>). Defaults to the names of the values of <code>f</code>, an
 <dd><p>(optional) subpopulation on which the average is conditioned
 (conditional marginal mean estimate). Either a logical vector (or numeric
 0/1 vector) with one value per value of <code>f</code>, a column name of <code>data</code>, or a
-one-sided formula evaluated in <code>data</code> (e.g., <code>~ a == 1 &amp; z &gt; 0</code>). Note
-that <code>subset</code> uses standard evaluation, i.e., <code>subset = a == 1</code> is
-evaluated in the calling environment and not in <code>data</code>. As for model
-formulas (see <a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">stats::model.frame</a>), the variables of a formula <code>subset</code>
-are looked up in the columns of <code>data</code> and then in the environment where
-the formula was created (not the environment from which <code>expectation</code> is
-called).</p></dd>
+one-sided formula evaluated in <code>data</code> (e.g., <code>~ a == 1 &amp; z &gt; 0</code>). Note that
+<code>subset</code> uses standard evaluation, i.e., <code>subset = a == 1</code> is evaluated in
+the calling environment and not in <code>data</code>. As for model formulas (see
+<a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">stats::model.frame</a>), the variables of a formula <code>subset</code> are looked up in
+the columns of <code>data</code> and then in the environment where the formula was
+created (not the environment from which <code>expectation</code> is called).</p></dd>
 
 
 <dt id="arg-labels">labels<a class="anchor" aria-label="anchor" href="#arg-labels"></a></dt>
 <dd><p>(optional) character vector of parameter names</p></dd>
+
+
+<dt id="arg-details">details<a class="anchor" aria-label="anchor" href="#arg-details"></a></dt>
+<dd><p>(optional) if TRUE extra information from the estimation
+procedure will be stored in the output as attributes: <code>ic.theta</code> contains
+the term \(E[Df(theta) s]IC(theta)\) where \(Df\) is gradient of <code>f</code>
+evaluted in the data and parameter estimate of <code>object</code> and <code>s</code> is the
+subset indicator. \(IC(theta)\) is the influence function of
+<code>object</code>. The <code>subset</code> attribute holds the subset indicator if provided.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
