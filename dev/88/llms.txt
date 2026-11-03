@@ -501,6 +501,8 @@ Functions for working with Influence Functions
   : Plot path diagram
 - [`predict(`*`<lvm>`*`)`](https://kkholst.github.io/lava/reference/predict.lvm.md)
   : Prediction in structural equation models
+- [`predict(`*`<estimate.mmrm>`*`)`](https://kkholst.github.io/lava/reference/predict.estimate.mmrm.md)
+  : Predictions at a single visit from mmrm models
 - [`predict_glm()`](https://kkholst.github.io/lava/reference/predict_glm.md)
   : Predict from a GLM with modified coefficients
 - [`predictlvm()`](https://kkholst.github.io/lava/reference/predictlvm.md)
@@ -587,6 +589,9 @@ Functions for working with Influence Functions
   operator
 - [`vec()`](https://kkholst.github.io/lava/reference/vec.md) : vec
   operator
+- [`vec2sigma()`](https://kkholst.github.io/lava/reference/vec2sigma.md)
+  [`sigma2vec()`](https://kkholst.github.io/lava/reference/vec2sigma.md)
+  : Covariance matrix from upper-triangular elements
 
 ## Utility functions
 
@@ -620,6 +625,9 @@ Functions for working with Influence Functions
 
 - [`commutation()`](https://kkholst.github.io/lava/reference/commutation.md)
   : Finds the unique commutation matrix
+
+- [`complete_visits()`](https://kkholst.github.io/lava/reference/complete_visits.md)
+  : Expand long-format data
 
 - [`csplit()`](https://kkholst.github.io/lava/reference/csplit.md) :
   Split data into folds
