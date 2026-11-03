@@ -44,6 +44,7 @@
 <url><loc>https://kkholst.github.io/lava/reference/colorbar.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/commutation.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/compare.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/complete_visits.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/complik.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/confband.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/confint.lvmfit.html</loc></url>
@@ -114,6 +115,7 @@
 <url><loc>https://kkholst.github.io/lava/reference/plot.lvm.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/plot.sim.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/plotConf.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/predict.estimate.mmrm.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/predict.lvm.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/predict_glm.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/predictlvm.html</loc></url>
@@ -144,6 +146,7 @@
 <url><loc>https://kkholst.github.io/lava/reference/var_ic.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/vars.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/vec.html</loc></url>
+<url><loc>https://kkholst.github.io/lava/reference/vec2sigma.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/wait.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/wkm.html</loc></url>
 <url><loc>https://kkholst.github.io/lava/reference/wrapvec.html</loc></url>
