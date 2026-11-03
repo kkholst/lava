@@ -69,7 +69,8 @@ expectation(f, object, data, id, subset, labels = NULL, details = FALSE, ...)
   will be stored in the output as attributes: `ic.theta` contains the
   term \\E\[Df(theta) s\]IC(theta)\\ where \\Df\\ is gradient of `f`
   evaluted in the data and parameter estimate of `object` and `s` is the
-  subset indicator. \\IF(theta)\\ is the influence function of `object`.
+  subset indicator. \\IC(theta)\\ is the influence function of `object`.
+  The `subset` attribute holds the subset indicator if provided.
 
 - ...:
 
