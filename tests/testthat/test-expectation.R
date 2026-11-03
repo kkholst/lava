@@ -485,3 +485,12 @@ test_that("expectation: expressions and quoted arguments", {
   expect_equal(coef(e1), coef(e2), ignore_attr=TRUE)
   expect_equal(IC(e1), IC(e2), ignore_attr=TRUE)
 })
+
+test_that("expectation: details", {
+  e <- glm(y ~ w1, data=dat) |> estimate()
+  m1 <- expectation(predict, object=e, subset="a",
+                    data=dat, details=TRUE)
+
+  # Check that ic.theta is an attribute
+  expect_true(!is.null(attr(m1, "ic.theta")))
+})
