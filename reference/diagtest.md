@@ -81,7 +81,7 @@ diagtest(M,exact=TRUE)
 #> ────────────────────────────────────────────────────────────────────────────────
 #>                                                                
 #>  Prevalence         Pr(outcome+)                               
-#>  Test:              Pr( test+ )\n                              
+#>  Test:              Pr( test+ )                                
 #>  Sensitivity (TPR): Pr(test+ | outcome+)                       
 #>  Specificity (TNR): Pr(test- | outcome-)                       
 #>  PPV (Precision):   Pr(outcome+ | test+)                       

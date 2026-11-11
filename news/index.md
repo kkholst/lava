@@ -1,6 +1,6 @@
 # Changelog
 
-## lava (development version)
+## lava 1.11
 
 - `sim.default` with `mc.cores` (parallel backend) now uses one
   L’Ecuyer-CMRG random number stream per replication. Results are

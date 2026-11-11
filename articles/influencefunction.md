@@ -1304,7 +1304,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x630437abe948>
+#> <bytecode: 0x5939db512168>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1869,11 +1869,11 @@ summary(est, transform = exp, labels="OR")
 #> Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, 
 #>     stack = FALSE, keep = keep)
 #> ────────────────────────────────────────────────────────────
-#>       Estimate Std.Err  2.5% 97.5%   P-value
-#> logOR    2.297         1.736 3.039 5.768e-09
+#>    Estimate Std.Err  2.5% 97.5%   P-value
+#> OR    2.297         1.736 3.039 5.768e-09
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [logOR] = 0 
+#>   [OR] = 1 
 #>  
 #> chisq = 33.91, df = 1, p-value = 5.768e-09
 ```
@@ -1923,7 +1923,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] survival_3.8-12  lava_1.10.0.9001
+#> [1] survival_3.8-12 lava_1.11      
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] Matrix_1.7-6           future.apply_1.21.0    jsonlite_2.0.0        

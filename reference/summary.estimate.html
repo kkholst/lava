@@ -13,7 +13,7 @@ been moved here."><meta property="og:image" content="https://kkholst.github.io/l
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,6 +64,7 @@ been moved here.</p>
 <span>  var.adj <span class="op">=</span> <span class="fl">0.25</span>,</span>
 <span>  <span class="va">df</span>,</span>
 <span>  transform <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  print <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -114,6 +115,10 @@ t-distribution with <code>df</code> degrees of freedom)</p></dd>
 confidence interval bounds <em>after</em> inference is performed on the original
 scale. Useful for variance-stabilizing transformations, e.g., compute CIs
 on the <code>atanh</code> (Fisher z) scale and back-transform with <code>tanh</code>.</p></dd>
+
+
+<dt id="arg-labels">labels<a class="anchor" aria-label="anchor" href="#arg-labels"></a></dt>
+<dd><p>(optional) character vector with new parameter names</p></dd>
 
 
 <dt id="arg-print">print<a class="anchor" aria-label="anchor" href="#arg-print"></a></dt>

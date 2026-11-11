@@ -22,6 +22,7 @@ summary(
   var.adj = 0.25,
   df,
   transform = NULL,
+  labels = NULL,
   print = NULL
 )
 ```
@@ -72,6 +73,10 @@ summary(
   interval bounds *after* inference is performed on the original scale.
   Useful for variance-stabilizing transformations, e.g., compute CIs on
   the `atanh` (Fisher z) scale and back-transform with `tanh`.
+
+- labels:
+
+  (optional) character vector with new parameter names
 
 - print:
 

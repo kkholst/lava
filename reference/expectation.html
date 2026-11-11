@@ -19,7 +19,7 @@ applications of this function."><meta property="og:image" content="https://kkhol
 
     <a class="navbar-brand me-2" href="../index.html">lava</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,17 @@ applications of this function.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">expectation</span><span class="op">(</span><span class="va">f</span>, <span class="va">object</span>, <span class="va">data</span>, <span class="va">id</span>, <span class="va">subset</span>, labels <span class="op">=</span> <span class="cn">NULL</span>, details <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">expectation</span><span class="op">(</span></span>
+<span>  <span class="va">f</span>,</span>
+<span>  <span class="va">object</span>,</span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  <span class="va">id</span>,</span>
+<span>  <span class="va">subset</span>,</span>
+<span>  labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  details <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -88,6 +98,10 @@ can be provided to calculate the simple mean (see examples).</p></dd>
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p><code>data.frame</code> over which <code>f</code> is averaged. Defaults to
 <code>model.frame(object)</code> (which is not available for <code>estimate</code> objects).</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>additional arguments passed to <code>f</code></p></dd>
 
 
 <dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
@@ -124,8 +138,8 @@ subset indicator. \(IC(theta)\) is the influence function of
 <code>object</code>. The <code>subset</code> attribute holds the subset indicator if provided.</p></dd>
 
 
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional arguments passed to <code>f</code></p></dd>
+<dt id="arg-args">args<a class="anchor" aria-label="anchor" href="#arg-args"></a></dt>
+<dd><p>(list) arguments to <code>f</code></p></dd>
 
 </dl></div>
     <div class="section level2">

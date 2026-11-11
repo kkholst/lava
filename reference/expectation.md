@@ -10,7 +10,17 @@ applications of this function.
 ## Usage
 
 ``` r
-expectation(f, object, data, id, subset, labels = NULL, details = FALSE, ...)
+expectation(
+  f,
+  object,
+  data,
+  ...,
+  id,
+  subset,
+  labels = NULL,
+  details = FALSE,
+  args = list()
+)
 ```
 
 ## Arguments
@@ -35,6 +45,10 @@ expectation(f, object, data, id, subset, labels = NULL, details = FALSE, ...)
 
   `data.frame` over which `f` is averaged. Defaults to
   `model.frame(object)` (which is not available for `estimate` objects).
+
+- ...:
+
+  additional arguments passed to `f`
 
 - id:
 
@@ -72,9 +86,9 @@ expectation(f, object, data, id, subset, labels = NULL, details = FALSE, ...)
   subset indicator. \\IC(theta)\\ is the influence function of `object`.
   The `subset` attribute holds the subset indicator if provided.
 
-- ...:
+- args:
 
-  additional arguments passed to `f`
+  (list) arguments to `f`
 
 ## Value
 
