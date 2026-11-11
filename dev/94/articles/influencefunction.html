@@ -82,7 +82,7 @@ P_{0})\}=0</span> and <span class="math inline">\mathbb{V}\!\text{ar}\{\operator
 </span> where the empirical variance of the plugin estimator, <span class="math inline">\mathbb{P}_{n}\operatorname{IC}(Z;
 \widehat{P})^{\otimes 2} = \frac{1}{n}\sum_{i=1}^n \operatorname{IC}(Z_{i};
 \widehat{P})\operatorname{IC}(Z_{i};
-\widehat{P})^{\top}</span> can be used to obtain a consistent estimate of the asymptotic variance. Note, in practice the estimate <span class="math inline">\widehat{P}</span> used in the plugin-estimate, needs only to capture the parts of the distribution of <span class="math inline">Z</span> that is necessary to evaluate the IF. In some cases this nuisance parameter can be estimated using flexible machine learning components and in other (parametric) cases be derived directly from <span class="math inline">\widehat{\theta}</span>.</p>
+\widehat{P})^{\top}</span> can be used to obtain a consistent estimate of the asymptotic variance. Note, in practice the estimate <span class="math inline">\widehat{P}</span> used in the plugin-estimate, needs only to capture the parts of the distribution of <span class="math inline">Z</span> that are necessary to evaluate the IF. In some cases this nuisance parameter can be estimated using flexible machine learning components and in other (parametric) cases be derived directly from <span class="math inline">\widehat{\theta}</span>.</p>
 <p>The IFs are easily derived for the parameters of many parametric statistical models as illustrated in the <a href="#example-generalized-linear-model">next example sections</a>. More generally, the IF can also be derived for a smooth target parameter <span class="math inline">\Psi:
 \mathcal{P}\to\mathbb{R}</span> where <span class="math inline">\mathcal{P}</span> is a family of probability distributions forming the statistical model, which often can be left completely non-parametric. Formally, the parameter must be <em>pathwise differentiable</em> see <span class="citation" data-cites="vaart_1998_asymp">(<a href="#ref-vaart_1998_asymp" role="doc-biblioref">Vaart 1998</a>)</span> in the sense that there exists a bounded linear functional <span class="math inline">\dot\Psi\colon
 L_{2}(P_{0})\to\mathbb{R}</span> such that <span class="math inline">[\Psi(P_{t}) - \Psi(P_{0})]t^{-1} \to \dot\Psi(P_{0})(g)</span> as <span class="math inline">t\to 0</span> for any parametric submodel <span class="math inline">P_t</span> with score function <span class="math inline">g(z)= \partial/(\partial t) \log (p_t)(z)|_{t=0}</span>. Riesz’s representation theorem then tells us that the directional derivative has a unique representer, <span class="math inline">\phi_{P_{0}}</span> lying in the closure of the submodel score space (the <em>tangent space</em>), s.t. <span class="math display">\begin{align*}
@@ -194,8 +194,7 @@ Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent covariates <spa
 <p>Here we first consider the problem of estimating the IF of the mean. For a general transformation <span class="math inline">f: \mathbb{R}^k\to\mathbb{R}^p</span> we have that <span class="math display">
 \sqrt{n}\{\mathbb{P}_{n}f(X) - \mathbb{E}[f(X)]\} = \frac{1}{\sqrt{n}}\sum_{i=1}^{n}
 \{f(X_{i}) - \mathbb{E}[f(X)]\}
-</span> <!-- $$
-<!-- \sqrt{n}\{\mathbb{P}_{n}f(X) - \pr(Y_{1}=1)\} = \frac{1}{\sqrt{n}}\sum_{i=1}^{n} --> <!-- \one(Y_{1i}=1) - \pr(Y_{1}=1) --> <!-- $$  --> and hence for the problem of estimating the proportion of the binary outcome <span class="math inline">Y_1</span>, the IF is given by <span class="math inline">\mathbf{1}(Y_{1}=1) - \mathbb{P}(Y_{1}=1)</span>.</p>
+</span> and hence for the problem of estimating the proportion of the binary outcome <span class="math inline">Y_1</span>, the IF is given by <span class="math inline">\mathbf{1}(Y_{1}=1) - \mathbb{P}(Y_{1}=1)</span>.</p>
 <p>To estimate this parameter and its IF we will use the <code>estimate</code> function</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
@@ -265,7 +264,7 @@ Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent covariates <spa
 <span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
 <span><span class="co">#&gt; y1:(Intercept) y2:(Intercept) </span></span>
 <span><span class="co">#&gt;          0.565          0.560</span></span>
-<span><span class="co">## ## Asymptotic (robust) variance estimate</span></span>
+<span><span class="co">## Asymptotic (robust) variance estimate</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                y1:(Intercept) y2:(Intercept)</span></span>
 <span><span class="co">#&gt; y1:(Intercept)    0.000245775      0.0000616</span></span>
@@ -422,7 +421,7 @@ Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent covariates <spa
 </section><section class="level2"><h3 id="example-random-effects-model-structural-equation-model">Example: random effects model / structural equation model<a class="anchor" aria-label="anchor" href="#example-random-effects-model-structural-equation-model"></a>
 </h3>
 <p>General structural equation models (SEMs) can be estimated with <code><a href="../reference/lvm.html">lava::lvm</a></code>. Here we fit a random effects probit model <span class="math display">
-\mathbb{P}(Y_{ij} = 1 \mid U_{i}, W_{ij})=\Phi(\mu_{j} + \beta_{j} W_{ij} + U_{i}), \quad U_{i}\sim\mathcal{N}(0,\sigma_{u}^{2}),\quad j=1,2
+\mathbb{P}(Y_{ij} = 1 \mid U_{i}, W_{i})=\Phi(\mu_{j} + \beta_{j} W_{i} + U_{i}), \quad U_{i}\sim\mathcal{N}(0,\sigma_{u}^{2}),\quad j=1,2
 </span> to the simulated dataset</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="downlit sourceCode r">
@@ -556,9 +555,9 @@ R_i \operatorname{IC}(O_i; Q_0) + o_{P_0}(1).
 \right)}_{W_N = \sqrt{N/n}V_n}.
 \end{align*}</span></p>
 <p>We need to show that the term <span class="math inline">W_N=o_{P_0}(1)</span>. Let <span class="math inline">E_N = \{n &gt; Np/2\}</span>, it then follows that <span class="math display">\begin{align*}
-P(\left\lVert W_N \right\rVert &gt; \epsilon) \leq P(E_N^\complement)
+P(\left\lVert W_N \right\rVert &gt; \epsilon) &amp;\leq P(E_N^\complement)
 + P(\{\left\lVert W_N \right\rVert &gt; \epsilon\}\cap E_N) \\
-\leq
+&amp;\leq
 P(E_N^\complement)
 + \sup_{n&gt;Np/2} Q(\left\lVert V_n \right\rVert &gt; \epsilon/c)
 \end{align*}</span> where we have used that on the set <span class="math inline">E_N</span> we have <span class="math inline">\sqrt{N/n}&lt; \sqrt{2/p} = c</span>. The supremum term converges to zero as <span class="math inline">N\to\infty</span> due to the assumption that <span class="math inline">\widehat{\theta}</span> is RAL in <span class="math inline">Q_0</span>.</p>
@@ -577,7 +576,7 @@ o_{P_0}(1) \\
 \end{align*}</span> <span class="math inline">\blacksquare</span></p>
 </div>
 <p>Based on the above Lemma we can therefore combine estimators that are estimated on different datasets. Let the observed data be <span class="math inline">(Z_{11}, R_{11}), (Z_{21}, R_{21}), \ldots, (Z_{1N}, R_{1N}),
-(Z_{2N}, R_{2N})</span> with estimators <span class="math inline">\widehat{\theta}_1</span> and <span class="math inline">\widehat{\theta}_2</span> for the conditional parameters <span class="math inline">\theta_1</span> and <span class="math inline">\theta_2</span> based on data where <span class="math inline">R_{1i}=1</span> and <span class="math inline">R_{2j}=1</span>, respectively, and let the corresponding IFs be <span class="math inline">IC_{1}(\cdot; P_{0})</span> and <span class="math inline">IC_{2}(\cdot;P_{0})</span>. It then follows that the joint parameter estimate has influence function corresponding to an inverse probability weighting with the empirical plugin estimate of the proportions <span class="math inline">P(R_{1}=1)</span>, and <span class="math inline">P(R_{2}=1)</span> <span class="math display">\begin{align*}
+(Z_{2N}, R_{2N})</span> with estimators <span class="math inline">\widehat{\theta}_1</span> and <span class="math inline">\widehat{\theta}_2</span> for the conditional parameters <span class="math inline">\theta_1</span> and <span class="math inline">\theta_2</span> based on data where <span class="math inline">R_{1i}=1</span> and <span class="math inline">R_{2j}=1</span>, respectively, and let the corresponding IFs be <span class="math inline">\operatorname{IC}_{1}(\cdot; P_{0})</span> and <span class="math inline">\operatorname{IC}_{2}(\cdot;P_{0})</span>. It then follows that the joint parameter estimate has influence function corresponding to an inverse probability weighting with the empirical plugin estimate of the proportions <span class="math inline">P(R_{1}=1)</span>, and <span class="math inline">P(R_{2}=1)</span> <span class="math display">\begin{align*}
 \sqrt{N}\left\{
 \begin{pmatrix}
 \widehat{\theta}_1 \\
@@ -592,8 +591,8 @@ o_{P_0}(1) \\
 =
 \frac{1}{\sqrt{N}}\sum_{i=1}^N
 \begin{pmatrix}
-IC_1(Z_{1i}; P_{0})\frac{R_{1i}N}{R_{1\bullet}} \\
-IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
+\operatorname{IC}_1(Z_{1i}; P_{0})\frac{R_{1i}N}{R_{1\bullet}} \\
+\operatorname{IC}_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 \end{pmatrix}
 + o_{P}(1)
 \end{align*}</span></p>
@@ -862,14 +861,14 @@ IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 <p>Let <span class="math inline">Z_i = (Z_{i1},\ldots,Z_{iN_{i}})</span> and assume that <span class="math inline">O_i = (Z_{i}, N_{i}) \sim P</span>, <span class="math inline">i=1,\ldots,n</span> are i.i.d. Define <span class="math inline">N = \sum_{i=1}^{n} N_i</span>, and assume that a parameter estimate, <span class="math inline">\widehat{\theta}\in\mathbb{R}^p</span> is RAL with decomposition <span class="math display">
 \sqrt{N}(\widehat{\theta}-\theta) =
 \frac{1}{\sqrt{N}}
-\sum_{i=1}^{n} \underbrace{\sum_{k=1}^{N_{i}} IC(Z_{ik}; P_{0})}_{S_i} + o_{P}(1),
+\sum_{i=1}^{n} \underbrace{\sum_{k=1}^{N_{i}} \operatorname{IC}(Z_{ik}; P_{0})}_{S_i} + o_{P}(1),
 </span> where <span class="math inline">\mathbb{E}S_1 = 0</span> and <span class="math inline">\mathbb{E}\left\lVert S_1 \right\rVert^2 &lt;\infty</span>.</p>
 <div id="lem-cluster" class="theorem lemma">
 <p><span class="theorem-title"><strong>Lemma 3</strong></span> The estimator has the i.i.d. decomposition <span class="math display">
 \sqrt{n}(\widehat{\theta}-\theta) =
 \frac{1}{\sqrt{n}}
 \sum_{i=1}^{n} \widetilde{\operatorname{IC}}(O_{i}) + o_{P}(1)
-</span> where <span class="math inline">\widetilde{\operatorname{IC}}(O_i) = S_i\mathbb{E}(N_1)^{-1}</span>, and <span class="math display">\sqrt{n}(\widehat{\theta}-\theta) \rightsquigarrow\mathcal{N}(0,\Omega).</span></p>
+</span> where <span class="math inline">\widetilde{\operatorname{IC}}(O_i) = S_i\mathbb{E}(N_1)^{-1}</span>, and <span class="math display">\sqrt{n}(\widehat{\theta}-\theta) \rightsquigarrow\mathcal{N}(0,\Omega)</span> and <span class="math inline">\Omega = \mathbb{V}\!\text{ar}(S_1)/(\mathbb{E}N_1)^2</span>.</p>
 </div>
 <div class="proof">
 <p><span class="proof-title"><em>Proof</em>. </span>It follows that <span class="math display">\begin{align*}
@@ -884,7 +883,7 @@ IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 <p>In practice we will have estimates <span class="math inline">\widehat{S}_i =
 \sum_{k=1}^{N_i}\widehat{\phi}(Z_{ik})</span> of the influence functions that we need to use as plugin-estimates of the variance. Let <span class="math inline">V = SS^\top</span>, then <span class="math display">\mathbb{P}_n
 \widehat{V}- \mathbb{P} V = \mathbb{P}_n
-(\widehat{V} - V) + (\mathbb{P}_n - \mathbb{P})V. </span> where the last term is seen to be <span class="math inline">o_p(1)</span> from the LLN. Writing</p>
+(\widehat{V} - V) + (\mathbb{P}_n - \mathbb{P})V</span> where the last term is seen to be <span class="math inline">o_p(1)</span> from the LLN. Writing</p>
 <p><span class="math display">\widehat{V} - V = (\widehat{S}-S)\widehat{S}^\top + S(\widehat{S}-S)^\top,</span> then by the triangle inequality <span class="math display"> \left\lVert \widehat{V} - V \right\rVert_F \leq
 \left\lVert \widehat{S}-S \right\rVert\left\lVert \widehat{S} \right\rVert + \left\lVert \widehat{S}-S \right\rVert\left\lVert S \right\rVert =
 \left\lVert \widehat{S}-S \right\rVert\left( \left\lVert S \right\rVert + \left\lVert \widehat{S} \right\rVert\right), </span> where we used that for the Frobenius norm <span class="math display">
@@ -1105,7 +1104,7 @@ P_{0})</span> such that <span class="math display">\begin{align*} \sqrt{n}(\wide
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p) - log1p(-p)</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x59712533cf20&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x642a92e16fd8&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
@@ -1143,7 +1142,7 @@ X_{1}X_{2}-\mathbb{E}\{X_{1}X_{2}\})^\top</span>. By the delta theorem with <spa
 z-xy</span> we have <span class="math inline">\nabla\phi(x,y,z) = (-y, -x, 1)</span> and thus the IF for the sample covariance estimate becomes <span class="math display">\begin{align*}
 \operatorname{IC}_{x_1, x_2}(X_1, X_2; P_{0}) = (X_1 - \mathbb{E}X_1)(X_2 - \mathbb{E}X_2) - \mathbb{C}\!\text{ov}(X_1,X_2)
 \end{align*}</span></p>
-<p>We can implement this directly using the <code>estimate</code> function via the <code>IC</code> argument which allows us to provide a user-specificed IF and with the point estimate given by the <code>coef</code> argument</p>
+<p>We can implement this directly using the <code>estimate</code> function via the <code>IC</code> argument which allows us to provide a user-specified IF and with the point estimate given by the <code>coef</code> argument</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Cov</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
@@ -1186,7 +1185,7 @@ z-xy</span> we have <span class="math inline">\nabla\phi(x,y,z) = (-y, -x, 1)</s
 <span><span class="co">#&gt;     Estimate Std.Err     2.5%  97.5% P-value</span></span>
 <span><span class="co">#&gt; rho  0.04937 0.03126 -0.01189 0.1106  0.1142</span></span></code></pre></div>
 </div>
-<p>by using a variance stabilizing transformation, Fisher’s <span class="math inline">z</span>-transform <span class="citation" data-cites="lehmann2023_testing">(<a href="#ref-lehmann2023_testing" role="doc-biblioref">Lehmann and Romano 2023</a>)</span>, <span class="math inline">z = \operatorname{arctanh}(\widehat{\rho}) =
+<p>By using a variance stabilizing transformation, Fisher’s <span class="math inline">z</span>-transform <span class="citation" data-cites="lehmann2023_testing">(<a href="#ref-lehmann2023_testing" role="doc-biblioref">Lehmann and Romano 2023</a>)</span>, <span class="math inline">z = \operatorname{arctanh}(\widehat{\rho}) =
 \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)</span>, confidence limits with generally better coverage can be obtained</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb51"><pre class="downlit sourceCode r">
@@ -1226,7 +1225,7 @@ H_0\colon\quad \mathbf{B}\theta = \mathbf{b}_0
 <span><span class="co">#&gt; (Intercept).2  -0.2763 0.12644 -0.5241 -0.02843 2.890e-02</span></span>
 <span><span class="co">#&gt; a.2             1.3586 0.19386  0.9787  1.73856 2.413e-12</span></span></code></pre></div>
 </div>
-<p>A linear transformation can be specified via the <code>f</code> as a matrix argument instead of function object</p>
+<p>A linear transformation can be specified via the <code>f</code> argument as a matrix instead of a function</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>, <span class="fl">0</span>,<span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span></span>
@@ -1279,7 +1278,7 @@ H_0\colon\quad \mathbf{B}\theta = \mathbf{b}_0
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; chisq = 21.01, df = 3, p-value = 0.0001047</span></span></code></pre></div>
 </div>
-<p>We refer to the function <code><a href="../reference/contr.html">lava::contr</a></code> and <code><a href="../reference/contr.html">lava::parsedesign</a></code> for defining contrast matrices.</p>
+<p>We refer to the functions <code><a href="../reference/contr.html">lava::contr</a></code> and <code><a href="../reference/contr.html">lava::parsedesign</a></code> for defining contrast matrices.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/contr.html">contr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>, n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
@@ -1288,7 +1287,7 @@ H_0\colon\quad \mathbf{B}\theta = \mathbf{b}_0
 <span><span class="co">#&gt; [2,]    1   -1    0    0    0</span></span>
 <span><span class="co">#&gt; [3,]    1    0    0   -1    0</span></span></code></pre></div>
 </div>
-<p>A particular useful contrast is the following for considering all pairwise comparisons of different exposure estimates:</p>
+<p>A particularly useful contrast is the following for considering all pairwise comparisons of different exposure estimates:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pairwise_diff.html">pairwise_diff</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
@@ -1330,14 +1329,14 @@ H_0\colon\quad \mathbf{B}\theta = \mathbf{b}_0
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; chisq = 33.79, df = 2, p-value = 4.597e-08</span></span></code></pre></div>
 </div>
-<p>When conducting multiple tests each at a nominal-level of <span class="math inline">\alpha</span> the overall type I error is not controlled at <span class="math inline">\alpha</span>-level. The influence function also allows for adjusting for multiple comparisons. Let <span class="math inline">Z_{1},\ldots,Z_{p}</span> denote <span class="math inline">Z</span>-statistics from <span class="math inline">p</span> distinct two-sided hypothesis tests which we will assume is asymptotically distributed under the null hypothesis as a zero-mean Gaussian distribution with correlation matrix <span class="math inline">R.</span> Let <span class="math inline">Z_{max} = \max_{i=1,\ldots,p} |Z_i|</span> then the family-wise error rate (FWER) under the null can be approximated by <span class="math display">
+<p>When conducting multiple tests each at a nominal-level of <span class="math inline">\alpha</span> the overall type I error is not controlled at <span class="math inline">\alpha</span>-level. The influence function also allows for adjusting for multiple comparisons. Let <span class="math inline">Z_{1},\ldots,Z_{m}</span> denote <span class="math inline">Z</span>-statistics from <span class="math inline">m</span> distinct two-sided hypothesis tests which we will assume are asymptotically distributed under the null hypothesis as a zero-mean Gaussian distribution with correlation matrix <span class="math inline">R.</span> Let <span class="math inline">Z_{max} = \max_{i=1,\ldots,m} |Z_i|</span> then the family-wise error rate (FWER) under the null can be approximated by <span class="math display">
 P(Z_{max} &gt; z) =
-1-\int_{-z}^{z} \cdots \int_{-z}^{z} \phi_{R}(x_{1},\ldots,x_{p})
-\,dx_{1}\cdots\,dx_{p}
+1-\int_{-z}^{z} \cdots \int_{-z}^{z} \phi_{R}(x_{1},\ldots,x_{m})
+\,dx_{1}\cdots\,dx_{m}
 </span> where <span class="math inline">\phi_{R}</span> is the multivariate normal density function with mean 0 and variance given by the correlation matrix <span class="math inline">R</span>. The adjusted <span class="math inline">p</span>-values can then be calculated as <span class="math display">
 P(Z_{max} &gt;
-\Phi^{-1}(1-p/2))
-</span> where <span class="math inline">\Phi</span> is the standard Gaussian CDF. As described in in <span class="citation" data-cites="RitzPipper_multcomp">(<a href="#ref-RitzPipper_multcomp" role="doc-biblioref">Pipper et al. 2012</a>)</span> the joint distribution of <span class="math inline">Z_{1},\ldots,Z_{p}</span> can be estimated from the IFs. This is implemented in the <code>alpha_zmax</code> method</p>
+\Phi^{-1}(1-p_j/2))
+</span> where <span class="math inline">p_j</span> is the unadjusted <span class="math inline">p</span>-value of the <span class="math inline">j</span>th test and <span class="math inline">\Phi</span> is the standard Gaussian CDF. As described in <span class="citation" data-cites="RitzPipper_multcomp">(<a href="#ref-RitzPipper_multcomp" role="doc-biblioref">Pipper et al. 2012</a>)</span> the joint distribution of <span class="math inline">Z_{1},\ldots,Z_{m}</span> can be estimated from the IFs. This is implemented in the <code>alpha_zmax</code> method</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gg0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">gg</span>, keep<span class="op">=</span><span class="st">"^a"</span>, regex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
@@ -1349,12 +1348,12 @@ P(Z_{max} &gt;
 <span><span class="co">#&gt; attr(,"adjusted.significance.level")</span></span>
 <span><span class="co">#&gt; [1] 0.01704</span></span></code></pre></div>
 </div>
-<p>While this always yields a more powerful test compared to Bonferroni adjustments, another powerful closed-testing procedure <span class="citation" data-cites="marcus1976">(<a href="#ref-marcus1976" role="doc-biblioref">Marcus et al. 1976</a>)</span>, can be generally obtained by considering all intersection hypotheses.</p>
+<p>While this always yields a test at least as powerful as Bonferroni adjustments, another powerful closed-testing procedure <span class="citation" data-cites="marcus1976">(<a href="#ref-marcus1976" role="doc-biblioref">Marcus et al. 1976</a>)</span> can be generally obtained by considering all intersection hypotheses.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure><p><img src="../reference/figures/closedtesting.svg" style="width:65.0%"></p>
 <figcaption><em>Figure: closed testing via Wald tests of all intersection hypotheses.</em></figcaption></figure>
 </div>
-<p>To reject the <span class="math inline">H_{1}</span> at a correct <span class="math inline">\alpha</span>-level we should test all intersection hypotheses involving <span class="math inline">H_{1}</span> and check if they are all rejected at the <span class="math inline">\alpha</span>-level. The adjusted <span class="math inline">p</span>-values can here be obtained as the maximum <span class="math inline">p</span>-value across all the composite hypothesis tests. Unfortunately, this only works for relatively few comparisons as the number of tests grows exponentially.</p>
+<p>To reject <span class="math inline">H_{1}</span> at a correct <span class="math inline">\alpha</span>-level we should test all intersection hypotheses involving <span class="math inline">H_{1}</span> and check if they are all rejected at the <span class="math inline">\alpha</span>-level. The adjusted <span class="math inline">p</span>-values can here be obtained as the maximum <span class="math inline">p</span>-value across all the composite hypothesis tests. Unfortunately, this only works for relatively few comparisons as the number of tests grows exponentially.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/closed_testing.html">closed_testing</a></span><span class="op">(</span><span class="va">gg0</span>, test <span class="op">=</span> <span class="va">test_wald</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">.8</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -1401,8 +1400,8 @@ P(Z_{max} &gt;
 \sqrt{n}(\widehat{\Psi}-\Psi) &amp;= \sqrt{n}P_{n}(f(X; \theta)-\Psi) +
 \frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}; P_{0}) + o_{P}(1) \\
 &amp;=
-\frac{1}{\sqrt{n}}\sum_{i=1}^{n}\{f(X;\theta)-\Psi\} +
-\frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}, P_{0}) + o_{P}(1)
+\frac{1}{\sqrt{n}}\sum_{i=1}^{n}\{f(X_i;\theta)-\Psi\} +
+\frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}; P_{0}) + o_{P}(1)
 \end{align*}</span> Hence the IF for <span class="math inline">\widehat{\Psi}</span> becomes <span class="math display">
 \operatorname{IC}(Z; P_{0}) = f(X;\theta)-\Psi +
 [P_{0}\nabla_{\theta}f(X;\theta)]\phi(Z).
@@ -1411,8 +1410,8 @@ P(Z_{max} &gt;
 </div>
 <p>Turning back to the example we can estimate the logistic regression model <span class="math inline">\operatorname{logit}(E\{Y_1 | A,X_1,W\}) = \beta_0 + \beta_a A + \beta_{x_1}
 X_1 + \beta_w W</span>, and from this we want to estimate the target parameter <span class="math display">
-\theta(P) = \mathbb{E}_{P}[E(Y\mid A=1, X_{1}, W)].
-</span> To do this we need first to estimate the model and then define a function that gives the predicted probability <span class="math inline">\mathbb{P}(Y=1\mid A=1,X_{1},W)</span> for any observed values of <span class="math inline">X_1,W</span> but with the treatment variable <span class="math inline">A</span> kept fixed at the value <span class="math inline">1</span></p>
+\psi(P) = \mathbb{E}_{P}[E(Y_1\mid A=1, X_{1}, W)].
+</span> To do this we need first to estimate the model and then define a function that gives the predicted probability <span class="math inline">\mathbb{P}(Y_1=1\mid A=1,X_{1},W)</span> for any observed values of <span class="math inline">X_1,W</span> but with the treatment variable <span class="math inline">A</span> kept fixed at the value <span class="math inline">1</span></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">a</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">w</span>, data<span class="op">=</span><span class="va">dw</span>, family<span class="op">=</span><span class="va">binomial</span><span class="op">)</span></span>
@@ -1451,15 +1450,15 @@ X_1 + \beta_w W</span>, and from this we want to estimate the target parameter <
 </h3>
 <p>Let the observed data be <span class="math inline">Z = (W,A,Y)</span>, where <span class="math inline">W</span> are covariates, <span class="math inline">A</span> a binary treatment variable, and <span class="math inline">Y</span> the outcome. In the following we are interested in estimating the target parameter <span class="math inline">\psi_a(P) = E_P[Y(a)]</span>, where <span class="math inline">Y(a)</span> is the <em>potential outcome</em> we would have observed if treatment <span class="math inline">a</span> had been administered, possibly contrary to the actual treatment that was observed, i.e., <span class="math inline">Y = Y(A)</span>. To assess the treatment effect we can then consider the <em>average treatment effect</em> (ATE) <span class="math display">E_P[Y(1)]-E_P[Y(0)],</span> or some other contrast of interest <span class="math inline">g(\psi_1(P), \psi_0(P))</span>. Under the following assumptions</p>
 <ol type="1">
-<li>Stable Unit Treatment Values Assumption (the treatment of a specific subject is not affecting the potential outcome of other subjects)</li>
+<li>Stable Unit Treatment Value Assumption (the treatment of a specific subject is not affecting the potential outcome of other subjects)</li>
 <li>Positivity, <span class="math inline">P(A=a\mid W)&gt;\epsilon</span> for some <span class="math inline">\epsilon&gt;0</span> and baseline covariates <span class="math inline">W</span>
 </li>
 <li>No unmeasured confounders, <span class="math inline">Y(a)\!\perp\!\!\!\!\perp\!A|W</span>
 </li>
 </ol>
 <p>then the target parameter can be identified from the observed data distribution as <span class="math display">E(E[Y|W,A=a]) = E(E[Y(a)|W]) = E[Y(a)]</span> or <span class="math display">E[Y I(A=a)/P(A=a|W)] = E[Y(a)].</span></p>
-<p>This suggests estimators based on outcome regression (<span class="math inline">g</span>-computation) or inverse probability weighting. More generally, under the above assumption we can construct a <em>one-step</em> estimator from the <em>Efficient Influence Function</em> combining these two <span class="math display"> E\left[\frac{I(A=a)}{\Pi_a(W)}(Y-Q(W,A)) + Q(W,a)\right].</span> In practice, this requires plugin estimates of both the outcome model, <span class="math inline">Q(W,A) := E(Y\mid A, W)</span>, and of the treatment propensity model <span class="math inline">\Pi_a(W) := P(A=a\mid W)</span>. The corresponding estimator is consistent even if just one of the two nuisance models is correctly specified.</p>
-<p>To illustrate this we manually construct the above estimating equations based on logistic regressions models for the two nuisance models</p>
+<p>This suggests estimators based on outcome regression (<span class="math inline">g</span>-computation) or inverse probability weighting. More generally, under the above assumptions we can construct a <em>one-step</em> estimator from the <em>Efficient Influence Function</em> combining these two <span class="math display"> E\left[\frac{I(A=a)}{\Pi_a(W)}(Y-Q(W,A)) + Q(W,a)\right].</span> In practice, this requires plugin estimates of both the outcome model, <span class="math inline">Q(W,A) := E(Y\mid A, W)</span>, and of the treatment propensity model <span class="math inline">\Pi_a(W) := P(A=a\mid W)</span>. The corresponding estimator is consistent even if just one of the two nuisance models is correctly specified.</p>
+<p>To illustrate this we manually construct the above estimating equations based on logistic regression models for the two nuisance models</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qmod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">a</span> <span class="op">*</span> <span class="va">w</span>, family <span class="op">=</span> <span class="va">binomial</span>, data <span class="op">=</span> <span class="va">dw</span><span class="op">)</span> <span class="co"># E(Y|W,A) := Q(W,A)</span></span>
