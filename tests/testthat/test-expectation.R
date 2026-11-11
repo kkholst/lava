@@ -229,6 +229,12 @@ test_that("expectation: arguments of 'f'", {
   # additional arguments
   fa <- function(p, data, a) plogis(p[1] + p["w1"] * data[, "w1"] + a * p["a"])
   expect_equal(vcov(expectation(object=g, fa, a = 1)), vcov(m))
+  # arguments of 'f' are not partially matched to arguments of 'expectation'
+  fs <- function(p, data, s, l) {
+    plogis(p[1] + p["w1"] * data[, "w1"] + s * l * p["a"])
+  }
+  expect_equal(vcov(expectation(object=g, fs, s = 1, l = 1)), vcov(m))
+  expect_equal(vcov(expectation(object=g, fa, args = list(a = 1))), vcov(m))
 
   expect_error(expectation(object=g, function(x) x[1]), "must have an argument")
   expect_error(expectation(object=estimate(g, vcov = vcov(g)), f, data = dat),

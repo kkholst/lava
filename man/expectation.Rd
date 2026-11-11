@@ -4,7 +4,17 @@
 \alias{expectation}
 \title{Mean of (estimated) function via g-computation}
 \usage{
-expectation(f, object, data, id, subset, labels = NULL, details = FALSE, ...)
+expectation(
+  f,
+  object,
+  data,
+  ...,
+  id,
+  subset,
+  labels = NULL,
+  details = FALSE,
+  args = list()
+)
 }
 \arguments{
 \item{f}{function with named argument \code{p} providing the parameter vector and
@@ -21,6 +31,8 @@ can be provided to calculate the simple mean (see examples).}
 
 \item{data}{\code{data.frame} over which \code{f} is averaged. Defaults to
 \code{model.frame(object)} (which is not available for \code{estimate} objects).}
+
+\item{...}{additional arguments passed to \code{f}}
 
 \item{id}{(optional) ids of the values returned by \code{f} (the g-computation
 part): a vector with one value per value of \code{f}, or a column name or
@@ -48,7 +60,7 @@ evaluted in the data and parameter estimate of \code{object} and \code{s} is the
 subset indicator. \eqn{IC(theta)} is the influence function of
 \code{object}. The \code{subset} attribute holds the subset indicator if provided.}
 
-\item{...}{additional arguments passed to \code{f}}
+\item{args}{(list) arguments to \code{f}}
 }
 \value{
 \code{estimate} object

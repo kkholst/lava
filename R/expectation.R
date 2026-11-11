@@ -42,6 +42,7 @@
 #'   evaluted in the data and parameter estimate of `object` and `s` is the
 #'   subset indicator. \eqn{IC(theta)} is the influence function of
 #'   `object`. The `subset` attribute holds the subset indicator if provided.
+#' @param args (list) arguments to `f`
 #' @param ... additional arguments passed to `f`
 #' @return `estimate` object
 #' @details
@@ -96,8 +97,8 @@
 #'
 #' ## Simple mean of known function
 #' expectation(~ 1 / (1+z^2), data=d, subset = ~x, labels="p")
-expectation <- function(f, object, data, id, subset, labels = NULL,
-                        details = FALSE, ...) {
+expectation <- function(f, object, data, ..., id, subset, labels = NULL,
+                        details = FALSE, args = list()) {
 
   if (!missing(subset)) {
     subset <- tryCatch(subset, error = function(e) {
@@ -134,11 +135,10 @@ expectation <- function(f, object, data, id, subset, labels = NULL,
     data <- tryCatch(model.frame(object), error = function(...) NULL)
 
   ## Values of 'f' (N x k matrix)
-  dots <- list(...)
+  dots <- c(args, list(...))
   fval <- function(p) {
     args <- c(list(p = p, data = data, object = object), dots)
     if (!("..." %in% form)) args <- args[names(args) %in% form]
-    ## args <- c(list(p), args)
     val <- do.call(f, args)
     if (is.list(val)) return(do.call("cbind", val))
     structure(cbind(val, deparse.level = 0), grad = attr(val, "grad"))
@@ -188,7 +188,8 @@ expectation <- function(f, object, data, id, subset, labels = NULL,
   colnames(val) <- nn
   ## Derivative of the (weighted) average, k x p (dim(f) x dim(theta))
   G <- if (!is.null(D)) {
-         rowsum(rbind(D) * w, rep(seq_len(k), each = N), reorder = FALSE) / sum(w)
+         rowsum(rbind(D) * w,
+                group = rep(seq_len(k), each = N), reorder = FALSE) / sum(w)
        } else {
          meanf <- function(theta) colSums(fval(theta) * w) / sum(w)
          rbind(numDeriv::jacobian(meanf,
