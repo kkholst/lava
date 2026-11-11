@@ -51,7 +51,7 @@ differentiable* see ([Vaart 1998](#ref-vaart_1998_asymp)) in the sense
 that there exists a bounded linear functional \dot\Psi\colon
 L\_{2}(P\_{0})\to\mathbb{R} such that \[\Psi(P\_{t}) -
 \Psi(P\_{0})\]t^{-1} \to \dot\Psi(P\_{0})(g) as t\to 0 for any
-parametric submodel P_t with score model g(z)= \partial/(\partial t)
+parametric submodel P_t with score function g(z)= \partial/(\partial t)
 \log (p_t)(z)\|\_{t=0}. Riesz’s representation theorem then tells us
 that the directional derivative has a unique representer, \phi\_{P\_{0}}
 lying in the closure of the submodel score space (the *tangent space*),
@@ -110,7 +110,7 @@ A typical call could look like
 ``` r
 
 merge(subset(estimate(x), 1), estimate(coef=p, IC=ic, id=id)) |>
-  transform(function(x) c(exp(x), exp(x[1]))) |> # parameter transformation
+  transform(function(x) c(exp(x[1]), x[2]^2)) |> # parameter transformation
   labels(c("a", "b")) # rename parameters
 ```
 
@@ -319,10 +319,10 @@ plot(ee, null=0.5, digits=2)
 
 ### Example: generalized linear model
 
-For a Z-estimator defined by the score equation E\[U(Z; \theta)\] = 0,
-the IF is given by \begin{align\*} IC(Z; \theta) =
--\mathbb{E}\Big\\\frac{\partial}{\partial\theta^\top}U(\theta;
-Z)\Big\\^{-1}U(Z; \theta) \end{align\*} In particular, for a maximum
+For a Z-estimator defined by the score equation \mathbb{E}\[U(\theta;
+Z)\] = 0, the IF is given by \begin{align\*}\operatorname{IC}(Z; \theta)
+= -\mathbb{E}\Big\\\frac{\partial}{\partial\theta^\top}U(\theta;
+Z)\Big\\^{-1}U(\theta; Z) \end{align\*} In particular, for a maximum
 likelihood estimator the score, U, is given by the partial derivative of
 the log-likelihood function.
 
@@ -371,7 +371,7 @@ The same estimates can be obtained with a *cumulative link regression*
 model which also generalizes to ordinal outcomes. Here we consider the
 proportional odds model given by \begin{align\*}
 \log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid
-x)}\right) = \alpha\_{j} - \beta^{\top}x) \quad j=1,\ldots,J-1
+x)}\right) = \alpha\_{j} - \beta^{\top}x \quad j=1,\ldots,J-1
 \end{align\*}
 
 ``` r
@@ -503,7 +503,7 @@ To calculate the variance estimate, an estimate of the density is thus
 needed which can be obtained by a kernel estimate. Alternatively, the
 resampling method of ([Zeng and Lin 2008](#ref-zenglin2008)) can be
 applied. Here we use a kernel smoother (additional arguments to the
-`estimate` function are parsed on to
+`estimate` function are passed on to
 [`stats::density.default`](https://rdrr.io/r/stats/density.html)) to
 estimate the quantiles and IF for the 25%, 50%, and 75% quantiles of W
 and X_1
@@ -654,8 +654,8 @@ supremum term converges to zero as N\to\infty due to the assumption that
 Applying Hoeffding’s Inequality to the iid Bernoulli random variables
 1-R_i, i=1,\ldots,N, we get that \begin{align\*} P(N-n - N(1-p) \geq t)
 \leq \exp(-2t^2/N), \end{align\*} and with t = Np/2, we have that
-P(n\<Np/2)\leq\exp(-N/(2p^2))\to 0 as N\to\infty, and it follows that
-the first term P(E_N^\complement) also converges to zero.
+P(n\<Np/2)\leq\exp(-Np^2/2)\to 0 as N\to\infty, and it follows that the
+first term P(E_N^\complement) also converges to zero.
 
 As \widehat{p}\to p a.s. by the strong LLN, it follows from continuity
 at p\>0 that \widehat{p}^{-1}-p^{-1} = o\_{P_0}(1), and hence by
@@ -898,10 +898,10 @@ labels or a vector of positions:
 
 ``` r
 
-merge(est1, est2, keep = c("a", "b"))
-#>      Estimate Std.Err 2.5% 97.5% P-value
-#> NA                                      
-#> NA.1
+merge(est1, est2, keep = c("ab", "cb"))
+#>    Estimate Std.Err    2.5% 97.5% P-value
+#> ab        3       1 1.04004  4.96  0.0027
+#> cb        2       1 0.04004  3.96  0.0455
 merge(g1, g2, keep = c(1, 3))
 #>               Estimate Std.Err    2.5%   97.5%   P-value
 #> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
@@ -1016,25 +1016,27 @@ IC(Z\_{ik}; P\_{0})}\_{S_i} + o\_{P}(1), where \mathbb{E}S_1 = 0 and
 \widetilde{\operatorname{IC}}(O_i) = S_i\mathbb{E}(N_1)^{-1}, and
 \sqrt{n}(\widehat{\theta}-\theta) \rightsquigarrow\mathcal{N}(0,\Omega).
 
-*Proof*. It follows that \begin{align} \sqrt{n}(\widehat{\theta}-\theta)
-&= \frac{n}{N}\frac{1}{\sqrt{n}}\sum\_{i=1}^{n} S_i + o_p(1) \\ &=
+*Proof*. It follows that \begin{align\*}
+\sqrt{n}(\widehat{\theta}-\theta) &=
+\frac{n}{N}\frac{1}{\sqrt{n}}\sum\_{i=1}^{n} S_i + o_p(1) \\ &=
 \frac{1}{\mathbb{E}N_1}\frac{1}{\sqrt{n}}\sum\_{i=1}^{n} S_i +
-\left(\frac{n}{N} - \frac{1}{\mathbb{E}N_1}\right)\sum\_{i=1}^{n} S_i +
-o_p(1). \end{align} By the CLT n^{-1/2}\sum\_{i=1}^n S_i
+\left(\frac{n}{N} -
+\frac{1}{\mathbb{E}N_1}\right)\frac{1}{\sqrt{n}}\sum\_{i=1}^{n} S_i +
+o_p(1). \end{align\*} By the CLT n^{-1/2}\sum\_{i=1}^n S_i
 \rightsquigarrow\mathcal{N}\\0, \mathbb{V}\\\text{ar}(S_1)\\ and (n/N -
-\mathbb{E}N_1^{-1}) = o_p(1), hence by Slutsky’s theorem it follows that
-\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}} \sum\_{i=1}^{n}
-\widetilde{\operatorname{IC}}(O\_{i}) + o\_{P}(1), and asymptotic
-normality follows from the central limit theorem.
+(\mathbb{E}N_1)^{-1}) = o_p(1), hence by Slutsky’s theorem it follows
+that \sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}
+\sum\_{i=1}^{n} \widetilde{\operatorname{IC}}(O\_{i}) + o\_{P}(1), and
+asymptotic normality follows from the central limit theorem.
 
 In practice we will have estimates \widehat{S}\_i =
-\sum\_{k=1}^{N_i}\widehat{\phi}(Z\_{ij}) of the influence functions that
+\sum\_{k=1}^{N_i}\widehat{\phi}(Z\_{ik}) of the influence functions that
 we need to use as plugin-estimates of the variance. Let V = SS^\top,
 then \mathbb{P}\_n \widehat{V}- \mathbb{P} V = \mathbb{P}\_n
 (\widehat{V} - V) + (\mathbb{P}\_n - \mathbb{P})V. where the last term
 is seen to be o_p(1) from the LLN. Writing
 
-\widehat{V} - V = (\widehat{S}-S)\widehat{S}^\top -
+\widehat{V} - V = (\widehat{S}-S)\widehat{S}^\top +
 S(\widehat{S}-S)^\top, then by the triangle inequality \left\lVert
 \widehat{V} - V \right\rVert_F \leq \left\lVert \widehat{S}-S
 \right\rVert\left\lVert \widehat{S} \right\rVert + \left\lVert
@@ -1055,7 +1057,7 @@ get \begin{align\*} \mathbb{P}\_n\left\lVert \widehat{V} - V
 inequality. From the LLN and E\left\lVert S \right\rVert^2\<\infty it
 follows that \mathbb{P}\_n\left\lVert S \right\rVert^2=O_p(1), and when
 n^{-1}\sum\_{i=1}^n \left\lVert \widehat{S}\_i-S_i \right\rVert^2 =
-o_p(1), then it follows that a consistent estimate of the asympotic
+o_p(1), then it follows that a consistent estimate of the asymptotic
 variance of \sqrt{n}(\widehat{\theta}-\theta) can be obtained as
 \widehat{\Omega} = \frac{1}{n} \sum\_{i=1}^n
 (\frac{n}{N}\widehat{S}\_i)^{\otimes 2}. \blacksquare
@@ -1302,7 +1304,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x57d374a3b800>
+#> <bytecode: 0x630437abe948>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1348,8 +1350,8 @@ covariance of two variables X_1 and X_2 \begin{align\*}
 \mathbb{P}\_n(X_1-\mathbb{P}\_n X_1)(X_2-\mathbb{P}\_n X_2).
 \end{align\*} It is easily verified that the IF of the sample estimate
 of (\mathbb{E}X\_{1}, \mathbb{E} X\_{2},
-\mathbb{E}\\X\_{1}X\_{2}\\)^\top is \operatorname{IC}(X1,X2; P\_{0}) =
-(X\_{1}-\mathbb{E}X\_{1}, X\_{2}-\mathbb{E}X\_{2},
+\mathbb{E}\\X\_{1}X\_{2}\\)^\top is \operatorname{IC}(X_1, X_2; P\_{0})
+= (X\_{1}-\mathbb{E}X\_{1}, X\_{2}-\mathbb{E}X\_{2},
 X\_{1}X\_{2}-\mathbb{E}\\X\_{1}X\_{2}\\)^\top. By the delta theorem with
 \phi(x,y,z) = z-xy we have \nabla\phi(x,y,z) = (-y, -x, 1) and thus the
 IF for the sample covariance estimate becomes \begin{align\*}
@@ -1365,11 +1367,11 @@ the point estimate given by the `coef` argument
 
 Cov <- function(x, y, ...) {
   est <- mean(x * y)-mean(x)*mean(y)
-    estimate(
-      coef = est,
-      IC = (x - mean(x)) * (y - mean(y)) - est,
-      ...
-    )
+  estimate(
+    coef = est,
+    IC = (x - mean(x)) * (y - mean(y)) - est,
+    ...
+  )
 }
 with(dw, Cov(x1, x2))
 #>    Estimate Std.Err     2.5%  97.5% P-value
@@ -1393,7 +1395,7 @@ est
 est["E12"] - est["E2"]*est["E1"]
 #>     Estimate Std.Err     2.5%  97.5% P-value
 #> E12  0.05263  0.0334 -0.01284 0.1181  0.1151
-# transform(e1, function(x) c(x, cov=with(as.list(x), E12 - E2* E1))) # Same result
+# transform(est, function(x) c(x, cov=with(as.list(x), E12 - E2* E1))) # Same result
 ```
 
 The variance estimates can be estimated in the same way and combined to
@@ -1411,11 +1413,11 @@ rho
 #> rho  0.04937 0.03126 -0.01189 0.1106  0.1142
 ```
 
-by using a variance stabilizing transformation, Fishers z-transform
+by using a variance stabilizing transformation, Fisher’s z-transform
 ([Lehmann and Romano 2023](#ref-lehmann2023_testing)), z =
 \operatorname{arctanh}(\widehat{\rho}) =
 \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right),
-confidence limits with general better coverage can be obtained
+confidence limits with generally better coverage can be obtained
 
 ``` r
 
@@ -1436,8 +1438,8 @@ The confidence limits are calculated on the \operatorname{arctanh}-scale
 and transformed back to the original correlation scale via the
 `transform` argument of the `summary` method. In this case, where the
 estimates are far away from the boundary of the parameter space, the
-variance stabilizing transform does almost not have any impact, and the
-confidence limits agrees with the original symmetric confidence limits.
+variance stabilizing transform has almost no impact, and the confidence
+limits agree with the original symmetric confidence limits.
 
 ### Linear contrasts and hypothesis testing
 
@@ -1450,12 +1452,12 @@ where \mathbf{B}\in\mathbb{R}^{m\times p} is a matrix of estimable
 contrasts and \mathbf{b}\_0\in\mathbb{R}^{m}.
 
 As an example consider marginal models for the binary response variables
-Y_1, Y_2, Y_3, Y_4
+Y_1, Y_2, Y_3
 
 ``` r
 
 g <- lapply(
-  list(y1 ~ a, y2 ~ a, y3 ~ a), #, y4 ~ a+x4),
+  list(y1 ~ a, y2 ~ a, y3 ~ a),
   function(f) glm(f, family = binomial, data = dw)
 )
 gg <- Reduce(merge, g)
@@ -1634,10 +1636,10 @@ intersection hypotheses.
 
 ![](../reference/figures/closedtesting.svg)
 
-*Figure: closed testing via Wald tests of all intersections hypotheses.*
+*Figure: closed testing via Wald tests of all intersection hypotheses.*
 
-To reject the H\_{1} at an correct \alpha-level we should test all
-intersection hypotheses involving H\_{1} and check if there all are
+To reject the H\_{1} at a correct \alpha-level we should test all
+intersection hypotheses involving H\_{1} and check if they are all
 rejected at the \alpha-level. The adjusted p-values can here be obtained
 as the maximum p-value across all the composite hypothesis tests.
 Unfortunately, this only works for relatively few comparisons as the
@@ -1677,7 +1679,7 @@ Z\_{1}\sim P\_{0} and let X\_{i}\subset Z\_{i}.
 **Lemma 4** Assume that \widehat{\theta} is RAL estimator of
 \theta\in\Omega\subset \mathbb{R}^{p} \sqrt{n}(\widehat{\theta}-\theta)
 = \frac{1}{\sqrt{n}}\sum\_{i=1}^{n}\phi(Z\_{i}; P\_{0}) + o\_{P}(1). Let
-f:\mathcal{X}\times\Omega\to\mathbb{R} be continuous differentiable in
+f:\mathcal{X}\times\Omega\to\mathbb{R} be continuously differentiable in
 \theta \sqrt{n}\\f(X; \widehat{\theta})-f(X; \theta)\\ =
 \frac{1}{\sqrt{n}}\nabla\_{\theta}f(X;\theta)\sum\_{i=1}^{n}\phi(Z\_{i};
 P\_{0}) + o\_{P}(1).
@@ -1685,12 +1687,12 @@ P\_{0}) + o\_{P}(1).
 Let \Psi = P\_{0}f(X;\theta) and \widehat{\Psi} = P\_{n}
 f(X;\widehat{\theta}). P\_{0} and P\_{n} are here denoting the integrals
 wrt. X. Then the influence function for \widehat{\Psi} is given by
-\begin{align\*} IC(Z; P\_{0}) = f(X;\theta)-\Psi +
+\begin{align\*} \operatorname{IC}(Z; P\_{0}) = f(X;\theta)-\Psi +
 \[P\_{0}\nabla\_{\theta}f(X;\theta)\]\phi(Z). \end{align\*}
 
 *Proof*. It is easily verified that \begin{align\*} \widehat{\Psi}-\Psi
 &= (P\_{n}-P\_{0})(f(X; \theta)-\Psi) +
-P\[f(X;\widehat{\theta})-f(X;\theta)\] \\ &\quad +
+P\_{0}\[f(X;\widehat{\theta})-f(X;\theta)\] \\ &\quad +
 (P\_{n}-P\_{0})\[f(X;\widehat{\theta})-f(X;\theta)\] \end{align\*}
 
 From Lemma 19.24 ([Vaart 1998](#ref-vaart_1998_asymp)) it follows that
@@ -1751,7 +1753,7 @@ IC(ea) |> head()
 
 Specifically for GLM models, it is possible to do the above steps
 directly with the `predict.estimate.glm` method (note the id argument
-here is not strictly needed as the IF of `e`and the data.frame are
+here is not strictly needed as the IF of `e` and the data.frame are
 already aligned):
 
 ``` r
@@ -1859,24 +1861,21 @@ log-odds scale:
 
 ``` r
 
-est <- with(potential_outcomes, logit(`y(1)`)-logit(`y(0)`))
+est <- with(potential_outcomes, c(logOR=logit(`y(1)`)-logit(`y(0)`)))
 est
-#>      Estimate Std.Err   2.5% 97.5%   P-value
-#> y(1)   0.8317  0.1428 0.5518 1.112 5.768e-09
-transform(est, labels="OR") |>
-  summary(transform = exp)
-#> Call: estimate.default(x = `_data`, labels = "OR")
+#>       Estimate Std.Err   2.5% 97.5%   P-value
+#> logOR   0.8317  0.1428 0.5518 1.112 5.768e-09
+summary(est, transform = exp, labels="OR")
+#> Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, 
+#>     stack = FALSE, keep = keep)
 #> ────────────────────────────────────────────────────────────
-#>    Estimate Std.Err  2.5% 97.5%   P-value
-#> OR    2.297         1.736 3.039 5.768e-09
+#>       Estimate Std.Err  2.5% 97.5%   P-value
+#> logOR    2.297         1.736 3.039 5.768e-09
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [OR] = 0 
+#>   [logOR] = 0 
 #>  
 #> chisq = 33.91, df = 1, p-value = 5.768e-09
-#logor <- function(p) logit(p[2]) - logit(p[1])
-#transform(potential_outcomes, logor, labels="logOR")
-#transform(potential_outcomes, logor, labels="OR") |> summary(transform = exp)
 ```
 
 We refer to the `targeted` package ([Holst et al.
@@ -1891,11 +1890,11 @@ function in the following way
 amod <- targeted::learner_glm(a ~ w, family=binomial)
 qmod <- targeted::learner_glm(y1 ~ a * w, family=binomial)
 est <- targeted::cate(qmod, amod, data=dw, second.order = FALSE)
-#>             Estimate Std.Err    2.5%  97.5%   P-value
-#> E[y1(1)]      0.7050 0.03721 0.63207 0.7779 4.934e-80
-#> E[y1(0)]      0.5359 0.03535 0.46666 0.6052 6.290e-52
+#>             Estimate Std.Err   2.5%  97.5%    P-value
+#> E[y1(1)]      0.6702 0.02454 0.6221 0.7183 3.657e-164
+#> E[y1(0)]      0.4693 0.02355 0.4232 0.5155  2.187e-88
 #> ───────────
-#> (Intercept)   0.1691 0.04996 0.07115 0.2670 7.138e-04
+#> (Intercept)   0.2008 0.03330 0.1356 0.2661  1.637e-09
 ```
 
 ## SessionInfo
@@ -1935,7 +1934,7 @@ sessionInfo()
 #> [16] generics_0.1.4         knitr_1.52             backports_1.5.1       
 #> [19] MASS_7.3-66            tibble_3.3.1           future_1.82.0         
 #> [22] pillar_1.11.1          rlang_1.3.0            broom_1.0.13          
-#> [25] xfun_0.62              otel_0.2.0             cli_3.6.6             
+#> [25] xfun_0.62              otel_0.3.0             cli_3.6.6             
 #> [28] magrittr_2.0.5         digest_0.6.39          grid_4.6.2            
 #> [31] mvtnorm_1.4-2          geepack_1.3.13         lifecycle_1.0.5       
 #> [34] RcppArmadillo_15.6.2-1 timereg_2.0.7          vctrs_0.7.3           

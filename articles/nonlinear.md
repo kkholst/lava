@@ -540,7 +540,7 @@ sessionInfo()
 
     loaded via a namespace (and not attached):
      [1] mets_1.3.12            cli_3.6.6              knitr_1.52
-     [4] rlang_1.3.0            xfun_0.62              otel_0.2.0
+     [4] rlang_1.3.0            xfun_0.62              otel_0.3.0
      [7] generics_0.1.4         jsonlite_2.0.0         future.apply_1.21.0
     [10] listenv_1.1.0          htmltools_0.5.9        graph_1.90.0
     [13] stats4_4.6.2           rmarkdown_2.32         grid_4.6.2
