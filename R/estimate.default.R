@@ -535,13 +535,21 @@ estimate.default <- function(x=NULL, f=NULL, ...,
     }
     D <- attributes(val)$grad
     if (!is.null(D)) derivative <- D
-    if (is.null(D)) {
+    if (is.null(D)) { # Numerical derivative
+      # Use relative steps for nonzero parameters, retaining an absolute
+      # step for parameters that are exactly zero.
+      scale <- abs(pp)
+      scale[scale == 0] <- 1
+      defaults <- list(eps = 1e-4 * pmin(1, scale))
+      method.args = as.list(lava.options()$Dmethod.args)
+      method.args <- utils::modifyList(defaults, method.args)
       D <- numDeriv::jacobian(function(p, ...) {
         if (length(form)==0) arglist[[1]] <- p
         else arglist[[parname]] <- p
         if (is.null(newf)) return(do.call("f", arglist))
         return(do.call("newf", arglist))
-      }, pp, method = lava.options()$Dmethod)
+      }, pp, method = lava.options()$Dmethod,
+      method.args = method.args)
     }
     if (is.null(ic_theta)) {
       pp <- structure(as.vector(val), names=names(val))
