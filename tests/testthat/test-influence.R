@@ -91,6 +91,22 @@ test_that("back.transform", {
   expect_equal(coef(tmp2), 2, ignore_attr = TRUE)
 })
 
+test_that("summary transform keeps null hypothesis", {
+  e <- estimate(coef = c(a = 0.5, b = 1), vcov = diag(2))
+  s0 <- summary(e)
+  s <- summary(e, transform = exp, labels = c("A", "B"))
+  # Wald test is unchanged, null displayed on the transformed scale
+  expect_equal(s$compare$p.value, s0$compare$p.value)
+  expect_true(all(c("[A] = 1", "[B] = 1") %in% s$compare$method))
+  # General contrast: null kept on the original scale
+  s2 <- summary(e, contrast = cbind(1, -1), transform = exp)
+  expect_true("Null Hypothesis (untransformed scale):" %in% s2$compare$method)
+  expect_true("[a] - [b] = 0" %in% s2$compare$method)
+  # No Wald test
+  s3 <- summary(e, contrast = NULL, transform = exp)
+  expect_null(s3$compare)
+})
+
 test_that("IC.numeric", {
   x <- rnorm(100)
   res <- IC(x)

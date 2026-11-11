@@ -4,7 +4,17 @@
 \alias{expectation}
 \title{Mean of (estimated) function via g-computation}
 \usage{
-expectation(f, object, data, id, subset, labels = NULL, details = FALSE, ...)
+expectation(
+  f,
+  object,
+  data,
+  id,
+  subset,
+  labels = NULL,
+  details = FALSE,
+  args = list(),
+  ...
+)
 }
 \arguments{
 \item{f}{function with named argument \code{p} providing the parameter vector and
@@ -47,6 +57,8 @@ the term \eqn{E[Df(theta) s]IC(theta)} where \eqn{Df} is gradient of \code{f}
 evaluted in the data and parameter estimate of \code{object} and \code{s} is the
 subset indicator. \eqn{IC(theta)} is the influence function of
 \code{object}. The \code{subset} attribute holds the subset indicator if provided.}
+
+\item{args}{(list) arguments to \code{f}}
 
 \item{...}{additional arguments passed to \code{f}}
 }

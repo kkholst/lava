@@ -14,6 +14,7 @@
   var.adj = 0.25,
   df,
   transform = NULL,
+  labels = NULL,
   print = NULL
 )
 }
@@ -43,6 +44,8 @@ t-distribution with \code{df} degrees of freedom)}
 confidence interval bounds \emph{after} inference is performed on the original
 scale. Useful for variance-stabilizing transformations, e.g., compute CIs
 on the \code{atanh} (Fisher z) scale and back-transform with \code{tanh}.}
+
+\item{labels}{(optional) character vector with new parameter names}
 
 \item{print}{(optional) custom print function for the resulting
 \code{summary.estimate} object}
