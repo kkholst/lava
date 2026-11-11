@@ -30,5 +30,7 @@ IC.estimate.list <- function(x,...) {
 
 #' @export
 merge.estimate.list <- function(x,...) {
-  Reduce(merge, x)
+  res <- Reduce(merge, x)
+  res$call <- generic_call(match.call())
+  res
 }

@@ -53,7 +53,15 @@ merge.lvm <- function(x, y, ...) {
 
 ##' @export
 merge.list <- function(x, ...) {
-  do.call(merge, c(x, list(...)))
+  res <- do.call(merge, c(x, list(...)))
+  if (inherits(res, "estimate")) res$call <- generic_call(match.call(), "merge")
+  res
+}
+
+## Call of a method with the method name replaced by the generic name
+generic_call <- function(call, generic = "merge") {
+  call[[1L]] <- as.name(generic)
+  call
 }
 
 ##' @export
@@ -67,7 +75,9 @@ merge.lm <- function(x,y,...) {
   names(mm)[1:2] <- c("x", "y")
   ii <- which(unlist(lapply(mm, is.null)))
   if (length(ii) > 0) mm[ii] <- NULL
-  do.call(merge,c(mm,args[idx]))
+  res <- do.call(merge,c(mm,args[idx]))
+  res$call <- generic_call(match.call())
+  res
 }
 
 ##' @export
@@ -78,6 +88,8 @@ merge.lvmfit <- merge.lm
 
 ##' @export
 merge.multinomial <- function(x,...) {
-    merge.estimate(x,...)
+    res <- merge.estimate(x,...)
+    res$call <- generic_call(match.call())
+    res
 }
 

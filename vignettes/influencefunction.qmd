@@ -1182,7 +1182,7 @@ It therefore follows that
 \end{align*}
 Hence the IF for $\widehat{\Psi}$ becomes
 $$
-IC(Z; \Pz) = f(X;\theta)-\Psi +
+\IC(Z; \Pz) = f(X;\theta)-\Psi +
 [\Pz\nabla_{\theta}f(X;\theta)]\phi(Z).
 $$
 
