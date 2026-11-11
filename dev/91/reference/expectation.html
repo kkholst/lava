@@ -66,12 +66,12 @@ applications of this function.</p>
 <span>  <span class="va">f</span>,</span>
 <span>  <span class="va">object</span>,</span>
 <span>  <span class="va">data</span>,</span>
+<span>  <span class="va">...</span>,</span>
 <span>  <span class="va">id</span>,</span>
 <span>  <span class="va">subset</span>,</span>
 <span>  labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  details <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -98,6 +98,10 @@ can be provided to calculate the simple mean (see examples).</p></dd>
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p><code>data.frame</code> over which <code>f</code> is averaged. Defaults to
 <code>model.frame(object)</code> (which is not available for <code>estimate</code> objects).</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>additional arguments passed to <code>f</code></p></dd>
 
 
 <dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
@@ -136,10 +140,6 @@ subset indicator. \(IC(theta)\) is the influence function of
 
 <dt id="arg-args">args<a class="anchor" aria-label="anchor" href="#arg-args"></a></dt>
 <dd><p>(list) arguments to <code>f</code></p></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional arguments passed to <code>f</code></p></dd>
 
 </dl></div>
     <div class="section level2">

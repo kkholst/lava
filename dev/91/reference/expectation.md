@@ -14,12 +14,12 @@ expectation(
   f,
   object,
   data,
+  ...,
   id,
   subset,
   labels = NULL,
   details = FALSE,
-  args = list(),
-  ...
+  args = list()
 )
 ```
 
@@ -45,6 +45,10 @@ expectation(
 
   `data.frame` over which `f` is averaged. Defaults to
   `model.frame(object)` (which is not available for `estimate` objects).
+
+- ...:
+
+  additional arguments passed to `f`
 
 - id:
 
@@ -85,10 +89,6 @@ expectation(
 - args:
 
   (list) arguments to `f`
-
-- ...:
-
-  additional arguments passed to `f`
 
 ## Value
 

@@ -85,7 +85,7 @@ P_{0})\}=0</span> and <span class="math inline">\mathbb{V}\!\text{ar}\{\operator
 \widehat{P})^{\top}</span> can be used to obtain a consistent estimate of the asymptotic variance. Note, in practice the estimate <span class="math inline">\widehat{P}</span> used in the plugin-estimate, needs only to capture the parts of the distribution of <span class="math inline">Z</span> that is necessary to evaluate the IF. In some cases this nuisance parameter can be estimated using flexible machine learning components and in other (parametric) cases be derived directly from <span class="math inline">\widehat{\theta}</span>.</p>
 <p>The IFs are easily derived for the parameters of many parametric statistical models as illustrated in the <a href="#example-generalized-linear-model">next example sections</a>. More generally, the IF can also be derived for a smooth target parameter <span class="math inline">\Psi:
 \mathcal{P}\to\mathbb{R}</span> where <span class="math inline">\mathcal{P}</span> is a family of probability distributions forming the statistical model, which often can be left completely non-parametric. Formally, the parameter must be <em>pathwise differentiable</em> see <span class="citation" data-cites="vaart_1998_asymp">(<a href="#ref-vaart_1998_asymp" role="doc-biblioref">Vaart 1998</a>)</span> in the sense that there exists a bounded linear functional <span class="math inline">\dot\Psi\colon
-L_{2}(P_{0})\to\mathbb{R}</span> such that <span class="math inline">[\Psi(P_{t}) - \Psi(P_{0})]t^{-1} \to \dot\Psi(P_{0})(g)</span> as <span class="math inline">t\to 0</span> for any parametric submodel <span class="math inline">P_t</span> with score model <span class="math inline">g(z)= \partial/(\partial t) \log (p_t)(z)|_{t=0}</span>. Riesz’s representation theorem then tells us that the directional derivative has a unique representer, <span class="math inline">\phi_{P_{0}}</span> lying in the closure of the submodel score space (the <em>tangent space</em>), s.t. <span class="math display">\begin{align*}
+L_{2}(P_{0})\to\mathbb{R}</span> such that <span class="math inline">[\Psi(P_{t}) - \Psi(P_{0})]t^{-1} \to \dot\Psi(P_{0})(g)</span> as <span class="math inline">t\to 0</span> for any parametric submodel <span class="math inline">P_t</span> with score function <span class="math inline">g(z)= \partial/(\partial t) \log (p_t)(z)|_{t=0}</span>. Riesz’s representation theorem then tells us that the directional derivative has a unique representer, <span class="math inline">\phi_{P_{0}}</span> lying in the closure of the submodel score space (the <em>tangent space</em>), s.t. <span class="math display">\begin{align*}
     \dot\Psi(P_0)(g) = \langle\phi_{P_0}, g\rangle =
     \int \phi_{P_0}(z)g(z)\,dP_0(z)
 \end{align*}</span> The unique representer is exactly the efficient IF which can be found by solving the above integral equation. For more details on how to derive influence functions, we refer to <span class="citation" data-cites="targetedlearning_2011 hines2022">(<a href="#ref-targetedlearning_2011" role="doc-biblioref">Laan and Rose 2011</a>; <a href="#ref-hines2022" role="doc-biblioref">Hines et al. 2022</a>)</span>.</p>
@@ -123,7 +123,7 @@ A=a,W] - \Psi_{a}(P)
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span>coef<span class="op">=</span><span class="va">p</span>, IC<span class="op">=</span><span class="va">ic</span>, id<span class="op">=</span><span class="va">id</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># parameter transformation</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="va">x</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># parameter transformation</span></span>
 <span>  <span class="fu"><a href="../reference/labels-set.html">labels</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span><span class="op">)</span><span class="op">)</span> <span class="co"># rename parameters</span></span></code></pre></div>
 </div>
 <p>Direct calculations are also possible, if <code>a</code> and <code>b</code> are estimate objects we can obtain new transformed parameter estimates with the syntax</p>
@@ -309,8 +309,8 @@ Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent covariates <spa
 <!-- ``` -->
 </section><section class="level2"><h3 id="example-generalized-linear-model">Example: generalized linear model<a class="anchor" aria-label="anchor" href="#example-generalized-linear-model"></a>
 </h3>
-<p>For a <span class="math inline">Z</span>-estimator defined by the score equation <span class="math inline">E[U(Z; \theta)] = 0</span>, the IF is given by <span class="math display">\begin{align*} IC(Z; \theta) =
--\mathbb{E}\Big\{\frac{\partial}{\partial\theta^\top}U(\theta; Z)\Big\}^{-1}U(Z; \theta)
+<p>For a <span class="math inline">Z</span>-estimator defined by the score equation <span class="math inline">\mathbb{E}[U(\theta; Z)] = 0</span>, the IF is given by <span class="math display">\begin{align*}\operatorname{IC}(Z; \theta) =
+-\mathbb{E}\Big\{\frac{\partial}{\partial\theta^\top}U(\theta; Z)\Big\}^{-1}U(\theta; Z)
 \end{align*}</span> In particular, for a maximum likelihood estimator the score, <span class="math inline">U</span>, is given by the partial derivative of the log-likelihood function.</p>
 <p>As an example, we can obtain the estimates with robust standard errors for a logistic regression model:</p>
 <div class="cell">
@@ -345,7 +345,7 @@ Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent covariates <spa
 <span><span class="co">#&gt; 6 -2.43751385   2.931614  1.5365778</span></span></code></pre></div>
 </div>
 <p>The same estimates can be obtained with a <em>cumulative link regression</em> model which also generalizes to ordinal outcomes. Here we consider the proportional odds model given by <span class="math display">\begin{align*}
-\log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid x)}\right) = \alpha_{j} - \beta^{\top}x) \quad j=1,\ldots,J-1
+\log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid x)}\right) = \alpha_{j} - \beta^{\top}x \quad j=1,\ldots,J-1
 \end{align*}</span></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
@@ -446,7 +446,7 @@ Bernoulli\{\operatorname{expit}(W_{i})\}</span> with independent covariates <spa
 \operatorname{IC}(x; P_{0}) = \{\tau - \mathbf{1}(x\leq \beta)\}f_{0}(\beta)^{-1}
 \end{align*}</span></p>
 <p>where <span class="math inline">f_{0}</span> is the density function of <span class="math inline">X</span>.</p>
-<p>To calculate the variance estimate, an estimate of the density is thus needed which can be obtained by a kernel estimate. Alternatively, the resampling method of <span class="citation" data-cites="zenglin2008">(<a href="#ref-zenglin2008" role="doc-biblioref">Zeng and Lin 2008</a>)</span> can be applied. Here we use a kernel smoother (additional arguments to the <code>estimate</code> function are parsed on to <code><a href="https://rdrr.io/r/stats/density.html" class="external-link">stats::density.default</a></code>) to estimate the quantiles and IF for the 25%, 50%, and 75% quantiles of <span class="math inline">W</span> and <span class="math inline">X_1</span></p>
+<p>To calculate the variance estimate, an estimate of the density is thus needed which can be obtained by a kernel estimate. Alternatively, the resampling method of <span class="citation" data-cites="zenglin2008">(<a href="#ref-zenglin2008" role="doc-biblioref">Zeng and Lin 2008</a>)</span> can be applied. Here we use a kernel smoother (additional arguments to the <code>estimate</code> function are passed on to <code><a href="https://rdrr.io/r/stats/density.html" class="external-link">stats::density.default</a></code>) to estimate the quantiles and IF for the 25%, 50%, and 75% quantiles of <span class="math inline">W</span> and <span class="math inline">X_1</span></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">dw</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"w"</span>, <span class="st">"x1"</span><span class="op">)</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"quantile"</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span><span class="op">)</span><span class="op">)</span></span>
@@ -566,7 +566,7 @@ P(E_N^\complement)
 <p>Applying Hoeffding’s Inequality to the iid Bernoulli random variables <span class="math inline">1-R_i,
 i=1,\ldots,N</span>, we get that <span class="math display">\begin{align*}
 P(N-n - N(1-p) \geq t) \leq \exp(-2t^2/N),
-\end{align*}</span> and with <span class="math inline">t = Np/2</span>, we have that <span class="math inline">P(n&lt;Np/2)\leq\exp(-N/(2p^2))\to 0</span> as <span class="math inline">N\to\infty</span>, and it follows that the first term <span class="math inline">P(E_N^\complement)</span> also converges to zero.</p>
+\end{align*}</span> and with <span class="math inline">t = Np/2</span>, we have that <span class="math inline">P(n&lt;Np/2)\leq\exp(-Np^2/2)\to 0</span> as <span class="math inline">N\to\infty</span>, and it follows that the first term <span class="math inline">P(E_N^\complement)</span> also converges to zero.</p>
 <p>As <span class="math inline">\widehat{p}\to p</span> a.s. by the strong LLN, it follows from continuity at <span class="math inline">p&gt;0</span> that <span class="math inline">\widehat{p}^{-1}-p^{-1} = o_{P_0}(1)</span>, and hence by Slutsky’s lemma <span class="math display">\begin{align*}
 \sqrt{N}(\widehat{\theta}-\theta) &amp;= \frac{1}{\sqrt{N}}\sum_{i=1}^N
 \frac{R_i}{p}\operatorname{IC}(O_i; Q_0) +
@@ -774,10 +774,10 @@ IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 <p>Parameters can also be selected when combining estimates, using the <code>keep</code> argument. This accepts either a character vector of parameter labels or a vector of positions:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">est1</span>, <span class="va">est2</span>, keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      Estimate Std.Err 2.5% 97.5% P-value</span></span>
-<span><span class="co">#&gt; NA                                      </span></span>
-<span><span class="co">#&gt; NA.1</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">est1</span>, <span class="va">est2</span>, keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ab"</span>, <span class="st">"cb"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    Estimate Std.Err    2.5% 97.5% P-value</span></span>
+<span><span class="co">#&gt; ab        3       1 1.04004  4.96  0.0027</span></span>
+<span><span class="co">#&gt; cb        2       1 0.04004  3.96  0.0455</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, keep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;               Estimate Std.Err    2.5%   97.5%   P-value</span></span>
 <span><span class="co">#&gt; (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05</span></span>
@@ -865,7 +865,7 @@ IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 \frac{1}{\sqrt{N}}
 \sum_{i=1}^{n} \underbrace{\sum_{k=1}^{N_{i}} IC(Z_{ik}; P_{0})}_{S_i} + o_{P}(1),
 </span> where <span class="math inline">\mathbb{E}S_1 = 0</span> and <span class="math inline">\mathbb{E}\left\lVert S_1 \right\rVert^2 &lt;\infty</span>.</p>
-<div id="lem-conditional" class="theorem lemma">
+<div id="lem-cluster" class="theorem lemma">
 <p><span class="theorem-title"><strong>Lemma 3</strong></span> The estimator has the i.i.d. decomposition <span class="math display">
 \sqrt{n}(\widehat{\theta}-\theta) =
 \frac{1}{\sqrt{n}}
@@ -873,20 +873,20 @@ IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
 </span> where <span class="math inline">\widetilde{\operatorname{IC}}(O_i) = S_i\mathbb{E}(N_1)^{-1}</span>, and <span class="math display">\sqrt{n}(\widehat{\theta}-\theta) \rightsquigarrow\mathcal{N}(0,\Omega).</span></p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>Proof</em>. </span>It follows that <span class="math display">\begin{align}
+<p><span class="proof-title"><em>Proof</em>. </span>It follows that <span class="math display">\begin{align*}
 \sqrt{n}(\widehat{\theta}-\theta) &amp;=
 \frac{n}{N}\frac{1}{\sqrt{n}}\sum_{i=1}^{n} S_i + o_p(1) \\
 &amp;= \frac{1}{\mathbb{E}N_1}\frac{1}{\sqrt{n}}\sum_{i=1}^{n} S_i +
-\left(\frac{n}{N} - \frac{1}{\mathbb{E}N_1}\right)\sum_{i=1}^{n} S_i + o_p(1).
-\end{align}</span> By the CLT <span class="math inline">n^{-1/2}\sum_{i=1}^n S_i \rightsquigarrow\mathcal{N}\{0,
-\mathbb{V}\!\text{ar}(S_1)\}</span> and <span class="math inline">(n/N - \mathbb{E}N_1^{-1}) = o_p(1)</span>, hence by Slutsky’s theorem it follows that <span class="math inline">\sqrt{n}(\widehat{\theta}-\theta) =
+\left(\frac{n}{N} - \frac{1}{\mathbb{E}N_1}\right)\frac{1}{\sqrt{n}}\sum_{i=1}^{n} S_i + o_p(1).
+\end{align*}</span> By the CLT <span class="math inline">n^{-1/2}\sum_{i=1}^n S_i \rightsquigarrow\mathcal{N}\{0,
+\mathbb{V}\!\text{ar}(S_1)\}</span> and <span class="math inline">(n/N - (\mathbb{E}N_1)^{-1}) = o_p(1)</span>, hence by Slutsky’s theorem it follows that <span class="math inline">\sqrt{n}(\widehat{\theta}-\theta) =
 \frac{1}{\sqrt{n}}
 \sum_{i=1}^{n} \widetilde{\operatorname{IC}}(O_{i}) + o_{P}(1)</span>, and asymptotic normality follows from the central limit theorem.</p>
 <p>In practice we will have estimates <span class="math inline">\widehat{S}_i =
-\sum_{k=1}^{N_i}\widehat{\phi}(Z_{ij})</span> of the influence functions that we need to use as plugin-estimates of the variance. Let <span class="math inline">V = SS^\top</span>, then <span class="math display">\mathbb{P}_n
+\sum_{k=1}^{N_i}\widehat{\phi}(Z_{ik})</span> of the influence functions that we need to use as plugin-estimates of the variance. Let <span class="math inline">V = SS^\top</span>, then <span class="math display">\mathbb{P}_n
 \widehat{V}- \mathbb{P} V = \mathbb{P}_n
 (\widehat{V} - V) + (\mathbb{P}_n - \mathbb{P})V. </span> where the last term is seen to be <span class="math inline">o_p(1)</span> from the LLN. Writing</p>
-<p><span class="math display">\widehat{V} - V = (\widehat{S}-S)\widehat{S}^\top - S(\widehat{S}-S)^\top,</span> then by the triangle inequality <span class="math display"> \left\lVert \widehat{V} - V \right\rVert_F \leq
+<p><span class="math display">\widehat{V} - V = (\widehat{S}-S)\widehat{S}^\top + S(\widehat{S}-S)^\top,</span> then by the triangle inequality <span class="math display"> \left\lVert \widehat{V} - V \right\rVert_F \leq
 \left\lVert \widehat{S}-S \right\rVert\left\lVert \widehat{S} \right\rVert + \left\lVert \widehat{S}-S \right\rVert\left\lVert S \right\rVert =
 \left\lVert \widehat{S}-S \right\rVert\left( \left\lVert S \right\rVert + \left\lVert \widehat{S} \right\rVert\right), </span> where we used that for the Frobenius norm <span class="math display">
 \left\lVert ab^\top \right\rVert_F^2
@@ -899,7 +899,7 @@ IC_2(Z_{2i}; P_{0})\frac{R_{2i}N}{R_{2\bullet}}
   \mathbb{P}_n\left\lVert \widehat{S}-S \right\rVert^2 + 2\sqrt{\mathbb{P}_n\left\lVert \widehat{S}-S \right\rVert^2}
   \sqrt{\mathbb{P}_n\left\lVert S \right\rVert^2},
 \end{align*}</span> where we have used the Cauchy-Schwarz inequality. From the LLN and <span class="math inline">E\left\lVert S \right\rVert^2&lt;\infty</span> it follows that <span class="math inline">\mathbb{P}_n\left\lVert S \right\rVert^2=O_p(1)</span>, and when <span class="math inline">n^{-1}\sum_{i=1}^n \left\lVert
-\widehat{S}_i-S_i \right\rVert^2 = o_p(1)</span>, then it follows that a consistent estimate of the asympotic variance of <span class="math inline">\sqrt{n}(\widehat{\theta}-\theta)</span> can be obtained as <span class="math display">
+\widehat{S}_i-S_i \right\rVert^2 = o_p(1)</span>, then it follows that a consistent estimate of the asymptotic variance of <span class="math inline">\sqrt{n}(\widehat{\theta}-\theta)</span> can be obtained as <span class="math display">
 \widehat{\Omega} = \frac{1}{n} \sum_{i=1}^n (\frac{n}{N}\widehat{S}_i)^{\otimes 2}.
 </span> <span class="math inline">\blacksquare</span></p>
 </div>
@@ -1106,7 +1106,7 @@ P_{0})</span> such that <span class="math display">\begin{align*} \sqrt{n}(\wide
 <code class="sourceCode R"><span><span class="fu">lava</span><span class="fu">::</span><span class="va"><a href="../reference/internal.html">logit</a></span></span>
 <span><span class="co">#&gt; function (p) </span></span>
 <span><span class="co">#&gt; log(p) - log1p(-p)</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x5671a6bb2358&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x567e2302f7e8&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:lava&gt;</span></span>
 <span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Estimate Std.Err   2.5% 97.5% P-value</span></span>
@@ -1139,7 +1139,7 @@ P_{0})</span> such that <span class="math display">\begin{align*} \sqrt{n}(\wide
 <p>As a simple toy example consider the problem of estimating the covariance of two variables <span class="math inline">X_1</span> and <span class="math inline">X_2</span> <span class="math display">\begin{align*}
 \widehat{\mathbb{C}\!\text{ov}}(X_1,X_2) = \mathbb{P}_n(X_1-\mathbb{P}_n X_1)(X_2-\mathbb{P}_n X_2).
 \end{align*}</span> It is easily verified that the IF of the sample estimate of <span class="math inline">(\mathbb{E}X_{1}, \mathbb{E}
-X_{2}, \mathbb{E}\{X_{1}X_{2}\})^\top</span> is <span class="math inline">\operatorname{IC}(X1,X2; P_{0}) = (X_{1}-\mathbb{E}X_{1}, X_{2}-\mathbb{E}X_{2},
+X_{2}, \mathbb{E}\{X_{1}X_{2}\})^\top</span> is <span class="math inline">\operatorname{IC}(X_1, X_2; P_{0}) = (X_{1}-\mathbb{E}X_{1}, X_{2}-\mathbb{E}X_{2},
 X_{1}X_{2}-\mathbb{E}\{X_{1}X_{2}\})^\top</span>. By the delta theorem with <span class="math inline">\phi(x,y,z) =
 z-xy</span> we have <span class="math inline">\nabla\phi(x,y,z) = (-y, -x, 1)</span> and thus the IF for the sample covariance estimate becomes <span class="math display">\begin{align*}
 \operatorname{IC}_{x_1, x_2}(X_1, X_2; P_{0}) = (X_1 - \mathbb{E}X_1)(X_2 - \mathbb{E}X_2) - \mathbb{C}\!\text{ov}(X_1,X_2)
@@ -1149,11 +1149,11 @@ z-xy</span> we have <span class="math inline">\nabla\phi(x,y,z) = (-y, -x, 1)</s
 <div class="sourceCode cell-code" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Cov</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">est</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span> <span class="op">*</span> <span class="va">y</span><span class="op">)</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span>
-<span>    <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span></span>
-<span>      coef <span class="op">=</span> <span class="va">est</span>,</span>
-<span>      IC <span class="op">=</span> <span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="va">y</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="va">est</span>,</span>
-<span>      <span class="va">...</span></span>
-<span>    <span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span></span>
+<span>    coef <span class="op">=</span> <span class="va">est</span>,</span>
+<span>    IC <span class="op">=</span> <span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="va">y</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="va">est</span>,</span>
+<span>    <span class="va">...</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">dw</span>, <span class="fu">Cov</span><span class="op">(</span><span class="va">x1</span>, <span class="va">x2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    Estimate Std.Err     2.5%  97.5% P-value</span></span>
@@ -1173,7 +1173,7 @@ z-xy</span> we have <span class="math inline">\nabla\phi(x,y,z) = (-y, -x, 1)</s
 <span><span class="va">est</span><span class="op">[</span><span class="st">"E12"</span><span class="op">]</span> <span class="op">-</span> <span class="va">est</span><span class="op">[</span><span class="st">"E2"</span><span class="op">]</span><span class="op">*</span><span class="va">est</span><span class="op">[</span><span class="st">"E1"</span><span class="op">]</span></span>
 <span><span class="co">#&gt;     Estimate Std.Err     2.5%  97.5% P-value</span></span>
 <span><span class="co">#&gt; E12  0.05263  0.0334 -0.01284 0.1181  0.1151</span></span>
-<span><span class="co"># transform(e1, function(x) c(x, cov=with(as.list(x), E12 - E2* E1))) # Same result</span></span></code></pre></div>
+<span><span class="co"># transform(est, function(x) c(x, cov=with(as.list(x), E12 - E2* E1))) # Same result</span></span></code></pre></div>
 </div>
 <p>The variance estimates can be estimated in the same way and combined to estimate the correlation</p>
 <div class="cell">
@@ -1187,8 +1187,8 @@ z-xy</span> we have <span class="math inline">\nabla\phi(x,y,z) = (-y, -x, 1)</s
 <span><span class="co">#&gt;     Estimate Std.Err     2.5%  97.5% P-value</span></span>
 <span><span class="co">#&gt; rho  0.04937 0.03126 -0.01189 0.1106  0.1142</span></span></code></pre></div>
 </div>
-<p>by using a variance stabilizing transformation, Fishers <span class="math inline">z</span>-transform <span class="citation" data-cites="lehmann2023_testing">(<a href="#ref-lehmann2023_testing" role="doc-biblioref">Lehmann and Romano 2023</a>)</span>, <span class="math inline">z = \operatorname{arctanh}(\widehat{\rho}) =
-\frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)</span>, confidence limits with general better coverage can be obtained</p>
+<p>by using a variance stabilizing transformation, Fisher’s <span class="math inline">z</span>-transform <span class="citation" data-cites="lehmann2023_testing">(<a href="#ref-lehmann2023_testing" role="doc-biblioref">Lehmann and Romano 2023</a>)</span>, <span class="math inline">z = \operatorname{arctanh}(\widehat{\rho}) =
+\frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)</span>, confidence limits with generally better coverage can be obtained</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html" class="external-link">atanh</a></span><span class="op">(</span><span class="va">rho</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1203,18 +1203,18 @@ z-xy</span> we have <span class="math inline">\nabla\phi(x,y,z) = (-y, -x, 1)</s
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; chisq = 2.486, df = 1, p-value = 0.1148</span></span></code></pre></div>
 </div>
-<p>The confidence limits are calculated on the <span class="math inline">\operatorname{arctanh}</span>-scale and transformed back to the original correlation scale via the <code>transform</code> argument of the <code>summary</code> method. In this case, where the estimates are far away from the boundary of the parameter space, the variance stabilizing transform does almost not have any impact, and the confidence limits agrees with the original symmetric confidence limits.</p>
+<p>The confidence limits are calculated on the <span class="math inline">\operatorname{arctanh}</span>-scale and transformed back to the original correlation scale via the <code>transform</code> argument of the <code>summary</code> method. In this case, where the estimates are far away from the boundary of the parameter space, the variance stabilizing transform has almost no impact, and the confidence limits agree with the original symmetric confidence limits.</p>
 </section><section class="level2"><h3 id="linear-contrasts-and-hypothesis-testing">Linear contrasts and hypothesis testing<a class="anchor" aria-label="anchor" href="#linear-contrasts-and-hypothesis-testing"></a>
 </h3>
 <p>An important special case of parameter transformations are linear transformations. A particular interest may be formulated around testing null-hypotheses of the form <span class="math display">\begin{align*}
 H_0\colon\quad \mathbf{B}\theta = \mathbf{b}_0
 \end{align*}</span></p>
 <p>where <span class="math inline">\mathbf{B}\in\mathbb{R}^{m\times p}</span> is a matrix of estimable contrasts and <span class="math inline">\mathbf{b}_0\in\mathbb{R}^{m}</span>.</p>
-<p>As an example consider marginal models for the binary response variables <span class="math inline">Y_1, Y_2, Y_3, Y_4</span></p>
+<p>As an example consider marginal models for the binary response variables <span class="math inline">Y_1, Y_2, Y_3</span></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">a</span>, <span class="va">y2</span> <span class="op">~</span> <span class="va">a</span>, <span class="va">y3</span> <span class="op">~</span> <span class="va">a</span><span class="op">)</span>, <span class="co">#, y4 ~ a+x4),</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">a</span>, <span class="va">y2</span> <span class="op">~</span> <span class="va">a</span>, <span class="va">y3</span> <span class="op">~</span> <span class="va">a</span><span class="op">)</span>,</span>
 <span>  <span class="kw">function</span><span class="op">(</span><span class="va">f</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">f</span>, family <span class="op">=</span> <span class="va">binomial</span>, data <span class="op">=</span> <span class="va">dw</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">gg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Reduce</a></span><span class="op">(</span><span class="va">merge</span>, <span class="va">g</span><span class="op">)</span></span>
@@ -1353,9 +1353,9 @@ P(Z_{max} &gt;
 <p>While this always yields a more powerful test compared to Bonferroni adjustments, another powerful closed-testing procedure <span class="citation" data-cites="marcus1976">(<a href="#ref-marcus1976" role="doc-biblioref">Marcus et al. 1976</a>)</span>, can be generally obtained by considering all intersection hypotheses.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure><p><img src="../reference/figures/closedtesting.svg" style="width:65.0%"></p>
-<figcaption><em>Figure: closed testing via Wald tests of all intersections hypotheses.</em></figcaption></figure>
+<figcaption><em>Figure: closed testing via Wald tests of all intersection hypotheses.</em></figcaption></figure>
 </div>
-<p>To reject the <span class="math inline">H_{1}</span> at an correct <span class="math inline">\alpha</span>-level we should test all intersection hypotheses involving <span class="math inline">H_{1}</span> and check if there all are rejected at the <span class="math inline">\alpha</span>-level. The adjusted <span class="math inline">p</span>-values can here be obtained as the maximum <span class="math inline">p</span>-value across all the composite hypothesis tests. Unfortunately, this only works for relatively few comparisons as the number of tests grows exponentially.</p>
+<p>To reject the <span class="math inline">H_{1}</span> at a correct <span class="math inline">\alpha</span>-level we should test all intersection hypotheses involving <span class="math inline">H_{1}</span> and check if they are all rejected at the <span class="math inline">\alpha</span>-level. The adjusted <span class="math inline">p</span>-values can here be obtained as the maximum <span class="math inline">p</span>-value across all the composite hypothesis tests. Unfortunately, this only works for relatively few comparisons as the number of tests grows exponentially.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="../reference/closed_testing.html">closed_testing</a></span><span class="op">(</span><span class="va">gg0</span>, test <span class="op">=</span> <span class="va">test_wald</span>, null<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">.8</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -1383,16 +1383,16 @@ P(Z_{max} &gt;
 <p>Some parameters of interest are expressed as averages over functions of the observed data and estimated parameters of a model. The asymptotic distribution can in some of these cases also be derived from the influence function. Let <span class="math inline">Z_{1},\ldots,Z_{n}</span> be iid observations, <span class="math inline">Z_{1}\sim P_{0}</span> and let <span class="math inline">X_{i}\subset Z_{i}</span>.</p>
 <div id="lem-averaging" class="theorem lemma">
 <p><span class="theorem-title"><strong>Lemma 4</strong></span> Assume that <span class="math inline">\widehat{\theta}</span> is RAL estimator of <span class="math inline">\theta\in\Omega\subset \mathbb{R}^{p}</span> <span class="math display">\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}\sum_{i=1}^{n}\phi(Z_{i}; P_{0}) + o_{P}(1).
-</span> Let <span class="math inline">f:\mathcal{X}\times\Omega\to\mathbb{R}</span> be continuous differentiable in <span class="math inline">\theta</span> <span class="math display">\sqrt{n}\{f(X; \widehat{\theta})-f(X; \theta)\} =
+</span> Let <span class="math inline">f:\mathcal{X}\times\Omega\to\mathbb{R}</span> be continuously differentiable in <span class="math inline">\theta</span> <span class="math display">\sqrt{n}\{f(X; \widehat{\theta})-f(X; \theta)\} =
 \frac{1}{\sqrt{n}}\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}; P_{0}) + o_{P}(1).
 </span></p>
 <p>Let <span class="math inline">\Psi = P_{0}f(X;\theta)</span> and <span class="math inline">\widehat{\Psi} = P_{n} f(X;\widehat{\theta})</span>. <span class="math inline">P_{0}</span> and <span class="math inline">P_{n}</span> are here denoting the integrals wrt. <span class="math inline">X</span>. Then the influence function for <span class="math inline">\widehat{\Psi}</span> is given by <span class="math display">\begin{align*}
-IC(Z; P_{0}) = f(X;\theta)-\Psi + [P_{0}\nabla_{\theta}f(X;\theta)]\phi(Z).
+\operatorname{IC}(Z; P_{0}) = f(X;\theta)-\Psi + [P_{0}\nabla_{\theta}f(X;\theta)]\phi(Z).
 \end{align*}</span></p>
 </div>
 <div class="proof">
 <p><span class="proof-title"><em>Proof</em>. </span>It is easily verified that <span class="math display">\begin{align*}
-\widehat{\Psi}-\Psi &amp;= (P_{n}-P_{0})(f(X; \theta)-\Psi) + P[f(X;\widehat{\theta})-f(X;\theta)] \\
+\widehat{\Psi}-\Psi &amp;= (P_{n}-P_{0})(f(X; \theta)-\Psi) + P_{0}[f(X;\widehat{\theta})-f(X;\theta)] \\
 &amp;\quad + (P_{n}-P_{0})[f(X;\widehat{\theta})-f(X;\theta)]
 \end{align*}</span></p>
 <p>From Lemma 19.24 <span class="citation" data-cites="vaart_1998_asymp">(<a href="#ref-vaart_1998_asymp" role="doc-biblioref">Vaart 1998</a>)</span> it follows that for the last term <span class="math display">\begin{align*}
@@ -1439,7 +1439,7 @@ X_1 + \beta_w W</span>, and from this we want to estimate the target parameter <
 <span><span class="co">#&gt; 5 -1.7140</span></span>
 <span><span class="co">#&gt; 6 -0.5285</span></span></code></pre></div>
 </div>
-<p>Specifically for GLM models, it is possible to do the above steps directly with the <code>predict.estimate.glm</code> method (note the id argument here is not strictly needed as the IF of <code>e</code>and the data.frame are already aligned):</p>
+<p>Specifically for GLM models, it is possible to do the above steps directly with the <code>predict.estimate.glm</code> method (note the id argument here is not strictly needed as the IF of <code>e</code> and the data.frame are already aligned):</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate.default.html">estimate</a></span><span class="op">(</span><span class="va">g</span>, id<span class="op">=</span><span class="va">dw</span><span class="op">$</span><span class="va">id</span><span class="op">)</span></span>
@@ -1515,13 +1515,13 @@ E[Y(1)]  - E[Y(0)]
 <p>Alternatively, we could get the estimate of the treatment effect on the log-odds scale:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb68"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">est</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">potential_outcomes</span>, <span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">`y(1)`</span><span class="op">)</span><span class="op">-</span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">`y(0)`</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">est</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">potential_outcomes</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>logOR<span class="op">=</span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">`y(1)`</span><span class="op">)</span><span class="op">-</span><span class="fu"><a href="../reference/internal.html">logit</a></span><span class="op">(</span><span class="va">`y(0)`</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">est</span></span>
-<span><span class="co">#&gt;      Estimate Std.Err   2.5% 97.5%   P-value</span></span>
-<span><span class="co">#&gt; y(1)   0.8317  0.1428 0.5518 1.112 5.768e-09</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">est</span>, labels<span class="op">=</span><span class="st">"OR"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span>transform <span class="op">=</span> <span class="va">exp</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Call: estimate.default(x = `_data`, labels = "OR")</span></span>
+<span><span class="co">#&gt;       Estimate Std.Err   2.5% 97.5%   P-value</span></span>
+<span><span class="co">#&gt; logOR   0.8317  0.1428 0.5518 1.112 5.768e-09</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">est</span>, transform <span class="op">=</span> <span class="va">exp</span>, labels<span class="op">=</span><span class="st">"OR"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, </span></span>
+<span><span class="co">#&gt;     stack = FALSE, keep = keep)</span></span>
 <span><span class="co">#&gt; ────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;    Estimate Std.Err  2.5% 97.5%   P-value</span></span>
 <span><span class="co">#&gt; OR    2.297         1.736 3.039 5.768e-09</span></span>
@@ -1529,10 +1529,7 @@ E[Y(1)]  - E[Y(0)]
 <span><span class="co">#&gt; Null Hypothesis: </span></span>
 <span><span class="co">#&gt;   [OR] = 1 </span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; chisq = 33.91, df = 1, p-value = 5.768e-09</span></span>
-<span><span class="co">#logor &lt;- function(p) logit(p[2]) - logit(p[1])</span></span>
-<span><span class="co">#transform(potential_outcomes, logor, labels="logOR")</span></span>
-<span><span class="co">#transform(potential_outcomes, logor, labels="OR") |&gt; summary(transform = exp)</span></span></code></pre></div>
+<span><span class="co">#&gt; chisq = 33.91, df = 1, p-value = 5.768e-09</span></span></code></pre></div>
 </div>
 <p>We refer to the <code>targeted</code> package <span class="citation" data-cites="r-targeted">(<a href="#ref-r-targeted" role="doc-biblioref">Holst et al. 2026</a>)</span> for a general implementation where the nuisance models can be based on machine learning models using cross-fitting. The above estimation can be obtained with the <code><a href="https://kkholst.github.io/targeted/reference/cate.html" class="external-link">targeted::cate</a></code> function in the following way</p>
 <div class="cell">
@@ -1540,11 +1537,11 @@ E[Y(1)]  - E[Y(0)]
 <code class="sourceCode R"><span><span class="va">amod</span> <span class="op">&lt;-</span> <span class="fu">targeted</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/targeted/reference/learner_glm.html" class="external-link">learner_glm</a></span><span class="op">(</span><span class="va">a</span> <span class="op">~</span> <span class="va">w</span>, family<span class="op">=</span><span class="va">binomial</span><span class="op">)</span></span>
 <span><span class="va">qmod</span> <span class="op">&lt;-</span> <span class="fu">targeted</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/targeted/reference/learner_glm.html" class="external-link">learner_glm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">a</span> <span class="op">*</span> <span class="va">w</span>, family<span class="op">=</span><span class="va">binomial</span><span class="op">)</span></span>
 <span><span class="va">est</span> <span class="op">&lt;-</span> <span class="fu">targeted</span><span class="fu">::</span><span class="fu"><a href="https://kkholst.github.io/targeted/reference/cate.html" class="external-link">cate</a></span><span class="op">(</span><span class="va">qmod</span>, <span class="va">amod</span>, data<span class="op">=</span><span class="va">dw</span>, second.order <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;             Estimate Std.Err    2.5%  97.5%   P-value</span></span>
-<span><span class="co">#&gt; E[y1(1)]      0.7050 0.03721 0.63207 0.7779 4.934e-80</span></span>
-<span><span class="co">#&gt; E[y1(0)]      0.5359 0.03535 0.46666 0.6052 6.290e-52</span></span>
+<span><span class="co">#&gt;             Estimate Std.Err   2.5%  97.5%    P-value</span></span>
+<span><span class="co">#&gt; E[y1(1)]      0.6702 0.02454 0.6221 0.7183 3.657e-164</span></span>
+<span><span class="co">#&gt; E[y1(0)]      0.4693 0.02355 0.4232 0.5155  2.187e-88</span></span>
 <span><span class="co">#&gt; ───────────</span></span>
-<span><span class="co">#&gt; (Intercept)   0.1691 0.04996 0.07115 0.2670 7.138e-04</span></span></code></pre></div>
+<span><span class="co">#&gt; (Intercept)   0.2008 0.03330 0.1356 0.2661  1.637e-09</span></span></code></pre></div>
 </div>
 </section></section><section class="section level2"><h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h2>
