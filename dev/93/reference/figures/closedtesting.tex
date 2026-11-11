@@ -1,0 +1,38 @@
+\documentclass{standalone}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,fit}
+% \usetikzlibrary{calc,positioning}
+
+\usepackage{tikz}
+
+\begin{document}
+
+\tikzstyle{plain}=[rectangle,thin,fill=white,align=left, minimum size=1cm,draw=gray!80,rounded corners=2pt]
+\begin{tikzpicture}[>=latex,text height=1.5ex,text depth=0.25ex]
+\matrix[row sep=0.4cm,column sep=1cm,,ampersand replacement=\&]{
+\node(emptyLeft) [scale=0.7] {}; \&  \& \node(emptyRight) [scale=0.7] {}; \\
+\& \node(H) [plain] {$H_{1}\cap H_{2}\cap H_{3}$}; \& \\
+\node(H12) [plain] {$H_{1}\cap H_{2}$}; \&
+\node(H13) [plain] {$H_{1}\cap H_{3}$}; \&
+\node(H23) [plain] {$H_{2}\cap H_{3}$}; \\
+\node(H1) [plain] {$H_{1}$}; \&
+\node(H2) [plain] {$H_{2}$}; \&
+\node(H3) [plain] {$H_{3}$}; \\
+\& \node(minimalText) {Minimal hypotheses}; \\
+};
+\path[->] (H) edge[thick,draw=blue!75,fill=blue!75] (H12);
+\path[->] (H) edge[thick,draw=blue!75,fill=blue!75] (H13);
+\path[->] (H) edge[thick,dashed] (H23);
+\path[->] (H12) edge[thick,draw=blue!75,fill=blue!75] (H1);
+\path[->] (H12) edge[thick,dashed] (H2);
+\path[->] (H13) edge[thick,draw=blue!75,fill=blue!75] (H1);
+\path[->] (H13) edge[thick,dashed] (H3);
+\path[->] (H23) edge[thick,dashed] (H2);
+\path[->] (H23) edge[thick,dashed] (H3);
+\node (minimalBox) [dashed,draw=black!50,fit = (H1.north west) (minimalText.south) (H3.south east)] {};
+\node (compositeBox) [anchor=south,inner sep=0.7em,dashed,draw=black!50,fit = (emptyLeft.north) (H12.south west) (H23.south east)] {};
+\node (compositeText) [anchor=base,draw=none,fit = (emptyLeft.north west) (emptyRight.south east)] {Composite hypotheses}; %%\vspace*{-1em}
+\end{tikzpicture}
+
+\end{document}
