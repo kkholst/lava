@@ -91,7 +91,8 @@ complete_visits <- function(data, id, time, response = NULL, levels = NULL) {
 predict.estimate.mmrm <- function(object, newdata = NULL, time = NULL,
                                   p = coef(object), ...) {
   if (!isTRUE(object$sigma)) {
-    stop("'object' must be obtained with estimate(fit, sigma = TRUE).")
+    ## stop("'object' must be obtained with estimate(fit, sigma = TRUE).")
+    object <- estimate(object$fit, sigma=TRUE)
   }
   stopifnot(length(p) == length(coef(object)))
   fit <- object$fit
