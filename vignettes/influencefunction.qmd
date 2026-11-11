@@ -83,7 +83,7 @@ where the empirical variance of the plugin estimator, $\pr_{n}\IC(Z;
 \widehat{P})^{\top}$ can be used to obtain a consistent estimate of the
 asymptotic variance. Note, in practice the estimate $\widehat{P}$ used in
 the plugin-estimate, needs only to capture the parts of the distribution of
-$Z$ that is necessary to evaluate the IF. In some cases this nuisance
+$Z$ that are necessary to evaluate the IF. In some cases this nuisance
 parameter can be estimated using flexible machine learning components and in
 other (parametric) cases be derived directly from $\widehat{\theta}$.
 
@@ -211,10 +211,6 @@ $$
 \sqrt{n}\{\mathbb{P}_{n}f(X) - \E[f(X)]\} = \frac{1}{\sqrt{n}}\sum_{i=1}^{n}
 \{f(X_{i}) - \E[f(X)]\}
 $$
-<!-- $$
-<!-- \sqrt{n}\{\mathbb{P}_{n}f(X) - \pr(Y_{1}=1)\} = \frac{1}{\sqrt{n}}\sum_{i=1}^{n} -->
-<!-- \one(Y_{1i}=1) - \pr(Y_{1}=1) -->
-<!-- $$  -->
 and hence for the problem of estimating the proportion of the binary outcome
 $Y_1$, the IF is given by $\one(Y_{1}=1) - \pr(Y_{1}=1)$.
 
@@ -251,7 +247,7 @@ Different methods are available for inspecting an `estimate`  object
 summary(e)
 ## extract parameter coefficients
 coef(e)
-## ## Asymptotic (robust) variance estimate
+## Asymptotic (robust) variance estimate
 vcov(e)
 ## Matrix with estimates and confidence limits
 summary(e, level = 0.99) |> parameter()
@@ -373,7 +369,7 @@ survival::survreg(Surv(time, status > 0) ~ age + sex, data = pbc, dist="weibull"
 General structural equation models (SEMs) can be estimated with `lava::lvm`.
 Here we fit a random effects probit model
 $$
-\pr(Y_{ij} = 1 \mid U_{i}, W_{ij})=\Phi(\mu_{j} + \beta_{j} W_{ij} + U_{i}), \quad U_{i}\sim\mathcal{N}(0,\sigma_{u}^{2}),\quad j=1,2
+\pr(Y_{ij} = 1 \mid U_{i}, W_{i})=\Phi(\mu_{j} + \beta_{j} W_{i} + U_{i}), \quad U_{i}\sim\mathcal{N}(0,\sigma_{u}^{2}),\quad j=1,2
 $$
 to the simulated dataset
 ```{r semfit }
@@ -508,9 +504,9 @@ We can write
 We need to show that the term $W_N=o_{P_0}(1)$.
 Let $E_N = \{n > Np/2\}$, it then follows that
 \begin{align*}
-P(\norm{W_N} > \epsilon) \leq P(E_N^\complement)
+P(\norm{W_N} > \epsilon) &\leq P(E_N^\complement)
 + P(\{\norm{W_N} > \epsilon\}\cap E_N) \\
-\leq
+&\leq
 P(E_N^\complement)
 + \sup_{n>Np/2} Q(\norm{V_n} > \epsilon/c)
 \end{align*}
@@ -550,7 +546,7 @@ $\widehat{\theta}_1$ and
 $\widehat{\theta}_2$ for the conditional parameters $\theta_1$ and
 $\theta_2$ based on data where $R_{1i}=1$ and $R_{2j}=1$, respectively, and let the
 corresponding IFs be
-$IC_{1}(\cdot; \Pz)$ and $IC_{2}(\cdot;\Pz)$. It then follows that
+$\IC_{1}(\cdot; \Pz)$ and $\IC_{2}(\cdot;\Pz)$. It then follows that
 the joint parameter estimate has influence function corresponding to an inverse probability
 weighting with the empirical plugin estimate of the proportions
 $P(R_{1}=1)$, and $P(R_{2}=1)$
@@ -569,8 +565,8 @@ $P(R_{1}=1)$, and $P(R_{2}=1)$
 =
 \frac{1}{\sqrt{N}}\sum_{i=1}^N
 \begin{pmatrix}
-IC_1(Z_{1i}; \Pz)\frac{R_{1i}N}{R_{1\bullet}} \\
-IC_2(Z_{2i}; \Pz)\frac{R_{2i}N}{R_{2\bullet}}
+\IC_1(Z_{1i}; \Pz)\frac{R_{1i}N}{R_{1\bullet}} \\
+\IC_2(Z_{2i}; \Pz)\frac{R_{2i}N}{R_{2\bullet}}
 \end{pmatrix}
 + \op(1)
 \end{align*}
@@ -723,7 +719,7 @@ assume that a parameter estimate, $\widehat{\theta}\in\mathbb{R}^p$ is RAL with 
 $$
 \sqrt{N}(\widehat{\theta}-\theta) =
 \frac{1}{\sqrt{N}}
-\sum_{i=1}^{n} \underbrace{\sum_{k=1}^{N_{i}} IC(Z_{ik}; \Pz)}_{S_i} + \op(1),
+\sum_{i=1}^{n} \underbrace{\sum_{k=1}^{N_{i}} \IC(Z_{ik}; \Pz)}_{S_i} + \op(1),
 $$
 where $\E S_1 = 0$ and $\E \norm{S_1}^2 <\infty$.
 
@@ -735,7 +731,8 @@ $$
 \sum_{i=1}^{n} \widetilde{\IC}(O_{i}) + \op(1)
 $$
 where $\widetilde{\IC}(O_i) = S_i\E(N_1)^{-1}$, and
-$$\sqrt{n}(\widehat{\theta}-\theta) \Dto \mathcal{N}(0,\Omega).$$
+$$\sqrt{n}(\widehat{\theta}-\theta) \Dto \mathcal{N}(0,\Omega)$$
+and $\Omega = \var(S_1)/(\E N_1)^2$.
 ::::
 
 ::: {.proof}
@@ -759,7 +756,7 @@ In practice we will have estimates $\widehat{S}_i =
 to use as plugin-estimates of the variance. Let $V = SS^\top$, then
 $$\mathbb{P}_n
 \widehat{V}- \mathbb{P} V = \mathbb{P}_n
-(\widehat{V} - V) + (\mathbb{P}_n - \mathbb{P})V. $$
+(\widehat{V} - V) + (\mathbb{P}_n - \mathbb{P})V$$
 where the last term is seen to be $o_p(1)$ from the LLN. Writing
 
 $$\widehat{V} - V = (\widehat{S}-S)\widehat{S}^\top + S(\widehat{S}-S)^\top,$$
@@ -919,8 +916,7 @@ The following transformations are implemented
   `normpdf`
 - mathematical operators: `+`, `-`, `*`, `/`, `^`, `prod`, `sum`, `diff`, `%*%`
 
-and any compositions of these functions, which also means we can immediately
- apply most existing user-defined functions. To give an example consider the `logit` function
+and any compositions of these functions, which also means we can immediately apply most existing user-defined functions. To give an example consider the `logit` function
 ```{r}
 lava::logit
 logit(b)
@@ -964,7 +960,7 @@ sample covariance estimate becomes
 \end{align*}
 
 We can implement this directly using the `estimate` function via the `IC`
-argument which allows us to provide a user-specificed IF and with the point
+argument which allows us to provide a user-specified IF and with the point
 estimate given by the `coef` argument
 ```{r cov}
 Cov <- function(x, y, ...) {
@@ -998,7 +994,7 @@ rho <- c(rho = v12 / sqrt(v1 * v2))
 rho
 ```
 
-by using a variance stabilizing transformation, Fisher's
+By using a variance stabilizing transformation, Fisher's
 $z$-transform [@lehmann2023_testing],
 $z = \arctanh(\widehat{\rho}) =
 \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right)$,
@@ -1036,8 +1032,8 @@ gg <- Reduce(merge, g)
 gg
 ```
 
-A linear transformation can be specified via the `f` as a matrix argument
-instead of function object
+A linear transformation can be specified via the `f` argument as a matrix
+instead of a function
 ```{r contrast1}
 B <- cbind(0,1, 0,-1, 0,0)
 estimate(gg, B)
@@ -1066,11 +1062,11 @@ Such linear statistics can also be specified directly as expressions of the para
 estimate(gg, a + a.1, 2*a - a.2, a) |> summary(null = c(2, 1, 1))
 ```
 
-We refer to the function `lava::contr`  and `lava::parsedesign` for defining contrast matrices.
+We refer to the functions `lava::contr`  and `lava::parsedesign` for defining contrast matrices.
 ```{r contr}
 contr(list(1, c(1, 2), c(1, 4)), n = 5)
 ```
-A particular useful contrast is the following for considering all pairwise
+A particularly useful contrast is the following for considering all pairwise
 comparisons of different exposure estimates:
 
 ```{r pairwise_diff}
@@ -1086,25 +1082,26 @@ pairwise_diff(gg[c(2,4,6)]) == 1
 When conducting multiple tests each at a nominal-level of $\alpha$ the overall
 type I error is not controlled at $\alpha$-level.
 The influence function also allows for adjusting for multiple comparisons.
-Let $Z_{1},\ldots,Z_{p}$ denote $Z$-statistics from $p$ distinct two-sided
-hypothesis tests which we will assume is asymptotically distributed under the
+Let $Z_{1},\ldots,Z_{m}$ denote $Z$-statistics from $m$ distinct two-sided
+hypothesis tests which we will assume are asymptotically distributed under the
 null hypothesis as a zero-mean Gaussian distribution with correlation matrix
-$R.$ Let $Z_{max} = \max_{i=1,\ldots,p} |Z_i|$ then the family-wise error
+$R.$ Let $Z_{max} = \max_{i=1,\ldots,m} |Z_i|$ then the family-wise error
 rate (FWER) under the null can be approximated by
 $$
 P(Z_{max} > z) =
-1-\int_{-z}^{z} \cdots \int_{-z}^{z} \phi_{R}(x_{1},\ldots,x_{p})
-\,dx_{1}\cdots\,dx_{p}
+1-\int_{-z}^{z} \cdots \int_{-z}^{z} \phi_{R}(x_{1},\ldots,x_{m})
+\,dx_{1}\cdots\,dx_{m}
 $$
 where $\phi_{R}$ is the multivariate normal density
 function with mean 0 and variance given by the correlation matrix $R$. The
 adjusted $p$-values can then be calculated as
 $$
 P(Z_{max} >
-\Phi^{-1}(1-p/2))
+\Phi^{-1}(1-p_j/2))
 $$
-where $\Phi$ is the standard Gaussian CDF. As described in
-in [@RitzPipper_multcomp] the joint distribution of $Z_{1},\ldots,Z_{p}$
+where $p_j$ is the unadjusted $p$-value of the $j$th test and
+ $\Phi$ is the standard Gaussian CDF. As described
+in [@RitzPipper_multcomp] the joint distribution of $Z_{1},\ldots,Z_{m}$
 can be estimated from the IFs. This is implemented in the `alpha_zmax` method
 
 ```{r pcorrect }
@@ -1113,13 +1110,13 @@ gg0 <- estimate(gg, keep="^a", regex=TRUE)
 alpha_zmax(gg0, null=rep(.8, 3))
 ```
 
-While this always yields a more powerful test compared to Bonferroni
-adjustments, another powerful closed-testing procedure [@marcus1976], can be generally
+While this always yields a test at least as powerful as Bonferroni
+adjustments, another powerful closed-testing procedure [@marcus1976] can be generally
 obtained by considering all intersection hypotheses.
 
 ![*Figure: closed testing via Wald tests of all intersection hypotheses.*](../man/figures/closedtesting.svg){width=65%}
 
-To reject the $H_{1}$ at
+To reject $H_{1}$ at
 a correct $\alpha$-level we should test all intersection hypotheses involving
 $H_{1}$ and check if they are all rejected at the $\alpha$-level. The
 adjusted $p$-values can here be obtained as the maximum $p$-value across all
@@ -1177,8 +1174,8 @@ It therefore follows that
 \sqrt{n}(\widehat{\Psi}-\Psi) &= \sqrt{n}P_{n}(f(X; \theta)-\Psi) +
 \frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}; \Pz) + \op(1) \\
 &=
-\frac{1}{\sqrt{n}}\sum_{i=1}^{n}\{f(X;\theta)-\Psi\} +
-\frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}, \Pz) + \op(1)
+\frac{1}{\sqrt{n}}\sum_{i=1}^{n}\{f(X_i;\theta)-\Psi\} +
+\frac{1}{\sqrt{n}}P\nabla_{\theta}f(X;\theta)\sum_{i=1}^{n}\phi(Z_{i}; \Pz) + \op(1)
 \end{align*}
 Hence the IF for $\widehat{\Psi}$ becomes
 $$
@@ -1193,10 +1190,10 @@ Turning back to the example we can estimate the logistic regression model
 $\operatorname{logit}(E\{Y_1 | A,X_1,W\}) = \beta_0 + \beta_a A + \beta_{x_1}
 X_1 + \beta_w W$, and from this we want to estimate the target parameter
 $$
-\theta(P) = \E_{P}[E(Y\mid A=1, X_{1}, W)].
+\psi(P) = \E_{P}[E(Y_1\mid A=1, X_{1}, W)].
 $$
 To do this we need first to estimate the model and then define a function that
-gives the predicted probability $\pr(Y=1\mid A=1,X_{1},W)$ for any observed
+gives the predicted probability $\pr(Y_1=1\mid A=1,X_{1},W)$ for any observed
 values of $X_1,W$ but with the treatment variable $A$ kept fixed at the
 value $1$
 ```{r estpred}
@@ -1233,7 +1230,7 @@ $Y = Y(A)$. To assess the treatment effect we can then consider the *average
 treatment effect* (ATE) $$E_P[Y(1)]-E_P[Y(0)],$$ or some other contrast of
 interest $g(\psi_1(P), \psi_0(P))$. Under the following assumptions
 
-1)  Stable Unit Treatment Values Assumption (the treatment of a specific
+1)  Stable Unit Treatment Value Assumption (the treatment of a specific
     subject is not affecting the potential outcome of other subjects)
 2)  Positivity, $P(A=a\mid W)>\epsilon$ for some $\epsilon>0$ and baseline
     covariates $W$
@@ -1246,7 +1243,7 @@ $$E[Y I(A=a)/P(A=a|W)] = E[Y(a)].$$
 
 This suggests estimators based on outcome regression ($g$-computation)
 or inverse probability weighting. More generally, under the above
-assumption we can construct a *one-step* estimator from the *Efficient
+assumptions we can construct a *one-step* estimator from the *Efficient
 Influence Function* combining these two
 $$ E\left[\frac{I(A=a)}{\Pi_a(W)}(Y-Q(W,A)) + Q(W,a)\right].$$
 In practice, this requires plugin estimates of both the outcome model,
@@ -1255,7 +1252,7 @@ $\Pi_a(W) := P(A=a\mid W)$. The corresponding estimator is consistent
 even if just one of the two nuisance models is correctly specified.
 
 To illustrate this we manually construct the above estimating equations based on
-logistic regressions models for the two nuisance models
+logistic regression models for the two nuisance models
 ```{r ate-nuisancemodels}
 qmod <- glm(y1 ~ a * w, family = binomial, data = dw) # E(Y|W,A) := Q(W,A)
 amod <- glm(a ~ w, family = binomial, data = dw) # P(A=1|W) = Pi_1(W)
