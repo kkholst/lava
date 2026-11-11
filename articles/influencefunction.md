@@ -484,11 +484,11 @@ semfit <- estimate(sem, data = dw)
 ## Robust standard errors
 estimate(semfit)
 #>      Estimate Std.Err     2.5%  97.5%   P-value
-#> y2   -0.01236 0.06061 -0.13115 0.1064 8.384e-01
-#> u     0.21656 0.04583  0.12673 0.3064 2.301e-06
-#> y1~w  0.59037 0.05306  0.48637 0.6944 9.394e-29
-#> y2~w  0.65419 0.05597  0.54449 0.7639 1.473e-31
-#> u~~u  0.19001 0.07610  0.04085 0.3392 1.254e-02
+#> y2   -0.01236 0.06100 -0.13192 0.1072 8.394e-01
+#> u     0.21656 0.04596  0.12648 0.3066 2.457e-06
+#> y1~w  0.59037 0.05306  0.48637 0.6944 9.346e-29
+#> y2~w  0.65419 0.05597  0.54449 0.7639 1.472e-31
+#> u~~u  0.19001 0.07608  0.04089 0.3391 1.251e-02
 ```
 
 ### Example: quantile
@@ -810,11 +810,11 @@ between the estimates, the argument `id=NULL` can be used
 
 merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #>      (Intercept) a          (Intercept).1
-#> 1    -5.097e-16   5.698e+00  0.000e+00   
-#> 2    -5.097e-16   5.698e+00  0.000e+00   
-#> 3    -5.097e-16   5.698e+00  0.000e+00   
-#> 4    -5.097e-16   5.698e+00  0.000e+00   
-#> 5     3.043e-15  -1.600e+01  0.000e+00   
+#> 1    -5.770e-16   5.698e+00  0.000e+00   
+#> 2    -5.770e-16   5.698e+00  0.000e+00   
+#> 3    -5.770e-16   5.698e+00  0.000e+00   
+#> 4    -5.770e-16   5.698e+00  0.000e+00   
+#> 5     2.155e-15  -1.600e+01  0.000e+00   
 #> ---                                      
 #> 1996  0.000       0.000     -4.545       
 #> 1997  0.000       0.000      3.571       
@@ -823,9 +823,9 @@ merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #> 2000  0.000       0.000     -4.545
 merge(g1, g2, id = NULL) |> vcov()
 #>                 (Intercept)             a (Intercept).1
-#> (Intercept)    7.898704e-03 -7.898704e-03  4.539224e-28
-#> a             -7.898704e-03  1.874767e-02 -2.718185e-24
-#> (Intercept).1  4.539224e-28 -2.718185e-24  4.058270e-03
+#> (Intercept)    7.898704e-03 -7.898704e-03 -1.700594e-28
+#> a             -7.898704e-03  1.874767e-02 -2.717325e-24
+#> (Intercept).1 -1.700594e-28 -2.717325e-24  4.058270e-03
 ```
 
 Note that for `estimate` objects it is also possible to merge objects
@@ -1304,7 +1304,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x5939db512168>
+#> <bytecode: 0x60068fccdde0>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
