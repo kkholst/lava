@@ -178,7 +178,7 @@ summary.estimate <- function(object,
       res$vcov <- NULL
       res$coef <- res$coefmat[, 1, drop=TRUE]
       ## res$compare$null <- do.call(transform, list(res$compare$null))
-      res$compare <- transform_null(res$compare, transform)
+      res$compare <- transform_null(res$compare, transform, p)
     }
     res$print <- print
     class(res) <- c("summary.estimate", "estimate")
@@ -186,16 +186,26 @@ summary.estimate <- function(object,
   })
 }
 
-transform_null <- function(test, transform) {
+transform_null <- function(test, transform, p) {
   if (is.null(test)) return(test)
   B <- attr(test, "B")
   unit <- all(rowSums(B != 0) == 1) && all(B[B != 0] == 1)
+  null <- test$null
+  hdr <- "Null Hypothesis (untransformed scale):"
   if (unit) { # H0: theta_j = b_j  <=>  transform(theta_j) = transform(b_j)
-    null <- do.call(transform, list(test$null))
-    hdr <- "Null Hypothesis:"
-  } else {   # general contrast: not expressible on the transformed scale
-    null <- test$null
-    hdr <- "Null Hypothesis (untransformed scale):"
+    # Apply transform to a p x 3 matrix as for the coefficient matrix, as
+    # transformations may operate on rows (parameters) of a matrix
+    idx <- apply(B != 0, 1, which)
+    v <- as.vector(p)
+    v[idx] <- null
+    tnull <- tryCatch(
+      rbind(do.call(transform, list(cbind(v, v, v))))[idx, 1],
+      error = function(e) NULL
+    )
+    if (!is.null(tnull)) {
+      null <- tnull
+      hdr <- "Null Hypothesis:"
+    }
   }
   msg <- paste0(test$cnames, " = ", format(null, digits = 4))
   test$method <- c(test$method[1:2], hdr, msg)

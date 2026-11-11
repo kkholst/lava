@@ -105,6 +105,13 @@ test_that("summary transform keeps null hypothesis", {
   # No Wald test
   s3 <- summary(e, contrast = NULL, transform = exp)
   expect_null(s3$compare)
+  # Row-wise transformation operating on matrices
+  rowtrans <- function(x) {
+    rbind(exp(x[1, , drop = FALSE]), x[2, , drop = FALSE])
+  }
+  s4 <- summary(e, transform = rowtrans)
+  expect_equal(unname(coef(s4)), c(exp(0.5), 1))
+  expect_true(all(c("[a] = 1", "[b] = 0") %in% s4$compare$method))
 })
 
 test_that("IC.numeric", {

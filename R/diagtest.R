@@ -141,7 +141,7 @@ diagtest <- function(table, positive=2, exact=FALSE, p0=NA,
                 ## TODO, agresti-ryu, biometrika 2010
             } else if (tolower(confint[1])=="arcsin")  {
                 btransform <- function(x) {
-                    rbind(sin(x[seq(nrow(x)-1),,drop=FALSE])^2,
+                    rbind(sin(x[seq_len(nrow(x)-1),,drop=FALSE])^2,
                           x[nrow(x),,drop=FALSE])
                 }
             }
@@ -185,7 +185,7 @@ print.diagtest <- function(x,...) {
     print(cli::rule())
     help <- rbind(
       c("Prevalence", "Pr(outcome+)"),
-      c("Test:", "Pr( test+ )\n"),
+      c("Test:", "Pr( test+ )"),
       c("Sensitivity (TPR):", "Pr(test+ | outcome+)"),
       c("Specificity (TNR):", "Pr(test- | outcome-)"),
       c("PPV (Precision):", "Pr(outcome+ | test+)"),
