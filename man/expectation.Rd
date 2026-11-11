@@ -8,12 +8,12 @@ expectation(
   f,
   object,
   data,
+  ...,
   id,
   subset,
   labels = NULL,
   details = FALSE,
-  args = list(),
-  ...
+  args = list()
 )
 }
 \arguments{
@@ -31,6 +31,8 @@ can be provided to calculate the simple mean (see examples).}
 
 \item{data}{\code{data.frame} over which \code{f} is averaged. Defaults to
 \code{model.frame(object)} (which is not available for \code{estimate} objects).}
+
+\item{...}{additional arguments passed to \code{f}}
 
 \item{id}{(optional) ids of the values returned by \code{f} (the g-computation
 part): a vector with one value per value of \code{f}, or a column name or
@@ -59,8 +61,6 @@ subset indicator. \eqn{IC(theta)} is the influence function of
 \code{object}. The \code{subset} attribute holds the subset indicator if provided.}
 
 \item{args}{(list) arguments to \code{f}}
-
-\item{...}{additional arguments passed to \code{f}}
 }
 \value{
 \code{estimate} object

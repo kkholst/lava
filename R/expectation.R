@@ -97,8 +97,8 @@
 #'
 #' ## Simple mean of known function
 #' expectation(~ 1 / (1+z^2), data=d, subset = ~x, labels="p")
-expectation <- function(f, object, data, id, subset, labels = NULL,
-                        details = FALSE, args = list(), ...) {
+expectation <- function(f, object, data, ..., id, subset, labels = NULL,
+                        details = FALSE, args = list()) {
 
   if (!missing(subset)) {
     subset <- tryCatch(subset, error = function(e) {
