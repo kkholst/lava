@@ -638,8 +638,7 @@ B %*% e
 #> a              0.5  0.2346  0.0401  0.9599 0.0331012
 #> b              0.8  0.2346  0.3401  1.2599 0.0006511
 e == 1 # wald-test, null-hypothesis H0: b=1
-#> Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, 
-#>     stack = FALSE, keep = keep)
+#> Call: c(a, b)
 #> ────────────────────────────────────────────────────────────
 #>   Estimate Std.Err   2.5%  97.5% P-value
 #> a      0.5  0.2346 0.0401 0.9599  0.0331
@@ -651,8 +650,7 @@ e == 1 # wald-test, null-hypothesis H0: b=1
 #>  
 #> chisq = 2.2249, df = 1, p-value = 0.1358
 e == c(1,2)
-#> Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, 
-#>     stack = FALSE, keep = keep)
+#> Call: c(a, b)
 #> ────────────────────────────────────────────────────────────
 #>   Estimate Std.Err   2.5%  97.5%   P-value
 #> a      0.5  0.2346 0.0401 0.9599 3.310e-02
