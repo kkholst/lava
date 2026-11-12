@@ -185,3 +185,21 @@ test_that("merge with clustered ids, IPW rescaling and id arguments", {
   expect_error(merge(a, b, id = list(id_a, c(NA, id_b[-1]))),
                "Missing values in 'id'")
 })
+
+test_that("merge stores its own call", {
+  e1 <- estimate(coef = c(a = 1), IC = c(-1, 1, 0), id = 1:3)
+  e2 <- estimate(coef = c(b = 2), IC = c(1, 0, -1), id = 1:3)
+  v1 <- estimate(coef = c(a = 1), vcov = diag(1))
+  expect_identical(deparse(merge(e1, e2)$call), "merge(x = e1, y = e2)")
+  expect_identical(deparse(merge(e1, e2, id = NULL)$call),
+                   "merge(x = e1, y = e2, id = NULL)")
+  expect_identical(deparse(merge(v1, e2)$call), "merge(x = v1, y = e2)")
+  expect_identical(deparse(c(e1, e2)$call), "c(e1, e2)")
+  expect_identical(deparse(c(x = e1, e2)$call), "c(x = e1, e2)")
+  expect_identical(deparse(merge(list(e1, e2))$call),
+                   "merge(x = list(e1, e2))")
+  expect_identical(deparse((e1 %++% e2)$call), "e1 %++% e2")
+  d <- data.frame(y = c(1, 3, 2, 5), x = c(1, 2, 3, 4))
+  g <- glm(y ~ x, data = d)
+  expect_identical(deparse(merge(g, g)$call), "merge(x = g, y = g)")
+})

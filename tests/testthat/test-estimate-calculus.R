@@ -213,8 +213,8 @@ test_that("^.estimate", {
 test_that("math functions", {
   e0 <- c(a, b) # merge
   e <- merge(a, b)
-  expect_equal(e[names(e) != "call"], e0[names(e0) != "call"],
-               ignore_attr = TRUE)
+  e$call <- e0$call <- NULL
+  expect_equal(e, e0, ignore_attr = TRUE)
 
   # subset and merge
   ## e1 <- c(a=a["a1"], b=b["b1"])

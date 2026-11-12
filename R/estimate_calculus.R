@@ -31,6 +31,7 @@ merge.estimate <- function(x, y,
                            drop.ic = FALSE,
                            ignore.case = FALSE,
                            sort = FALSE) {
+    cl <- generic_call(match.call())
     if (missing(y)) {
       objects <- c(list(x), list(...))
     } else {
@@ -88,7 +89,9 @@ merge.estimate <- function(x, y,
         pos <- col_starts[k]:col_ends[k]
         V[pos, pos] <- suppressMessages(vcov(objects[[k]]))
       }
-      return(estimate(coef=coefs, vcov=V, keep=keep))
+      res <- estimate(coef=coefs, vcov=V, keep=keep)
+      res$call <- cl
+      return(res)
     }
     id_missing <- missing(id)
     id <- merge_ids(objects, id = if (!id_missing) id,
@@ -120,6 +123,7 @@ merge.estimate <- function(x, y,
     if (is.null(keep) && sep) {
       res$model.index <- model.index
     }
+    res$call <- cl
     return(res)
 }
 
@@ -188,7 +192,11 @@ merge_ids <- function(objects, id, paired = FALSE, id_missing = FALSE) {
 
 #' @export
 "%++%.estimate" <- function(x, ...) {
-  merge(x, ...)
+  res <- merge(x, ...)
+  cl <- generic_call(sys.call(), "%++%")
+  names(cl) <- NULL
+  res$call <- cl
+  res
 }
 
 #' Concatenate estimate objects
@@ -248,6 +256,7 @@ c.estimate <- function(..., as.list = FALSE) {
     newlabels[idx] <- lab[idx]
     res <- labels(res, newlabels)
   }
+  res$call <- generic_call(match.call(), "c")
   # Attach extra as attribute (same pattern as c.summary.estimate)
   if (length(extra) > 0L) attr(res, "extra") <- extra
   res
