@@ -35,7 +35,7 @@ empirical variance of the plugin estimator,
 \widehat{P})\operatorname{IC}(Z\_{i}; \widehat{P})^{\top} can be used to
 obtain a consistent estimate of the asymptotic variance. Note, in
 practice the estimate \widehat{P} used in the plugin-estimate, needs
-only to capture the parts of the distribution of Z that is necessary to
+only to capture the parts of the distribution of Z that are necessary to
 evaluate the IF. In some cases this nuisance parameter can be estimated
 using flexible machine learning components and in other (parametric)
 cases be derived directly from \widehat{\theta}.
@@ -51,7 +51,7 @@ differentiable* see ([Vaart 1998](#ref-vaart_1998_asymp)) in the sense
 that there exists a bounded linear functional \dot\Psi\colon
 L\_{2}(P\_{0})\to\mathbb{R} such that \[\Psi(P\_{t}) -
 \Psi(P\_{0})\]t^{-1} \to \dot\Psi(P\_{0})(g) as t\to 0 for any
-parametric submodel P_t with score model g(z)= \partial/(\partial t)
+parametric submodel P_t with score function g(z)= \partial/(\partial t)
 \log (p_t)(z)\|\_{t=0}. Riesz’s representation theorem then tells us
 that the directional derivative has a unique representer, \phi\_{P\_{0}}
 lying in the closure of the submodel score space (the *tangent space*),
@@ -110,7 +110,7 @@ A typical call could look like
 ``` r
 
 merge(subset(estimate(x), 1), estimate(coef=p, IC=ic, id=id)) |>
-  transform(function(x) c(exp(x), exp(x[1]))) |> # parameter transformation
+  transform(function(x) c(exp(x[1]), x[2]^2)) |> # parameter transformation
   labels(c("a", "b")) # rename parameters
 ```
 
@@ -284,7 +284,7 @@ summary(e)
 coef(e)
 #> y1:(Intercept) y2:(Intercept) 
 #>          0.565          0.560
-## ## Asymptotic (robust) variance estimate
+## Asymptotic (robust) variance estimate
 vcov(e)
 #>                y1:(Intercept) y2:(Intercept)
 #> y1:(Intercept)    0.000245775      0.0000616
@@ -319,10 +319,10 @@ plot(ee, null=0.5, digits=2)
 
 ### Example: generalized linear model
 
-For a Z-estimator defined by the score equation E\[U(Z; \theta)\] = 0,
-the IF is given by \begin{align\*} IC(Z; \theta) =
--\mathbb{E}\Big\\\frac{\partial}{\partial\theta^\top}U(\theta;
-Z)\Big\\^{-1}U(Z; \theta) \end{align\*} In particular, for a maximum
+For a Z-estimator defined by the score equation \mathbb{E}\[U(\theta;
+Z)\] = 0, the IF is given by \begin{align\*}\operatorname{IC}(Z; \theta)
+= -\mathbb{E}\Big\\\frac{\partial}{\partial\theta^\top}U(\theta;
+Z)\Big\\^{-1}U(\theta; Z) \end{align\*} In particular, for a maximum
 likelihood estimator the score, U, is given by the partial derivative of
 the log-likelihood function.
 
@@ -371,7 +371,7 @@ The same estimates can be obtained with a *cumulative link regression*
 model which also generalizes to ordinal outcomes. Here we consider the
 proportional odds model given by \begin{align\*}
 \log\left(\frac{\mathbb{P}(Y\leq j\mid x)}{1-\mathbb{P}(Y\leq j\mid
-x)}\right) = \alpha\_{j} - \beta^{\top}x) \quad j=1,\ldots,J-1
+x)}\right) = \alpha\_{j} - \beta^{\top}x \quad j=1,\ldots,J-1
 \end{align\*}
 
 ``` r
@@ -470,7 +470,7 @@ survival::survreg(Surv(time, status > 0) ~ age + sex, data = pbc, dist="weibull"
 General structural equation models (SEMs) can be estimated with
 [`lava::lvm`](https://kkholst.github.io/lava/reference/lvm.md). Here we
 fit a random effects probit model \mathbb{P}(Y\_{ij} = 1 \mid U\_{i},
-W\_{ij})=\Phi(\mu\_{j} + \beta\_{j} W\_{ij} + U\_{i}), \quad
+W\_{i})=\Phi(\mu\_{j} + \beta\_{j} W\_{i} + U\_{i}), \quad
 U\_{i}\sim\mathcal{N}(0,\sigma\_{u}^{2}),\quad j=1,2 to the simulated
 dataset
 
@@ -484,11 +484,11 @@ semfit <- estimate(sem, data = dw)
 ## Robust standard errors
 estimate(semfit)
 #>      Estimate Std.Err     2.5%  97.5%   P-value
-#> y2   -0.01236 0.06061 -0.13115 0.1064 8.384e-01
-#> u     0.21656 0.04583  0.12673 0.3064 2.301e-06
-#> y1~w  0.59037 0.05306  0.48637 0.6944 9.394e-29
-#> y2~w  0.65419 0.05597  0.54449 0.7639 1.473e-31
-#> u~~u  0.19001 0.07610  0.04085 0.3392 1.254e-02
+#> y2   -0.01236 0.06100 -0.13192 0.1072 8.394e-01
+#> u     0.21656 0.04596  0.12648 0.3066 2.457e-06
+#> y1~w  0.59037 0.05306  0.48637 0.6944 9.346e-29
+#> y2~w  0.65419 0.05597  0.54449 0.7639 1.472e-31
+#> u~~u  0.19001 0.07608  0.04089 0.3391 1.251e-02
 ```
 
 ### Example: quantile
@@ -503,7 +503,7 @@ To calculate the variance estimate, an estimate of the density is thus
 needed which can be obtained by a kernel estimate. Alternatively, the
 resampling method of ([Zeng and Lin 2008](#ref-zenglin2008)) can be
 applied. Here we use a kernel smoother (additional arguments to the
-`estimate` function are parsed on to
+`estimate` function are passed on to
 [`stats::density.default`](https://rdrr.io/r/stats/density.html)) to
 estimate the quantiles and IF for the 25%, 50%, and 75% quantiles of W
 and X_1
@@ -571,8 +571,7 @@ g1 <- glm(y1 ~ a, family=binomial, data=dw)
 g2 <- glm(y2 ~ a, family=binomial, data=dw)
 e <- merge(g1, g2)
 summary(e)
-#> Call: estimate.default(data = NULL, id = id, coef = coefs, IC = ic0, 
-#>     stack = FALSE, keep = keep)
+#> Call: merge(x = g1, y = g2)
 #> ────────────────────────────────────────────────────────────
 #>               Estimate Std.Err    2.5%   97.5%   P-value
 #> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
@@ -644,8 +643,8 @@ Q_0) \right)}\_{W_N = \sqrt{N/n}V_n}. \end{align\*}
 
 We need to show that the term W_N=o\_{P_0}(1). Let E_N = \\n \> Np/2\\,
 it then follows that \begin{align\*} P(\left\lVert W_N \right\rVert \>
-\epsilon) \leq P(E_N^\complement) + P(\\\left\lVert W_N \right\rVert \>
-\epsilon\\\cap E_N) \\ \leq P(E_N^\complement) + \sup\_{n\>Np/2}
+\epsilon) &\leq P(E_N^\complement) + P(\\\left\lVert W_N \right\rVert \>
+\epsilon\\\cap E_N) \\ &\leq P(E_N^\complement) + \sup\_{n\>Np/2}
 Q(\left\lVert V_n \right\rVert \> \epsilon/c) \end{align\*} where we
 have used that on the set E_N we have \sqrt{N/n}\< \sqrt{2/p} = c. The
 supremum term converges to zero as N\to\infty due to the assumption that
@@ -654,8 +653,8 @@ supremum term converges to zero as N\to\infty due to the assumption that
 Applying Hoeffding’s Inequality to the iid Bernoulli random variables
 1-R_i, i=1,\ldots,N, we get that \begin{align\*} P(N-n - N(1-p) \geq t)
 \leq \exp(-2t^2/N), \end{align\*} and with t = Np/2, we have that
-P(n\<Np/2)\leq\exp(-N/(2p^2))\to 0 as N\to\infty, and it follows that
-the first term P(E_N^\complement) also converges to zero.
+P(n\<Np/2)\leq\exp(-Np^2/2)\to 0 as N\to\infty, and it follows that the
+first term P(E_N^\complement) also converges to zero.
 
 As \widehat{p}\to p a.s. by the strong LLN, it follows from continuity
 at p\>0 that \widehat{p}^{-1}-p^{-1} = o\_{P_0}(1), and hence by
@@ -673,17 +672,18 @@ R\_{11}), (Z\_{21}, R\_{21}), \ldots, (Z\_{1N}, R\_{1N}), (Z\_{2N},
 R\_{2N}) with estimators \widehat{\theta}\_1 and \widehat{\theta}\_2 for
 the conditional parameters \theta_1 and \theta_2 based on data where
 R\_{1i}=1 and R\_{2j}=1, respectively, and let the corresponding IFs be
-IC\_{1}(\cdot; P\_{0}) and IC\_{2}(\cdot;P\_{0}). It then follows that
-the joint parameter estimate has influence function corresponding to an
-inverse probability weighting with the empirical plugin estimate of the
+\operatorname{IC}\_{1}(\cdot; P\_{0}) and
+\operatorname{IC}\_{2}(\cdot;P\_{0}). It then follows that the joint
+parameter estimate has influence function corresponding to an inverse
+probability weighting with the empirical plugin estimate of the
 proportions P(R\_{1}=1), and P(R\_{2}=1) \begin{align\*} \sqrt{N}\left\\
 \begin{pmatrix} \widehat{\theta}\_1 \\ \widehat{\theta}\_2
 \end{pmatrix} - \begin{pmatrix} \vphantom{\widehat{\theta}\_1}\theta_1
 \\ \vphantom{\widehat{\theta}\_1}\theta_2 \end{pmatrix} \right\\ =
-\frac{1}{\sqrt{N}}\sum\_{i=1}^N \begin{pmatrix} IC_1(Z\_{1i};
-P\_{0})\frac{R\_{1i}N}{R\_{1\bullet}} \\ IC_2(Z\_{2i};
-P\_{0})\frac{R\_{2i}N}{R\_{2\bullet}} \end{pmatrix} + o\_{P}(1)
-\end{align\*}
+\frac{1}{\sqrt{N}}\sum\_{i=1}^N \begin{pmatrix}
+\operatorname{IC}\_1(Z\_{1i}; P\_{0})\frac{R\_{1i}N}{R\_{1\bullet}} \\
+\operatorname{IC}\_2(Z\_{2i}; P\_{0})\frac{R\_{2i}N}{R\_{2\bullet}}
+\end{pmatrix} + o\_{P}(1) \end{align\*}
 
 with R\_{k\bullet} = \sum\_{i=1}^{N}R\_{ki}. Returning to the example,
 we can combine the marginal estimates of two model objects that have
@@ -810,11 +810,11 @@ between the estimates, the argument `id=NULL` can be used
 
 merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #>      (Intercept) a          (Intercept).1
-#> 1    -5.097e-16   5.698e+00  0.000e+00   
-#> 2    -5.097e-16   5.698e+00  0.000e+00   
-#> 3    -5.097e-16   5.698e+00  0.000e+00   
-#> 4    -5.097e-16   5.698e+00  0.000e+00   
-#> 5     3.043e-15  -1.600e+01  0.000e+00   
+#> 1    -5.770e-16   5.698e+00  0.000e+00   
+#> 2    -5.770e-16   5.698e+00  0.000e+00   
+#> 3    -5.770e-16   5.698e+00  0.000e+00   
+#> 4    -5.770e-16   5.698e+00  0.000e+00   
+#> 5     2.155e-15  -1.600e+01  0.000e+00   
 #> ---                                      
 #> 1996  0.000       0.000     -4.545       
 #> 1997  0.000       0.000      3.571       
@@ -823,9 +823,9 @@ merge(g1, g2, id = NULL) |> (Print %++% IC)()
 #> 2000  0.000       0.000     -4.545
 merge(g1, g2, id = NULL) |> vcov()
 #>                 (Intercept)             a (Intercept).1
-#> (Intercept)    7.898704e-03 -7.898704e-03  4.539224e-28
-#> a             -7.898704e-03  1.874767e-02 -2.718185e-24
-#> (Intercept).1  4.539224e-28 -2.718185e-24  4.058270e-03
+#> (Intercept)    7.898704e-03 -7.898704e-03 -1.700594e-28
+#> a             -7.898704e-03  1.874767e-02 -2.717325e-24
+#> (Intercept).1 -1.700594e-28 -2.717325e-24  4.058270e-03
 ```
 
 Note that for `estimate` objects it is also possible to merge objects
@@ -898,10 +898,10 @@ labels or a vector of positions:
 
 ``` r
 
-merge(est1, est2, keep = c("a", "b"))
-#>      Estimate Std.Err 2.5% 97.5% P-value
-#> NA                                      
-#> NA.1
+merge(est1, est2, keep = c("ab", "cb"))
+#>    Estimate Std.Err    2.5% 97.5% P-value
+#> ab        3       1 1.04004  4.96  0.0027
+#> cb        2       1 0.04004  3.96  0.0455
 merge(g1, g2, keep = c(1, 3))
 #>               Estimate Std.Err    2.5%   97.5%   P-value
 #> (Intercept)    -0.3706 0.08887 -0.5448 -0.1964 3.048e-05
@@ -1007,34 +1007,37 @@ N\_{i}) \sim P, i=1,\ldots,n are i.i.d. Define N = \sum\_{i=1}^{n} N_i,
 and assume that a parameter estimate, \widehat{\theta}\in\mathbb{R}^p is
 RAL with decomposition \sqrt{N}(\widehat{\theta}-\theta) =
 \frac{1}{\sqrt{N}} \sum\_{i=1}^{n} \underbrace{\sum\_{k=1}^{N\_{i}}
-IC(Z\_{ik}; P\_{0})}\_{S_i} + o\_{P}(1), where \mathbb{E}S_1 = 0 and
-\mathbb{E}\left\lVert S_1 \right\rVert^2 \<\infty.
+\operatorname{IC}(Z\_{ik}; P\_{0})}\_{S_i} + o\_{P}(1), where
+\mathbb{E}S_1 = 0 and \mathbb{E}\left\lVert S_1 \right\rVert^2 \<\infty.
 
 **Lemma 3** The estimator has the i.i.d. decomposition
 \sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}} \sum\_{i=1}^{n}
 \widetilde{\operatorname{IC}}(O\_{i}) + o\_{P}(1) where
 \widetilde{\operatorname{IC}}(O_i) = S_i\mathbb{E}(N_1)^{-1}, and
-\sqrt{n}(\widehat{\theta}-\theta) \rightsquigarrow\mathcal{N}(0,\Omega).
+\sqrt{n}(\widehat{\theta}-\theta) \rightsquigarrow\mathcal{N}(0,\Omega)
+and \Omega = \mathbb{V}\\\text{ar}(S_1)/(\mathbb{E}N_1)^2.
 
-*Proof*. It follows that \begin{align} \sqrt{n}(\widehat{\theta}-\theta)
-&= \frac{n}{N}\frac{1}{\sqrt{n}}\sum\_{i=1}^{n} S_i + o_p(1) \\ &=
+*Proof*. It follows that \begin{align\*}
+\sqrt{n}(\widehat{\theta}-\theta) &=
+\frac{n}{N}\frac{1}{\sqrt{n}}\sum\_{i=1}^{n} S_i + o_p(1) \\ &=
 \frac{1}{\mathbb{E}N_1}\frac{1}{\sqrt{n}}\sum\_{i=1}^{n} S_i +
-\left(\frac{n}{N} - \frac{1}{\mathbb{E}N_1}\right)\sum\_{i=1}^{n} S_i +
-o_p(1). \end{align} By the CLT n^{-1/2}\sum\_{i=1}^n S_i
+\left(\frac{n}{N} -
+\frac{1}{\mathbb{E}N_1}\right)\frac{1}{\sqrt{n}}\sum\_{i=1}^{n} S_i +
+o_p(1). \end{align\*} By the CLT n^{-1/2}\sum\_{i=1}^n S_i
 \rightsquigarrow\mathcal{N}\\0, \mathbb{V}\\\text{ar}(S_1)\\ and (n/N -
-\mathbb{E}N_1^{-1}) = o_p(1), hence by Slutsky’s theorem it follows that
-\sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}} \sum\_{i=1}^{n}
-\widetilde{\operatorname{IC}}(O\_{i}) + o\_{P}(1), and asymptotic
-normality follows from the central limit theorem.
+(\mathbb{E}N_1)^{-1}) = o_p(1), hence by Slutsky’s theorem it follows
+that \sqrt{n}(\widehat{\theta}-\theta) = \frac{1}{\sqrt{n}}
+\sum\_{i=1}^{n} \widetilde{\operatorname{IC}}(O\_{i}) + o\_{P}(1), and
+asymptotic normality follows from the central limit theorem.
 
 In practice we will have estimates \widehat{S}\_i =
-\sum\_{k=1}^{N_i}\widehat{\phi}(Z\_{ij}) of the influence functions that
+\sum\_{k=1}^{N_i}\widehat{\phi}(Z\_{ik}) of the influence functions that
 we need to use as plugin-estimates of the variance. Let V = SS^\top,
 then \mathbb{P}\_n \widehat{V}- \mathbb{P} V = \mathbb{P}\_n
-(\widehat{V} - V) + (\mathbb{P}\_n - \mathbb{P})V. where the last term
-is seen to be o_p(1) from the LLN. Writing
+(\widehat{V} - V) + (\mathbb{P}\_n - \mathbb{P})V where the last term is
+seen to be o_p(1) from the LLN. Writing
 
-\widehat{V} - V = (\widehat{S}-S)\widehat{S}^\top -
+\widehat{V} - V = (\widehat{S}-S)\widehat{S}^\top +
 S(\widehat{S}-S)^\top, then by the triangle inequality \left\lVert
 \widehat{V} - V \right\rVert_F \leq \left\lVert \widehat{S}-S
 \right\rVert\left\lVert \widehat{S} \right\rVert + \left\lVert
@@ -1055,7 +1058,7 @@ get \begin{align\*} \mathbb{P}\_n\left\lVert \widehat{V} - V
 inequality. From the LLN and E\left\lVert S \right\rVert^2\<\infty it
 follows that \mathbb{P}\_n\left\lVert S \right\rVert^2=O_p(1), and when
 n^{-1}\sum\_{i=1}^n \left\lVert \widehat{S}\_i-S_i \right\rVert^2 =
-o_p(1), then it follows that a consistent estimate of the asympotic
+o_p(1), then it follows that a consistent estimate of the asymptotic
 variance of \sqrt{n}(\widehat{\theta}-\theta) can be obtained as
 \widehat{\Omega} = \frac{1}{n} \sum\_{i=1}^n
 (\frac{n}{N}\widehat{S}\_i)^{\otimes 2}. \blacksquare
@@ -1302,7 +1305,7 @@ example consider the `logit` function
 lava::logit
 #> function (p) 
 #> log(p) - log1p(-p)
-#> <bytecode: 0x5c31b6b07eb0>
+#> <bytecode: 0x586429cc2248>
 #> <environment: namespace:lava>
 logit(b)
 #>   Estimate Std.Err   2.5% 97.5% P-value
@@ -1348,8 +1351,8 @@ covariance of two variables X_1 and X_2 \begin{align\*}
 \mathbb{P}\_n(X_1-\mathbb{P}\_n X_1)(X_2-\mathbb{P}\_n X_2).
 \end{align\*} It is easily verified that the IF of the sample estimate
 of (\mathbb{E}X\_{1}, \mathbb{E} X\_{2},
-\mathbb{E}\\X\_{1}X\_{2}\\)^\top is \operatorname{IC}(X1,X2; P\_{0}) =
-(X\_{1}-\mathbb{E}X\_{1}, X\_{2}-\mathbb{E}X\_{2},
+\mathbb{E}\\X\_{1}X\_{2}\\)^\top is \operatorname{IC}(X_1, X_2; P\_{0})
+= (X\_{1}-\mathbb{E}X\_{1}, X\_{2}-\mathbb{E}X\_{2},
 X\_{1}X\_{2}-\mathbb{E}\\X\_{1}X\_{2}\\)^\top. By the delta theorem with
 \phi(x,y,z) = z-xy we have \nabla\phi(x,y,z) = (-y, -x, 1) and thus the
 IF for the sample covariance estimate becomes \begin{align\*}
@@ -1358,18 +1361,18 @@ IF for the sample covariance estimate becomes \begin{align\*}
 \end{align\*}
 
 We can implement this directly using the `estimate` function via the
-`IC` argument which allows us to provide a user-specificed IF and with
+`IC` argument which allows us to provide a user-specified IF and with
 the point estimate given by the `coef` argument
 
 ``` r
 
 Cov <- function(x, y, ...) {
   est <- mean(x * y)-mean(x)*mean(y)
-    estimate(
-      coef = est,
-      IC = (x - mean(x)) * (y - mean(y)) - est,
-      ...
-    )
+  estimate(
+    coef = est,
+    IC = (x - mean(x)) * (y - mean(y)) - est,
+    ...
+  )
 }
 with(dw, Cov(x1, x2))
 #>    Estimate Std.Err     2.5%  97.5% P-value
@@ -1393,7 +1396,7 @@ est
 est["E12"] - est["E2"]*est["E1"]
 #>     Estimate Std.Err     2.5%  97.5% P-value
 #> E12  0.05263  0.0334 -0.01284 0.1181  0.1151
-# transform(e1, function(x) c(x, cov=with(as.list(x), E12 - E2* E1))) # Same result
+# transform(est, function(x) c(x, cov=with(as.list(x), E12 - E2* E1))) # Same result
 ```
 
 The variance estimates can be estimated in the same way and combined to
@@ -1411,11 +1414,11 @@ rho
 #> rho  0.04937 0.03126 -0.01189 0.1106  0.1142
 ```
 
-by using a variance stabilizing transformation, Fishers z-transform
+By using a variance stabilizing transformation, Fisher’s z-transform
 ([Lehmann and Romano 2023](#ref-lehmann2023_testing)), z =
 \operatorname{arctanh}(\widehat{\rho}) =
 \frac{1}{2}\log\left(\frac{1+\widehat{\rho}}{1-\widehat{\rho}}\right),
-confidence limits with general better coverage can be obtained
+confidence limits with generally better coverage can be obtained
 
 ``` r
 
@@ -1436,8 +1439,8 @@ The confidence limits are calculated on the \operatorname{arctanh}-scale
 and transformed back to the original correlation scale via the
 `transform` argument of the `summary` method. In this case, where the
 estimates are far away from the boundary of the parameter space, the
-variance stabilizing transform does almost not have any impact, and the
-confidence limits agrees with the original symmetric confidence limits.
+variance stabilizing transform has almost no impact, and the confidence
+limits agree with the original symmetric confidence limits.
 
 ### Linear contrasts and hypothesis testing
 
@@ -1450,12 +1453,12 @@ where \mathbf{B}\in\mathbb{R}^{m\times p} is a matrix of estimable
 contrasts and \mathbf{b}\_0\in\mathbb{R}^{m}.
 
 As an example consider marginal models for the binary response variables
-Y_1, Y_2, Y_3, Y_4
+Y_1, Y_2, Y_3
 
 ``` r
 
 g <- lapply(
-  list(y1 ~ a, y2 ~ a, y3 ~ a), #, y4 ~ a+x4),
+  list(y1 ~ a, y2 ~ a, y3 ~ a),
   function(f) glm(f, family = binomial, data = dw)
 )
 gg <- Reduce(merge, g)
@@ -1469,8 +1472,8 @@ gg
 #> a.2             1.3586 0.19386  0.9787  1.73856 2.413e-12
 ```
 
-A linear transformation can be specified via the `f` as a matrix
-argument instead of function object
+A linear transformation can be specified via the `f` argument as a
+matrix instead of a function
 
 ``` r
 
@@ -1535,7 +1538,7 @@ estimate(gg, a + a.1, 2*a - a.2, a) |> summary(null = c(2, 1, 1))
 #> chisq = 21.01, df = 3, p-value = 0.0001047
 ```
 
-We refer to the function
+We refer to the functions
 [`lava::contr`](https://kkholst.github.io/lava/reference/contr.md) and
 [`lava::parsedesign`](https://kkholst.github.io/lava/reference/contr.md)
 for defining contrast matrices.
@@ -1549,7 +1552,7 @@ contr(list(1, c(1, 2), c(1, 4)), n = 5)
 #> [3,]    1    0    0   -1    0
 ```
 
-A particular useful contrast is the following for considering all
+A particularly useful contrast is the following for considering all
 pairwise comparisons of different exposure estimates:
 
 ``` r
@@ -1600,20 +1603,20 @@ pairwise_diff(gg[c(2,4,6)]) == 1
 When conducting multiple tests each at a nominal-level of \alpha the
 overall type I error is not controlled at \alpha-level. The influence
 function also allows for adjusting for multiple comparisons. Let
-Z\_{1},\ldots,Z\_{p} denote Z-statistics from p distinct two-sided
-hypothesis tests which we will assume is asymptotically distributed
+Z\_{1},\ldots,Z\_{m} denote Z-statistics from m distinct two-sided
+hypothesis tests which we will assume are asymptotically distributed
 under the null hypothesis as a zero-mean Gaussian distribution with
-correlation matrix R. Let Z\_{max} = \max\_{i=1,\ldots,p} \|Z_i\| then
+correlation matrix R. Let Z\_{max} = \max\_{i=1,\ldots,m} \|Z_i\| then
 the family-wise error rate (FWER) under the null can be approximated by
 P(Z\_{max} \> z) = 1-\int\_{-z}^{z} \cdots \int\_{-z}^{z}
-\phi\_{R}(x\_{1},\ldots,x\_{p}) \\dx\_{1}\cdots\\dx\_{p} where \phi\_{R}
+\phi\_{R}(x\_{1},\ldots,x\_{m}) \\dx\_{1}\cdots\\dx\_{m} where \phi\_{R}
 is the multivariate normal density function with mean 0 and variance
 given by the correlation matrix R. The adjusted p-values can then be
-calculated as P(Z\_{max} \> \Phi^{-1}(1-p/2)) where \Phi is the standard
-Gaussian CDF. As described in in ([Pipper et al.
-2012](#ref-RitzPipper_multcomp)) the joint distribution of
-Z\_{1},\ldots,Z\_{p} can be estimated from the IFs. This is implemented
-in the `alpha_zmax` method
+calculated as P(Z\_{max} \> \Phi^{-1}(1-p_j/2)) where p_j is the
+unadjusted p-value of the jth test and \Phi is the standard Gaussian
+CDF. As described in ([Pipper et al. 2012](#ref-RitzPipper_multcomp))
+the joint distribution of Z\_{1},\ldots,Z\_{m} can be estimated from the
+IFs. This is implemented in the `alpha_zmax` method
 
 ``` r
 
@@ -1627,17 +1630,17 @@ alpha_zmax(gg0, null=rep(.8, 3))
 #> [1] 0.01704
 ```
 
-While this always yields a more powerful test compared to Bonferroni
+While this always yields a test at least as powerful as Bonferroni
 adjustments, another powerful closed-testing procedure ([Marcus et al.
-1976](#ref-marcus1976)), can be generally obtained by considering all
+1976](#ref-marcus1976)) can be generally obtained by considering all
 intersection hypotheses.
 
 ![](../reference/figures/closedtesting.svg)
 
-*Figure: closed testing via Wald tests of all intersections hypotheses.*
+*Figure: closed testing via Wald tests of all intersection hypotheses.*
 
-To reject the H\_{1} at an correct \alpha-level we should test all
-intersection hypotheses involving H\_{1} and check if there all are
+To reject H\_{1} at a correct \alpha-level we should test all
+intersection hypotheses involving H\_{1} and check if they are all
 rejected at the \alpha-level. The adjusted p-values can here be obtained
 as the maximum p-value across all the composite hypothesis tests.
 Unfortunately, this only works for relatively few comparisons as the
@@ -1677,7 +1680,7 @@ Z\_{1}\sim P\_{0} and let X\_{i}\subset Z\_{i}.
 **Lemma 4** Assume that \widehat{\theta} is RAL estimator of
 \theta\in\Omega\subset \mathbb{R}^{p} \sqrt{n}(\widehat{\theta}-\theta)
 = \frac{1}{\sqrt{n}}\sum\_{i=1}^{n}\phi(Z\_{i}; P\_{0}) + o\_{P}(1). Let
-f:\mathcal{X}\times\Omega\to\mathbb{R} be continuous differentiable in
+f:\mathcal{X}\times\Omega\to\mathbb{R} be continuously differentiable in
 \theta \sqrt{n}\\f(X; \widehat{\theta})-f(X; \theta)\\ =
 \frac{1}{\sqrt{n}}\nabla\_{\theta}f(X;\theta)\sum\_{i=1}^{n}\phi(Z\_{i};
 P\_{0}) + o\_{P}(1).
@@ -1685,12 +1688,12 @@ P\_{0}) + o\_{P}(1).
 Let \Psi = P\_{0}f(X;\theta) and \widehat{\Psi} = P\_{n}
 f(X;\widehat{\theta}). P\_{0} and P\_{n} are here denoting the integrals
 wrt. X. Then the influence function for \widehat{\Psi} is given by
-\begin{align\*} IC(Z; P\_{0}) = f(X;\theta)-\Psi +
+\begin{align\*} \operatorname{IC}(Z; P\_{0}) = f(X;\theta)-\Psi +
 \[P\_{0}\nabla\_{\theta}f(X;\theta)\]\phi(Z). \end{align\*}
 
 *Proof*. It is easily verified that \begin{align\*} \widehat{\Psi}-\Psi
 &= (P\_{n}-P\_{0})(f(X; \theta)-\Psi) +
-P\[f(X;\widehat{\theta})-f(X;\theta)\] \\ &\quad +
+P\_{0}\[f(X;\widehat{\theta})-f(X;\theta)\] \\ &\quad +
 (P\_{n}-P\_{0})\[f(X;\widehat{\theta})-f(X;\theta)\] \end{align\*}
 
 From Lemma 19.24 ([Vaart 1998](#ref-vaart_1998_asymp)) it follows that
@@ -1703,10 +1706,10 @@ It therefore follows that \begin{align\*} \sqrt{n}(\widehat{\Psi}-\Psi)
 &= \sqrt{n}P\_{n}(f(X; \theta)-\Psi) +
 \frac{1}{\sqrt{n}}P\nabla\_{\theta}f(X;\theta)\sum\_{i=1}^{n}\phi(Z\_{i};
 P\_{0}) + o\_{P}(1) \\ &=
-\frac{1}{\sqrt{n}}\sum\_{i=1}^{n}\\f(X;\theta)-\Psi\\ +
-\frac{1}{\sqrt{n}}P\nabla\_{\theta}f(X;\theta)\sum\_{i=1}^{n}\phi(Z\_{i},
+\frac{1}{\sqrt{n}}\sum\_{i=1}^{n}\\f(X_i;\theta)-\Psi\\ +
+\frac{1}{\sqrt{n}}P\nabla\_{\theta}f(X;\theta)\sum\_{i=1}^{n}\phi(Z\_{i};
 P\_{0}) + o\_{P}(1) \end{align\*} Hence the IF for \widehat{\Psi}
-becomes IC(Z; P\_{0}) = f(X;\theta)-\Psi +
+becomes \operatorname{IC}(Z; P\_{0}) = f(X;\theta)-\Psi +
 \[P\_{0}\nabla\_{\theta}f(X;\theta)\]\phi(Z).
 
 \blacksquare
@@ -1714,9 +1717,9 @@ becomes IC(Z; P\_{0}) = f(X;\theta)-\Psi +
 Turning back to the example we can estimate the logistic regression
 model \operatorname{logit}(E\\Y_1 \| A,X_1,W\\) = \beta_0 + \beta_a A +
 \beta\_{x_1} X_1 + \beta_w W, and from this we want to estimate the
-target parameter \theta(P) = \mathbb{E}\_{P}\[E(Y\mid A=1, X\_{1}, W)\].
+target parameter \psi(P) = \mathbb{E}\_{P}\[E(Y_1\mid A=1, X\_{1}, W)\].
 To do this we need first to estimate the model and then define a
-function that gives the predicted probability \mathbb{P}(Y=1\mid
+function that gives the predicted probability \mathbb{P}(Y_1=1\mid
 A=1,X\_{1},W) for any observed values of X_1,W but with the treatment
 variable A kept fixed at the value 1
 
@@ -1751,7 +1754,7 @@ IC(ea) |> head()
 
 Specifically for GLM models, it is possible to do the above steps
 directly with the `predict.estimate.glm` method (note the id argument
-here is not strictly needed as the IF of `e`and the data.frame are
+here is not strictly needed as the IF of `e` and the data.frame are
 already aligned):
 
 ``` r
@@ -1775,7 +1778,7 @@ effect we can then consider the *average treatment effect* (ATE)
 E_P\[Y(1)\]-E_P\[Y(0)\], or some other contrast of interest g(\psi_1(P),
 \psi_0(P)). Under the following assumptions
 
-1.  Stable Unit Treatment Values Assumption (the treatment of a specific
+1.  Stable Unit Treatment Value Assumption (the treatment of a specific
     subject is not affecting the potential outcome of other subjects)
 2.  Positivity, P(A=a\mid W)\>\epsilon for some \epsilon\>0 and baseline
     covariates W
@@ -1787,7 +1790,7 @@ I(A=a)/P(A=a\|W)\] = E\[Y(a)\].
 
 This suggests estimators based on outcome regression (g-computation) or
 inverse probability weighting. More generally, under the above
-assumption we can construct a *one-step* estimator from the *Efficient
+assumptions we can construct a *one-step* estimator from the *Efficient
 Influence Function* combining these two
 E\left\[\frac{I(A=a)}{\Pi_a(W)}(Y-Q(W,A)) + Q(W,a)\right\]. In practice,
 this requires plugin estimates of both the outcome model, Q(W,A) :=
@@ -1796,7 +1799,7 @@ P(A=a\mid W). The corresponding estimator is consistent even if just one
 of the two nuisance models is correctly specified.
 
 To illustrate this we manually construct the above estimating equations
-based on logistic regressions models for the two nuisance models
+based on logistic regression models for the two nuisance models
 
 ``` r
 
@@ -1859,24 +1862,20 @@ log-odds scale:
 
 ``` r
 
-est <- with(potential_outcomes, logit(`y(1)`)-logit(`y(0)`))
+est <- with(potential_outcomes, c(logOR=logit(`y(1)`)-logit(`y(0)`)))
 est
-#>      Estimate Std.Err   2.5% 97.5%   P-value
-#> y(1)   0.8317  0.1428 0.5518 1.112 5.768e-09
-transform(est, labels="OR") |>
-  summary(transform = exp)
-#> Call: estimate.default(x = `_data`, labels = "OR")
+#>       Estimate Std.Err   2.5% 97.5%   P-value
+#> logOR   0.8317  0.1428 0.5518 1.112 5.768e-09
+summary(est, transform = exp, labels="OR")
+#> Call: c(logOR = logit(data["y(1)"]) - logit(data["y(0)"]))
 #> ────────────────────────────────────────────────────────────
 #>    Estimate Std.Err  2.5% 97.5%   P-value
 #> OR    2.297         1.736 3.039 5.768e-09
 #> ────────────────────────────────────────────────────────────
 #> Null Hypothesis: 
-#>   [OR] = 0 
+#>   [OR] = 1 
 #>  
 #> chisq = 33.91, df = 1, p-value = 5.768e-09
-#logor <- function(p) logit(p[2]) - logit(p[1])
-#transform(potential_outcomes, logor, labels="logOR")
-#transform(potential_outcomes, logor, labels="OR") |> summary(transform = exp)
 ```
 
 We refer to the `targeted` package ([Holst et al.
@@ -1891,11 +1890,11 @@ function in the following way
 amod <- targeted::learner_glm(a ~ w, family=binomial)
 qmod <- targeted::learner_glm(y1 ~ a * w, family=binomial)
 est <- targeted::cate(qmod, amod, data=dw, second.order = FALSE)
-#>             Estimate Std.Err    2.5%  97.5%   P-value
-#> E[y1(1)]      0.7050 0.03721 0.63207 0.7779 4.934e-80
-#> E[y1(0)]      0.5359 0.03535 0.46666 0.6052 6.290e-52
+#>             Estimate Std.Err   2.5%  97.5%    P-value
+#> E[y1(1)]      0.6702 0.02454 0.6221 0.7183 3.657e-164
+#> E[y1(0)]      0.4693 0.02355 0.4232 0.5155  2.187e-88
 #> ───────────
-#> (Intercept)   0.1691 0.04996 0.07115 0.2670 7.138e-04
+#> (Intercept)   0.2008 0.03330 0.1356 0.2661  1.637e-09
 ```
 
 ## SessionInfo
@@ -1935,7 +1934,7 @@ sessionInfo()
 #> [16] generics_0.1.4         knitr_1.52             backports_1.5.1       
 #> [19] MASS_7.3-66            tibble_3.3.1           future_1.82.0         
 #> [22] pillar_1.11.1          rlang_1.3.0            broom_1.0.13          
-#> [25] xfun_0.62              otel_0.2.0             cli_3.6.6             
+#> [25] xfun_0.62              otel_0.3.0             cli_3.6.6             
 #> [28] magrittr_2.0.5         digest_0.6.39          grid_4.6.2            
 #> [31] mvtnorm_1.4-2          geepack_1.3.13         lifecycle_1.0.5       
 #> [34] RcppArmadillo_15.6.2-1 timereg_2.0.7          vctrs_0.7.3           
