@@ -2,6 +2,8 @@
 
 ## lava 1.11
 
+CRAN release: 2026-11-12
+
 - `sim.default` with `mc.cores` (parallel backend) now uses one
   L’Ecuyer-CMRG random number stream per replication. Results are
   reproducible via [`set.seed()`](https://rdrr.io/r/base/Random.html) or

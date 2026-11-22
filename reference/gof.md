@@ -142,7 +142,7 @@ gof(e,all=TRUE,rmsea.threshold=0.05,level=0.9)
 #> 
 #> rank(Information) = 18 (p=18)
 #> condition(Information) = 10.37525
-#> mean(score^2) = 4.216767e-09 
+#> mean(score^2) = 4.216768e-09 
 
 
 set.seed(1)
@@ -153,7 +153,7 @@ e <- estimate(m,d)
 rsq(e)
 #> $`R-squared`
 #>           y1           y2           y3            u 
-#> 6.714238e-01 5.109812e-01 5.276472e-01 2.220446e-16 
+#> 6.714238e-01 5.109812e-01 5.276472e-01 5.551115e-16 
 #> 
 #> $`Variance explained by 'u'`
 #>        y1        y2        y3 
