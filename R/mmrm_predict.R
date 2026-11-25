@@ -73,6 +73,8 @@ complete_visits <- function(data, id, time, response = NULL, levels = NULL) {
 #' @param p (numeric) parameter vector on the scale of `coef(object)`: mean
 #'   parameters followed by the upper-triangular elements (column-major,
 #'   including the diagonal) of the covariance matrix of each group.
+#' @param data (data.frame) alias for `newdata`, provided for compatibility
+#'   with [expectation()]. Supply either `newdata` or `data`, not both.
 #' @param ... additional arguments (not used)
 #' @return Named numeric vector (subject IDs) with attributes `observed`
 #'   (logical) and `time`.
@@ -89,7 +91,8 @@ complete_visits <- function(data, id, time, response = NULL, levels = NULL) {
 #'   predict(e, newdata = subset(fev_data, USUBJID %in% c("PT1", "PT2")))
 #' }
 predict.estimate.mmrm <- function(object, newdata = NULL, time = NULL,
-                                  p = coef(object), ...) {
+                                  p = coef(object), data = NULL, ...) {
+  newdata <- resolve_newdata(newdata, data)
   if (!isTRUE(object$sigma)) {
     ## stop("'object' must be obtained with estimate(fit, sigma = TRUE).")
     object <- estimate(object$fit, sigma=TRUE)

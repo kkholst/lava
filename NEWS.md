@@ -1,4 +1,9 @@
 # lava 1.11
+  - `predict.estimate.glm` and `predict.estimate.mmrm` now accept both
+    `newdata` (standard `predict()` convention) and `data` (required by
+    `expectation()`) as aliases. Supplying both with conflicting values is
+    an error. Previously the non-native name was silently swallowed by
+    `...`, returning predictions on the fitted model's data.
   - `sim.default` with `mc.cores` (parallel backend) now uses one L'Ecuyer-CMRG
     random number stream per replication. Results are reproducible via
     `set.seed()` or the `seed` argument, do not depend on `mc.cores`, and are

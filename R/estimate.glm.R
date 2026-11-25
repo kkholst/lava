@@ -14,7 +14,9 @@ estimate.glm <- function(x, ...) {
 
 #' @export
 predict.estimate.glm <- function(object, p=coef(object),
-                                 data=NULL, offset = NULL,...) {
+                                 data=NULL, offset = NULL,
+                                 newdata = NULL, ...) {
+  data <- resolve_newdata(newdata, data)
   if (is.null(data)) data <- model.frame(object$fit)
   predict_glm(object$fit, p=p, data=data, offset=offset, ...)
 }
