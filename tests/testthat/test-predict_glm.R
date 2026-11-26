@@ -129,7 +129,7 @@ test_that("predict_glm respects factor level order and contrasts of the fit", {
 
   ## A level that was not present in the fit is an error (as in predict.glm)
   newd3 <- transform(newd, g = factor(c("z", "a", "a", "b", "b")))
-  expect_error(predict_glm(m2, data = newd3), "new level")
+  expect_error(predict_glm(m3, data = newd3), "new level")
 
   ## Mismatching parameter vector gives an informative error
   expect_error(predict_glm(m, p = coef(m)[1:2], data = newd),
