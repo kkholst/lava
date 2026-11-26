@@ -40,7 +40,9 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.11" id="lava-111">lava 1.11<a class="anchor" aria-label="anchor" href="#lava-111"></a></h2><p class="text-muted">CRAN release: 2026-11-12</p>
 <ul><li>
-<code>predict.estimate.glm</code> and <code>predict.estimate.mmrm</code> now accept both <code>newdata</code> (standard <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> convention) and <code>data</code> (required by <code><a href="../reference/expectation.html">expectation()</a></code>) as aliases. Supplying both with conflicting values is an error. Previously the non-native name was silently swallowed by <code>...</code>, returning predictions on the fitted model’s data.</li>
+<code>predict_glm</code>, <code>score.glm</code> and <code>score.lm</code> now build the design matrix of the supplied <code>data</code> using the terms object, factor levels (<code>xlevels</code>) and contrasts of the fitted model, as <code><a href="https://rdrr.io/r/stats/predict.lm.html" class="external-link">stats::predict.lm</a></code> does.</li>
+<li>
+<code>predict.estimate.glm</code> and <code>predict.estimate.mmrm</code> now accept both <code>newdata</code> (standard <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> convention) and <code>data</code> (required by <code><a href="../reference/expectation.html">expectation()</a></code>) as aliases.</li>
 <li>
 <code>sim.default</code> with <code>mc.cores</code> (parallel backend) now uses one L’Ecuyer-CMRG random number stream per replication. Results are reproducible via <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> or the <code>seed</code> argument, do not depend on <code>mc.cores</code>, and are identical to the future backend.</li>
 <li>Support for mixed models for repeated measures (MMRM) fitted with the <code>mmrm</code> package (added to <code>Suggests</code>):

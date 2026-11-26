@@ -4,14 +4,16 @@
 
 CRAN release: 2026-11-12
 
+- `predict_glm`, `score.glm` and `score.lm` now build the design matrix
+  of the supplied `data` using the terms object, factor levels
+  (`xlevels`) and contrasts of the fitted model, as
+  [`stats::predict.lm`](https://rdrr.io/r/stats/predict.lm.html) does.
 - `predict.estimate.glm` and `predict.estimate.mmrm` now accept both
   `newdata` (standard
   [`predict()`](https://rdrr.io/r/stats/predict.html) convention) and
   `data` (required by
   [`expectation()`](https://kkholst.github.io/lava/reference/expectation.md))
-  as aliases. Supplying both with conflicting values is an error.
-  Previously the non-native name was silently swallowed by `...`,
-  returning predictions on the fitted model’s data.
+  as aliases.
 - `sim.default` with `mc.cores` (parallel backend) now uses one
   L’Ecuyer-CMRG random number stream per replication. Results are
   reproducible via [`set.seed()`](https://rdrr.io/r/base/Random.html) or
