@@ -146,6 +146,31 @@ GLMscore <- function(x,p,data,indiv=TRUE,logLik=FALSE,...) {
   return(S1)
 }
 
+.glm_design <- function(x, data, response = FALSE) {
+  tt <- stats::terms(x)
+  mf <- stats::model.frame(if (response) tt else stats::delete.response(tt),
+                           data,
+                           na.action = stats::na.pass,
+                           xlev = x$xlevels)
+  X <- stats::model.matrix(stats::delete.response(tt), mf,
+                           contrasts.arg = x$contrasts)
+  if (!response) return(X)
+  return(list(X = X, y = stats::model.response(mf)))
+}
+
+.glm_offset <- function(x, data, n) {
+  off <- rep(0, n)
+  tt <- stats::terms(x)
+  if (!is.null(o <- attr(tt, "offset"))) {
+    vars <- attr(tt, "variables")
+    for (i in o) off <- off + eval(vars[[i + 1L]], data)
+  }
+  if (!is.null(x$call$offset)) {
+    off <- off + eval(x$call$offset, data, environment(tt))
+  }
+  return(off)
+}
+
 ##' @export
 score.lm <- function(x, p=coef(x), data, indiv=FALSE,
               y, X, offset=NULL, weights=NULL, dispersion=TRUE, ...) {
@@ -153,12 +178,15 @@ score.lm <- function(x, p=coef(x), data, indiv=FALSE,
         X <- model.matrix(x)
         y <- model.frame(x)[,1]
     } else {
-        X <- model.matrix(formula(x),data=data)
-        y <- model.frame(formula(x),data=data)[,1]
+        dd <- .glm_design(x, data, response = TRUE)
+        X <- dd$X
+        y <- dd$y
     }
     if(any(is.na(p))) warning("Over-parameterized model")
     Xbeta <- X%*%p
-    if (is.null(offset)) offset <- x$offset
+    if (is.null(offset)) {
+        offset <- if (missing(data)) x$offset else .glm_offset(x, data, NROW(X))
+    }
     if (!is.null(offset)) Xbeta <- Xbeta+offset
     r <- y-Xbeta
     if (is.null(weights)) weights <- x$weights
@@ -221,10 +249,7 @@ predict_glm <- function(object, p=coef(object), data, offset = NULL,
   if (missing(data)) {
     X <- stats::model.matrix.lm(x)
   } else {
-    ff <- formula(stats::delete.response(terms(formula(x))))
-    X <- stats::model.matrix.lm(ff,
-                                data = data,
-                                na.action = na.pass)
+    X <- .glm_design(x, data)
   }
 
   ## Setting NA parameters to zero
@@ -233,12 +258,18 @@ predict_glm <- function(object, p=coef(object), data, offset = NULL,
     p[is.na(p)] <- 0
   }
 
+  if (NCOL(X) != length(p)) {
+    stop("Number of columns of the model matrix (", NCOL(X),
+         ") does not match the length of 'p' (", length(p), ").",
+         call. = FALSE)
+  }
+
   ## Calculating the prediction on the link scale
   Xbeta <- X%*%p
 
   ## Handling offset
   if (is.null(offset)) {
-    offset <- x$offset
+    offset <- if (missing(data)) x$offset else .glm_offset(x, data, NROW(X))
   }
   if (!is.null(offset)) {
     Xbeta <- Xbeta + offset
@@ -269,10 +300,14 @@ score.glm <- function(x, p=coef(x), data, indiv=FALSE,
             X <- model.matrix(x)
             y <- model.frame(x)[,1]
         } else {
-            X <- model.matrix(formula(x),data=data)
-            y <- model.frame(formula(x),data=data)[,1]
+            dd <- .glm_design(x, data, response = TRUE)
+            X <- dd$X
+            y <- dd$y
         }
-        if (is.null(offset)) offset <- x$offset
+        if (is.null(offset)) {
+            offset <- if (missing(data)) x$offset
+                      else .glm_offset(x, data, NROW(X))
+        }
     } else {
         if (missing(link)) stop("Family needed")
         if (missing(data)) stop("data needed")

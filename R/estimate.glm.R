@@ -17,7 +17,9 @@ predict.estimate.glm <- function(object, p=coef(object),
                                  data=NULL, offset = NULL,
                                  newdata = NULL, ...) {
   data <- resolve_newdata(newdata, data)
-  if (is.null(data)) data <- model.frame(object$fit)
+  if (is.null(data)) {
+    return(predict_glm(object$fit, p = p, offset = offset, ...))
+  }
   predict_glm(object$fit, p=p, data=data, offset=offset, ...)
 }
 

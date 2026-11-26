@@ -1,9 +1,10 @@
 # lava 1.11
+  - `predict_glm`, `score.glm` and `score.lm` now build the design matrix of
+    the supplied `data` using the terms object, factor levels (`xlevels`) and
+    contrasts of the fitted model, as `stats::predict.lm` does.
   - `predict.estimate.glm` and `predict.estimate.mmrm` now accept both
     `newdata` (standard `predict()` convention) and `data` (required by
-    `expectation()`) as aliases. Supplying both with conflicting values is
-    an error. Previously the non-native name was silently swallowed by
-    `...`, returning predictions on the fitted model's data.
+    `expectation()`) as aliases.
   - `sim.default` with `mc.cores` (parallel backend) now uses one L'Ecuyer-CMRG
     random number stream per replication. Results are reproducible via
     `set.seed()` or the `seed` argument, do not depend on `mc.cores`, and are
