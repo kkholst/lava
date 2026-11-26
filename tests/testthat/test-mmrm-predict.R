@@ -76,6 +76,41 @@ test_that("predict.estimate.mmrm agrees with conditional predictions of mmrm", {
   check_predict_vs_mmrm(FEV1 ~ ARMCD * AVISIT + toep(AVISIT | ARMCD / USUBJID))
 })
 
+test_that("predict.estimate.mmrm accepts 'data' as alias for 'newdata'", {
+  d <- subset(fev_data, USUBJID %in% levels(USUBJID)[1:40])
+  fit <- mmrm(FEV1 ~ ARMCD * AVISIT + us(AVISIT | USUBJID), data = d,
+              reml = FALSE, optimizer = "nlminb", optimizer_control = ctrl)
+  e <- est_obj(fit)
+  sub <- subset(d, USUBJID %in% c("PT1", "PT2"))
+
+  pr_newdata <- predict(e, newdata = sub)
+  pr_data <- predict(e, data = sub)
+  expect_equal(pr_data, pr_newdata)
+  expect_equal(length(pr_newdata), length(unique(sub$USUBJID)))
+
+  ## Conflict errors loudly; identical values pass through
+  expect_error(predict(e, newdata = sub, data = d), "not both")
+  expect_equal(predict(e, newdata = sub, data = sub), pr_newdata)
+})
+
+test_that("expectation(predict, ...) works for estimate.mmrm via 'data'", {
+  d <- subset(fev_data, USUBJID %in% levels(USUBJID)[1:80])
+  fit <- mmrm(FEV1 ~ ARMCD * AVISIT + us(AVISIT | USUBJID), data = d,
+              reml = FALSE, optimizer = "nlminb", optimizer_control = ctrl)
+  e <- estimate(fit, sigma = TRUE)
+  d1 <- transform(d, ARMCD = factor("TRT", levels = levels(d$ARMCD)))
+
+  ## Reference: hand-wrapped call renaming 'data' -> 'newdata'
+  f_wrap <- function(object, p, data, ...) {
+    predict.estimate.mmrm(object, newdata = data, p = p, ...)
+  }
+  ref <- expectation(f_wrap, object = e, data = d1)
+  out <- expectation(predict, object = e, data = d1)
+
+  expect_equal(coef(out), coef(ref), ignore_attr = TRUE)
+  expect_equal(vcov(out), vcov(ref), ignore_attr = TRUE)
+})
+
 test_that("predict.estimate.mmrm with delta method", {
   d <- subset(fev_data, USUBJID %in% levels(USUBJID)[1:80])
   fit <- mmrm(FEV1 ~ ARMCD * AVISIT + us(AVISIT | USUBJID), data = d,

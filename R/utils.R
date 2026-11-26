@@ -468,3 +468,14 @@ warnings_on_success <- function(expr) {
   }
   result
 }
+
+## Resolve the 'newdata'/'data' argument aliases of predict methods.
+## 'newdata' follows the predict() convention; 'data' is the name required
+## by expectation(). Returns NULL if neither is supplied.
+resolve_newdata <- function(newdata = NULL, data = NULL) {
+  if (is.null(newdata)) return(data)
+  if (!is.null(data) && !identical(newdata, data)) {
+    stop("Supply either 'newdata' or 'data', not both.", call. = FALSE)
+  }
+  return(newdata)
+}

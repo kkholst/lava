@@ -4,7 +4,14 @@
 \alias{predict.estimate.mmrm}
 \title{Predictions at a single visit from mmrm models}
 \usage{
-\method{predict}{estimate.mmrm}(object, newdata = NULL, time = NULL, p = coef(object), ...)
+\method{predict}{estimate.mmrm}(
+  object,
+  newdata = NULL,
+  time = NULL,
+  p = coef(object),
+  data = NULL,
+  ...
+)
 }
 \arguments{
 \item{object}{(estimate.mmrm) estimate of an mmrm model obtained with
@@ -19,6 +26,9 @@ used to fit the model.}
 \item{p}{(numeric) parameter vector on the scale of \code{coef(object)}: mean
 parameters followed by the upper-triangular elements (column-major,
 including the diagonal) of the covariance matrix of each group.}
+
+\item{data}{(data.frame) alias for \code{newdata}, provided for compatibility
+with \code{\link[=expectation]{expectation()}}. Supply either \code{newdata} or \code{data}, not both.}
 
 \item{...}{additional arguments (not used)}
 }
