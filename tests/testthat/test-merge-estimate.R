@@ -203,3 +203,26 @@ test_that("merge stores its own call", {
   g <- glm(y ~ x, data = d)
   expect_identical(deparse(merge(g, g)$call), "merge(x = g, y = g)")
 })
+
+test_that("merge with mixed IC and non-IC objects handles id arguments", {
+  set.seed(1)
+  ic <- scale(rnorm(10), scale = FALSE)
+  a <- estimate(coef = c(a = 1), IC = ic, id = 1:10)
+  b <- estimate(coef = c(b = 2), IC = ic, id = 1:10)
+  nb <- estimate(coef = c(c = 3), vcov = matrix(1))
+
+  expect_equal(vcov(merge(a, b, nb, id = TRUE)),
+               vcov(merge(a, b, nb, paired = TRUE)))
+  expect_equal(vcov(merge(a, b, nb, id = FALSE)),
+               vcov(merge(a, b, nb, id = NULL)))
+
+  cl <- rep(1:5, each = 2)
+  m_cl <- merge(a, nb, id = list(cl, NULL))
+  expect_equal(vcov(m_cl)["a", "a"], vcov(merge(a, id = list(cl)))[1, 1])
+  expect_equal(vcov(m_cl)["c", "c"], 1)
+  expect_true(is.na(vcov(m_cl)["a", "c"]))
+
+  m_cl2 <- merge(a, b, nb, id = list(cl, cl, NULL))
+  expect_equal(vcov(m_cl2)[1:2, 1:2], vcov(merge(a, b, id = list(cl, cl))))
+  expect_error(merge(a, b, nb, id = list(cl, cl)), "Same number of id-elements")
+})
