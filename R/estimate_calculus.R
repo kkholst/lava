@@ -75,12 +75,18 @@ merge.estimate <- function(x, y,
 
       ic_idx <- which(hasIC)
       if (length(ic_idx) > 0L) {
-        if (length(ic_idx) > 1L) {
+        if (!missing(id) && is.list(id) && length(id) != length(objects)) {
+          stop("Same number of id-elements as model objects expected")
+        }
+        if (length(ic_idx) > 1L || !missing(id)) {
           ic_args <- c(objects[ic_idx],
                        list(paired = paired),
-                       if (!missing(id)) list(id = id[ic_idx]))
-          m_ic  <- do.call(merge, ic_args)
-        } else m_ic <- objects[[ic_idx]]
+                       if (!missing(id))
+                         list(id = if (is.list(id)) id[ic_idx] else id))
+          m_ic <- do.call(merge, ic_args)
+        } else {
+          m_ic <- objects[[ic_idx]]
+        }
         ic_cols <- unlist(Map(`:`, col_starts[ic_idx], col_ends[ic_idx]))
         V[ic_cols, ic_cols] <- vcov(m_ic)
       }
